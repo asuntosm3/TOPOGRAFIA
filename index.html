@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - ETRS89 & Field CAD</title>
+  <title>Topografía Pro 2026 - Settop RTK & ETRS89</title>
 
   <!-- Tipografías de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +27,7 @@
       --accent-secondary: #4facfe;
       --accent-success: #10b981;
       --accent-warning: #f59e0b;
-      --accent-pink: #ec4899;
+      --accent-danger: #ef4444;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -45,7 +45,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* HEADER FLOTANTE FUTURISTA */
     header {
       background: rgba(10, 14, 23, 0.85);
       backdrop-filter: blur(16px);
@@ -110,7 +109,6 @@
       color: var(--text-main);
     }
 
-    /* CONTENEDOR PRINCIPAL */
     .app-container {
       max-width: 1400px;
       margin: 0 auto;
@@ -120,11 +118,11 @@
       gap: 16px;
     }
 
-    /* BARRA DE HERRAMIENTAS TÁCTILES */
     .toolbar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .btn {
@@ -157,22 +155,30 @@
       box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
     }
 
-    .btn-primary:hover {
-      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
-      transform: translateY(-1px);
-    }
-
     .btn-warning {
       background: rgba(245, 158, 11, 0.15);
       border-color: rgba(245, 158, 11, 0.4);
       color: var(--accent-warning);
     }
 
-    .btn-warning:hover {
-      background: rgba(245, 158, 11, 0.25);
+    /* BADGE DE CALIDAD DE SOLUCIÓN RTK SETTOP */
+    .rtk-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.4);
     }
 
-    /* MAPA LEAFLET ESTILO DARK HUD */
+    .status-fix { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
+    .status-float { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+    .status-single { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+
     .map-wrapper {
       position: relative;
       border-radius: 16px;
@@ -183,33 +189,74 @@
 
     #map {
       width: 100%;
-      height: 520px;
+      height: 540px;
       background: #080b11;
     }
 
-    /* PERSONALIZACIÓN OSCURA DE CONTROLES LEAFLET */
+    .map-gps-btn {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-primary);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s ease;
+    }
+
+    .user-gps-pulse {
+      width: 16px;
+      height: 16px;
+      background: #00f2fe;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00f2fe;
+      position: relative;
+    }
+
+    .user-gps-pulse::after {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 242, 254, 0.35);
+      animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.3); opacity: 1; }
+      80%, 100% { transform: scale(1.5); opacity: 0; }
+    }
+
     .leaflet-control-layers {
       background: rgba(18, 26, 41, 0.9) !important;
       backdrop-filter: blur(12px);
       border: 1px solid var(--border) !important;
       border-radius: 12px !important;
       color: var(--text-main) !important;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
       padding: 8px 12px !important;
     }
 
-    .leaflet-control-layers-toggle {
-      filter: invert(1);
-    }
+    .leaflet-control-layers-toggle { filter: invert(1); }
 
     .leaflet-bar a {
       background: rgba(18, 26, 41, 0.9) !important;
       color: var(--text-main) !important;
       border-bottom: 1px solid var(--border) !important;
-      backdrop-filter: blur(12px);
     }
 
-    /* PANALES HUD (GLASSMORPHISM) */
     .glass-panel {
       background: var(--bg-surface);
       backdrop-filter: blur(16px);
@@ -254,11 +301,6 @@
       outline: none;
     }
 
-    .input-field:focus {
-      border-color: var(--accent-primary);
-    }
-
-    /* TELEMETRÍA DE REPLANTEO HUD */
     .telemetry-box {
       background: rgba(0, 0, 0, 0.4);
       border-left: 3px solid var(--accent-primary);
@@ -270,10 +312,7 @@
       margin-top: 10px;
     }
 
-    /* TABLA FUTURISTA DE PUNTOS */
-    .table-container {
-      overflow-x: auto;
-    }
+    .table-container { overflow-x: auto; }
 
     table {
       width: 100%;
@@ -291,7 +330,6 @@
       border-bottom: 1px solid var(--border);
       text-transform: uppercase;
       font-size: 0.75rem;
-      letter-spacing: 0.05em;
     }
 
     td {
@@ -301,23 +339,16 @@
       color: #e2e8f0;
     }
 
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .tag-nap {
-      color: var(--accent-primary);
-      font-weight: 600;
-    }
+    .tag-nap { color: var(--accent-primary); font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER DE NAVEGACIÓN FUTURISTA -->
+  <!-- HEADER NAVEGACIÓN -->
   <header>
     <div class="brand">
       <div class="brand-logo"></div>
-      <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
+      <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026 (Settop GNSS)</span></h1>
     </div>
     <div class="huso-badge">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 29M2 12h20"/></svg>
@@ -333,11 +364,16 @@
 
   <div class="app-container">
     
-    <!-- BARRA DE ACCIONES RÁPIDAS -->
+    <!-- ACCIONES RÁPIDAS & TELEMETRÍA -->
     <div class="toolbar">
       <button class="btn btn-primary" onclick="capturarPuntoGPS()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>
         Capturar GPS
+      </button>
+
+      <button class="btn" onclick="centrarEnPosicionGPS()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 8 8 12 12 16 16 12 12 8"/></svg>
+        Centrar Posición
       </button>
 
       <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="cargarDXF(event)">
@@ -350,14 +386,22 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar CSV
       </button>
+
+      <!-- INDICADOR DE SOLUCIÓN RTK SETTOP -->
+      <div id="rtkBadge" class="rtk-status-badge status-single">
+        <span>GNSS: ESPERANDO DATO</span>
+      </div>
     </div>
 
     <!-- MAPA VISOR HUD -->
     <div class="map-wrapper">
       <div id="map"></div>
+      <button class="map-gps-btn" onclick="centrarEnPosicionGPS()" title="Centrar Mapa">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+      </button>
     </div>
 
-    <!-- HERRAMIENTAS INTERACTIVAS CAD -->
+    <!-- HERRAMIENTAS CAD -->
     <div id="cadPanel" class="glass-panel" style="display:none;">
       <div class="panel-title">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
@@ -384,11 +428,11 @@
       <div id="stakeoutMetrics" class="telemetry-box" style="display:none;"></div>
     </div>
 
-    <!-- REGISTRO DE PUNTOS TOPOGRÁFICOS -->
+    <!-- REGISTRO DE PUNTOS -->
     <div class="glass-panel">
       <div class="panel-title">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Registro de Coordenadas de Campo
+        Registro de Coordenadas de Campo (ETRS89 / REDNAP)
       </div>
       <div class="table-container">
         <table id="tablaPuntos">
@@ -400,6 +444,7 @@
               <th>Cota NAP (H)</th>
               <th>Cota Elips. (h)</th>
               <th>N (Geoide)</th>
+              <th>Precisión</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -417,11 +462,7 @@
     proj4.defs("EPSG:25831", "+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
     function latLngATransformadaETRS89(lat, lng, huso) {
-      return proj4("EPSG:4326", `EPSG:258${huso}`, [lng, lat]);
-    }
-
-    function utmALatLng(x, y, huso) {
-      const [lng, lat] = proj4(`EPSG:258${huso}`, "EPSG:4326", [x, y]);
+      return proj4("EPSG:4326", `EPSG:258${huso}`, [lng, lat]); }  function utmALatLng(x, y, huso) { const [lng, lat] = proj4(`EPSG:258${huso}`, "EPSG:4326", [x, y]);
       return [lat, lng];
     }
 
@@ -432,28 +473,24 @@
       }
     };
 
-    // 3. MAPA CON MOTOR LEAFLET Y CAPAS IGN / ESRI / CATASTRO
+    // 3. MAPA Y CAPAS
     const map = L.map('map', { zoomControl: false }).setView([40.4167, -3.7037], 15);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Ortofoto PNOA
     const pnoaLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
       layers: 'OI.OrtoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0',
       attribution: '© IGN - PNOA'
     }).addTo(map);
 
-    // Satélite Respaldo
     const esriSatLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, attribution: '© Esri'
     });
 
-    // Catastro
     const catastroLayer = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
       layers: 'Catastro', format: 'image/png', transparent: true, version: '1.1.1',
       attribution: '© Catastro'
     }).addTo(map);
 
-    // Topográfico IGN
     const ignBaseLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/ign-base', {
       layers: 'IGNBaseTodo', format: 'image/png', transparent: false, version: '1.3.0',
       attribution: '© IGN'
@@ -465,7 +502,58 @@
       { position: 'topright' }
     ).addTo(map);
 
-    // 4. INTERACCIÓN CAD Y REPLANTEO
+    // 4. CONTROL DE POSICIÓN Y CALIDAD RTK SETTOP
+    let userMarker = null;
+    let userAccuracyCircle = null;
+
+    function actualizarBadgeRTK(acc) {
+      const badge = document.getElementById('rtkBadge');
+      if (acc <= 0.05) {
+        badge.className = 'rtk-status-badge status-fix';
+        badge.innerHTML = `🟢 RTK FIX (\${(acc * 100).toFixed(1)} cm)`;
+      } else if (acc <= 0.5) {
+        badge.className = 'rtk-status-badge status-float';
+        badge.innerHTML = `🟡 RTK FLOAT (${(acc * 100).toFixed(0)} cm)`; } else { badge.className = 'rtk-status-badge status-single'; badge.innerHTML = `🔴 AUTÓNOMO (${acc.toFixed(1)} m)`;
+      }
+    }
+
+    function centrarEnPosicionGPS() {
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const accuracy = pos.coords.accuracy;
+
+        actualizarBadgeRTK(accuracy);
+
+        if (userMarker) {
+          userMarker.setLatLng([lat, lng]);
+          userAccuracyCircle.setLatLng([lat, lng]);
+          userAccuracyCircle.setRadius(accuracy);
+        } else {
+          const userIcon = L.divIcon({
+            className: 'user-gps-marker',
+            html: '<div class="user-gps-pulse"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          });
+
+          userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
+          userAccuracyCircle = L.circle([lat, lng], {
+            radius: accuracy,
+            color: '#00f2fe',
+            fillColor: '#00f2fe',
+            fillOpacity: 0.15,
+            weight: 1
+          }).addTo(map);
+        }
+
+        map.flyTo([lat, lng], 18, { animate: true, duration: 1.2 });
+      }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
+    }
+
+    // 5. INTERACCIÓN CAD Y REPLANTEO
     let cadLayerGroup = L.layerGroup().addTo(map);
     let selectedPolylineLayer = null;
     let selectedVerticesUTM = [];
@@ -548,9 +636,9 @@
       selectedPolylineLayer.setStyle({ color: '#f59e0b', weight: 6 });
 
       document.getElementById('selectedInfo').innerHTML = `
-        <span style="color: var(--accent-primary); font-weight:600;">Elemento Seleccionado:</span> ${meta.type} | 
-        <span style="color: var(--accent-primary); font-weight:600;">Capa:</span> ${meta.layer} | 
-        <span style="color: var(--accent-primary); font-weight:600;">Vértices:</span> ${verticesUTM.length}
+        <span style="color: var(--accent-primary); font-weight:600;">Elemento Seleccionado:</span> \${meta.type} | 
+        <span style="color: var(--accent-primary); font-weight:600;">Capa:</span> \${meta.layer} | 
+        <span style="color: var(--accent-primary); font-weight:600;">Vértices:</span> \${verticesUTM.length}
       `;
 
       document.getElementById('toolsContainer').style.display = 'flex';
@@ -559,8 +647,8 @@
     function mostrarInfoPunto(meta) {
       document.getElementById('cadPanel').style.display = 'block';
       document.getElementById('selectedInfo').innerHTML = `
-        <span style="color: var(--accent-pink); font-weight:600;">Punto Vértice:</span> Capa ${meta.layer} | 
-        X: ${meta.position.x.toFixed(3)} | Y: ${meta.position.y.toFixed(3)}
+        <span style="color: var(--accent-pink); font-weight:600;">Punto Vértice:</span> Capa \${meta.layer} | 
+        X: ${meta.position.x.toFixed(3)} \vert{} Y:${meta.position.y.toFixed(3)}
       `;
       document.getElementById('toolsContainer').style.display = 'none';
     }
@@ -576,7 +664,7 @@
       document.getElementById('stakeoutMetrics').style.display = 'none';
     }
 
-    // 5. INVERTIR Y OFFSET
+    // 6. INVERTIR Y OFFSET
     function invertirSentidoPolilinea() {
       if (!selectedVerticesUTM || selectedVerticesUTM.length < 2) return;
 
@@ -625,64 +713,22 @@
 
       const metricsBox = document.getElementById('stakeoutMetrics');
       metricsBox.style.display = 'block';
-      metricsBox.innerHTML = `✔ <b>Línea paralela generada:</b> Offset de ${dist} metros.`;
-    }
-
-    // 6. CAPTURA GPS Y EXPORTACIÓN
-    let listaPuntos = [];
-
-    function capturarPuntoGPS() {
-      if (!navigator.geolocation) return alert("El navegador no soporta geolocalización GPS.");
-
-      const huso = parseInt(document.getElementById('husoSelect').value);
-
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const hGPS = pos.coords.altitude || 0;
-
-        const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso);
-        const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);
-
-        const punto = {
-          id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`,
+      metricsBox.innerHTML = `✔ <b>Línea paralela generada:</b> Offset de ${dist} metros.`; }  // 7. CAPTURA GPS Y EXPORTACIÓN let listaPuntos = [];  function capturarPuntoGPS() { if (!navigator.geolocation) return alert("Sin soporte GPS.");  const huso = parseInt(document.getElementById('husoSelect').value);  navigator.geolocation.getCurrentPosition((pos) => { const lat = pos.coords.latitude; const lng = pos.coords.longitude; const hGPS = pos.coords.altitude \vert{}\vert{} 0; const acc = pos.coords.accuracy;  actualizarBadgeRTK(acc);  const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso); const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);  const punto = { id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`,
           easting: easting.toFixed(3),
           northing: northing.toFixed(3),
           cotaNAP: altimetria.cotaNAP.toFixed(3),
           hGPS: hGPS.toFixed(3),
-          N: altimetria.ondulacionN.toFixed(2)
+          N: altimetria.ondulacionN.toFixed(2),
+          acc: acc <= 0.1 ? `${(acc * 100).toFixed(1)} cm` : `${acc.toFixed(2)} m`
         };
 
         listaPuntos.push(punto);
         
         const tbody = document.querySelector('#tablaPuntos tbody');
         tbody.innerHTML += `<tr>
-          <td><b>${punto.id}</b></td>
-          <td>${punto.easting}</td>
-          <td>${punto.northing}</td>
-          <td class="tag-nap">${punto.cotaNAP}</td>
-          <td>${punto.hGPS}</td>
-          <td>${punto.N}</td>
-        </tr>`;
-
-        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id}</b><br>H (NAP): ${punto.cotaNAP} m`).openPopup();
-        map.setView([lat, lng], 18);
-      }, (err) => alert("Error capturando GPS: " + err.message), { enableHighAccuracy: true });
-    }
-
-    function exportarCSV() {
-      if (listaPuntos.length === 0) return alert("No hay puntos guardados.");
-      let csv = "ID,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide\n";
-      listaPuntos.forEach(p => {
-        csv += `${p.id},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N}\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Puntos_ETRS89_H${document.getElementById('husoSelect').value}.csv`);
-      a.click();
-    }
-  </script>
-</body>
-</html>
+          <td><b>\${punto.id}</b></td>
+          <td>\${punto.easting}</td>
+          <td>\${punto.northing}</td>
+          <td class="tag-nap">\${punto.cotaNAP}</td>
+          <td>\${punto.hGPS}</td>
+          <td>\${punto.N}</td>

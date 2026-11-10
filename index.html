@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v4.2 (Micro-Zoom 2cm Fix)</title>
+  <title>Topografía Pro 2026 - Field Station HUD v4.5</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,7 +185,6 @@
     .tool-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
     .tool-btn.active { background: var(--accent-primary); color: #000; box-shadow: 0 0 12px rgba(0,242,254,0.6); }
 
-    /* PANELES FLOTANTES DE CAPAS */
     .map-cad-panel {
       position: absolute; top: 12px; left: 12px; z-index: 999;
       background: rgba(8, 12, 20, 0.94); backdrop-filter: blur(16px);
@@ -254,6 +253,12 @@
       display: flex; flex-direction: column; gap: 6px;
     }
 
+    .telemetry-point {
+      background: rgba(0, 242, 254, 0.08); border-left: 4px solid var(--accent-primary);
+      padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.88rem; color: #f8fafc;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
     th { background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-family: var(--font-mono); text-transform: uppercase; }
     td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); font-family: var(--font-mono); }
@@ -294,7 +299,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v4.2 (MICRO-ZOOM 2CM & HIGH PRECISION)</span>
+        <span class="brand-sub">FIELD STATION HUD v4.5 (ESTACIÓN UNIFICADA DE TOPOGRAFÍA)</span>
       </div>
     </div>
 
@@ -315,20 +320,19 @@
     </div>
   </header>
 
-  <!-- NAVEGACIÓN MODULAR -->
+  <!-- NAVEGACIÓN MODULAR UNIFICADA -->
   <nav class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('tabMap', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
       <span>Visor CAD & Mapa</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('tabRoads', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19L10 5M20 19L14 5M12 5v2M12 11v2M12 17v2"/></svg>
-      <span>Replanteo Carreteras</span>
+
+    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA -->
+    <button class="tab-btn" onclick="switchTab('tabTopo', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M7 7l10 10M7 17L17 7"/></svg>
+      <span>Topografía (Replanteos & Campo & COGO)</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('tabCOGO', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M3 21V3l18 18M9 21v-4M15 21v-8"/></svg>
-      <span>COGO & Geometría</span>
-    </button>
+
     <button class="tab-btn" onclick="switchTab('tabGNSS', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4m-8.4 0a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2m-14.2 0a10 10 0 0 1 0-14.2"/></svg>
       <span>Conexión GNSS / RTK</span>
@@ -403,64 +407,143 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 2: REPLANTEO DE CARRETERAS -->
-    <div id="tabRoads" class="tab-content">
+    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA (REPLANTEOS + LEVANTAMIENTOS + COGO) -->
+    <div id="tabTopo" class="tab-content">
+      
+      <!-- SECCIÓN 1: REPLANTEOS EN CAMPO -->
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-road);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19L10 5M20 19L14 5M12 5v2M12 11v2M12 17v2"/></svg>
-          Módulo de Alineaciones y Ejes de Carreteras
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          1. Módulo de Replanteos Topográficos
         </div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Importa ejes desde <b>TCP-MDT / ISTRAM (LandXML / EJE)</b> o <b>toca cualquier línea/arco directamente en el Visor CAD</b>.
-        </p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
-          <button class="btn btn-road" onclick="document.getElementById('roadFileInput').click()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Importar Eje (LandXML / EJE / CSV)
-          </button>
-          <button class="btn btn-primary" onclick="capturarPuntoGPS()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Capturar Punto en Eje
-          </button>
-        </div>
-      </div>
 
-      <div id="roadTelemetryBox" class="glass-card" style="display:none;">
-        <div class="card-title">Telemetría de Replanteo de Eje (PK + Offset + Rasante)</div>
-        <div id="roadMetrics" class="telemetry-road">
-          <i>Esperando ubicación GPS para calcular estación (PK)...</i>
-        </div>
-      </div>
-    </div>
+        <div class="grid-2col">
+          <!-- A. Replanteo por Eje / Carretera -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.83rem; color:var(--accent-primary);">⚡ A. Replanteo de Ejes / Polilíneas</b>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Carga ejes LandXML/EJE o toca líneas en el visor CAD.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+              <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
+              <button class="btn btn-road" onclick="document.getElementById('roadFileInput').click()">
+                Importar Eje (LandXML / EJE)
+              </button>
+            </div>
+            <div id="roadTelemetryBox" style="display:none; margin-top:6px;">
+              <div id="roadMetrics" class="telemetry-road"></div>
+            </div>
+          </div>
 
-    <!-- PESTAÑA 3: CÁLCULOS COGO -->
-    <div id="tabCOGO" class="tab-content">
-      <div class="grid-2col">
-        <div class="glass-card">
-          <div class="card-title">COGO Inverso (Distancia & Azimut)</div>
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <input type="text" id="cogoP1" class="input-field" placeholder="Punto 1 (Easting, Northing, Cota)">
-            <input type="text" id="cogoP2" class="input-field" placeholder="Punto 2 (Easting, Northing, Cota)">
-            <button class="btn btn-primary" onclick="calcularCOGOInverso()">Calcular Distancia y Azimut</button>
-            <div id="resCOGOInverso" style="font-family:var(--font-mono); font-size:0.83rem; color:var(--accent-primary); margin-top:4px;"></div>
+          <!-- B. Replanteo Punto a Punto -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.83rem; color:var(--accent-primary);">🎯 B. Replanteo de Puntos (Coordenadas X, Y, Z)</b>
+            <div style="display:flex; gap:6px;">
+              <select id="selectPuntoReplanteo" class="input-field" onchange="seleccionarPuntoParaReplanteo()">
+                <option value="">-- Seleccionar de Puntos Registrados --</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <input type="number" id="replantearX" class="input-field" placeholder="Easting Target (X)">
+              <input type="number" id="replantearY" class="input-field" placeholder="Northing Target (Y)">
+              <input type="number" id="replantearZ" class="input-field" placeholder="Cota Target (Z)">
+            </div>
+            <button class="btn btn-primary" onclick="calcularReplanteoPuntoDirecto()">Guiar a Punto Objetivo</button>
+            <div id="resReplanteoPunto" class="telemetry-point" style="display:none; margin-top:4px;"></div>
           </div>
         </div>
 
-        <div class="glass-card">
-          <div class="card-title">Radiación Directa (Punto Nuevo)</div>
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <input type="text" id="radP1" class="input-field" placeholder="Estación Base (Easting, Northing, Cota)">
-            <input type="number" id="radAzimut" class="input-field" placeholder="Azimut (grados decimales °)">
-            <input type="number" id="radDist" class="input-field" placeholder="Distancia Horizontal (m)">
-            <button class="btn btn-primary" onclick="calcularRadiacionDirecta()">Calcular Nuevo Punto</button>
-            <div id="resRadiacion" style="font-family:var(--font-mono); font-size:0.83rem; color:var(--accent-primary); margin-top:4px;"></div>
+        <!-- C. Control Altimétrico de Rasantes -->
+        <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:10px;">
+          <b style="font-size:0.83rem; color:var(--accent-primary);">📐 C. Control Altimétrico de Rasantes / Planos</b>
+          <div style="display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; align-items:center;">
+            <input type="number" id="cotaProyectoTarget" class="input-field" style="max-width:220px;" placeholder="Cota Proyecto / Rasante (m)">
+            <button class="btn btn-primary" onclick="verificarCotaAltimetrica()">Verificar Desmonte / Relleno Actual</button>
+            <div id="resControlCota" style="font-family:var(--font-mono); font-size:0.85rem; font-weight:600;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN 2: ADQUISICIÓN ESPACIAL & TOMA DE DATOS EN CAMPO -->
+      <div class="glass-card">
+        <div class="card-title" style="color: var(--accent-success);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          2. Adquisición Espacial & Levantamiento de Puntos
+        </div>
+
+        <div class="grid-2col">
+          <!-- Toma de Puntos con Código de Campo -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.83rem; color:#4ade80;">📡 Captura de Puntos con Código / Descriptor</b>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="puntoCodigoInput" class="input-field" placeholder="Código (ej. BORD, ARQ, EJE, TERRENO)" value="TERRENO">
+              <select id="codigoPreset" class="input-field" style="max-width:140px;" onchange="document.getElementById('puntoCodigoInput').value=this.value;">
+                <option value="TERRENO">TERRENO</option>
+                <option value="BORDILLO">BORDILLO</option>
+                <option value="EJE">EJE</option>
+                <option value="ARQUETA">ARQUETA</option>
+                <option value="TUBERIA">TUBERIA</option>
+                <option value="TALUD_PIE">TALUD PIE</option>
+                <option value="TALUD_CAB">TALUD CAB</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="capturarPuntoGPSConCodigo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2v20M2 12h20"/></svg>
+              Grabar Punto GNSS (Auto NAP)
+            </button>
+          </div>
+
+          <!-- Estacionamiento / Desorientación por 2 Puntos -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.83rem; color:#4ade80;">⚙️ Estacionamiento / Orientación por 2 Bases</b>
+            <input type="text" id="estacionA" class="input-field" placeholder="Estación Base A (Easting, Northing)">
+            <input type="text" id="estacionB" class="input-field" placeholder="Referencia / Trasera B (Easting, Northing)">
+            <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="calcularOrientacionBases()">Calcular Azimut Referencia</button>
+            <div id="resOrientacion" style="font-family:var(--font-mono); font-size:0.8rem; color:#4ade80;"></div>
           </div>
         </div>
       </div>
+
+      <!-- SECCIÓN 3: CÁLCULOS COGO & GEOMETRÍA -->
+      <div class="glass-card">
+        <div class="card-title" style="color: var(--accent-secondary);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 21h18M3 21V3l18 18M9 21v-4M15 21v-8"/></svg>
+          3. Cálculos COGO & Geometría Avanzada
+        </div>
+
+        <div class="grid-3col">
+          <!-- COGO Inverso -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.8rem; color:var(--accent-secondary);">COGO Inverso (P1 ➔ P2)</b>
+            <input type="text" id="cogoP1" class="input-field" placeholder="P1 (Easting, Northing)">
+            <input type="text" id="cogoP2" class="input-field" placeholder="P2 (Easting, Northing)">
+            <button class="btn btn-primary" onclick="calcularCOGOInverso()">Distancia & Azimut</button>
+            <div id="resCOGOInverso" style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-primary);"></div>
+          </div>
+
+          <!-- Radiación Directa -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.8rem; color:var(--accent-secondary);">Radiación Directa</b>
+            <input type="text" id="radP1" class="input-field" placeholder="Base (Easting, Northing)">
+            <input type="number" id="radAzimut" class="input-field" placeholder="Azimut (° sexagesimal)">
+            <input type="number" id="radDist" class="input-field" placeholder="Distancia Horiz (m)">
+            <button class="btn btn-primary" onclick="calcularRadiacionDirecta()">Calcular Punto Nuevo</button>
+            <div id="resRadiacion" style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-primary);"></div>
+          </div>
+
+          <!-- Intersección de Azimuts -->
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:0.8rem; color:var(--accent-secondary);">Intersección Directa (2 Azimuts)</b>
+            <input type="text" id="intP1" class="input-field" placeholder="P1 (E, N) + Azimut 1 (°)">
+            <input type="text" id="intP2" class="input-field" placeholder="P2 (E, N) + Azimut 2 (°)">
+            <button class="btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="calcularInterseccionAzimuts()">Calcular Intersección</button>
+            <div id="resInterseccion" style="font-family:var(--font-mono); font-size:0.78rem; color:#60a5fa;"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- PESTAÑA 4: CONFIGURACIÓN GNSS -->
+    <!-- PESTAÑA 3: CONFIGURACIÓN GNSS -->
     <div id="tabGNSS" class="tab-content">
       <div class="grid-2col">
         <div class="glass-card">
@@ -484,7 +567,7 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 5: IMPORTAR / EXPORTAR -->
+    <!-- PESTAÑA 4: IMPORTAR / EXPORTAR -->
     <div id="tabData" class="tab-content">
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-primary);">Centro de Importación Cartográfica y Topográfica</div>
@@ -589,7 +672,7 @@
           <table id="tablaPuntos">
             <thead>
               <tr>
-                <th>ID</th><th>Easting (E)</th><th>Northing (N)</th><th>Cota NAP (H)</th><th>Cota Elips. (h)</th><th>N (Geoide)</th><th>Precisión (±)</th><th>Fuente</th>
+                <th>ID</th><th>Código</th><th>Easting (E)</th><th>Northing (N)</th><th>Cota NAP (H)</th><th>Cota Elips. (h)</th><th>N (Geoide)</th><th>Precisión (±)</th><th>Fuente</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -657,7 +740,6 @@
     
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // SERVICIOS CARTOGRÁFICOS CON MAXZOOM: 28 Y MAXNATIVEZOOM: 19
     const cartoLayers = {
       pnoa: L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
         layers: 'OI.OrthoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0',
@@ -676,7 +758,6 @@
       })
     };
 
-    // Activar PNOA y Catastro por defecto
     cartoLayers.pnoa.addTo(map);
     cartoLayers.catastro.addTo(map);
 
@@ -734,7 +815,7 @@
       modoBoxZoom = false; document.getElementById('btnZoomBox').classList.remove('active'); map.dragging.enable();
     });
 
-    // 4. TELEMETRÍA GPS
+    // 4. TELEMETRÍA GPS Y REPLANTEO CONTINUO
     let userMarker = null, userAccuracyCircle = null, ultimaPosicionGPS = null;
 
     function formatearPrecision(acc) {
@@ -778,7 +859,9 @@
           userAccuracyCircle = L.circle([lat, lng], { radius: accuracy, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.15 }).addTo(map);
         }
         map.flyTo([lat, lng], 18, { animate: true });
+        
         if (ejeCarretera.length > 0) calcularReplanteoCarretera(pos);
+        if (window.puntoTargetReplanteo) calcularReplanteoPuntoDirecto(pos);
       }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
     }
 
@@ -903,7 +986,7 @@
             const featureGroup = L.featureGroup();
 
             const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9 });
-            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 14, opacity: 0 }); // Buffer ajustado para líneas de 2cm
+            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 14, opacity: 0 });
 
             featureGroup.addLayer(visibleLine);
             featureGroup.addLayer(touchBuffer);
@@ -936,7 +1019,7 @@
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado correctamente. Soporte de zoom milimétrico activo.`);
+          alert(`✔ DXF '${filename}' cargado correctamente. Entidades de línea y arcos listos para replanteo.`);
         } else {
           alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
@@ -945,7 +1028,7 @@
       }
     }
 
-    // HIT-TEST DE ALTA PRECISIÓN: Selecciona exactamente la línea más cercana al clic
+    // HIT-TEST DE ALTA PRECISIÓN PARA LÍNEAS PARALELAS CERCANAS
     map.on('click', function(e) {
       if (dxfEntidadesRenderizadas.length === 0) return;
 
@@ -1027,9 +1110,8 @@
       });
 
       dibujarEjeEnMapa();
-      document.getElementById('roadTelemetryBox').style.display = 'block';
-      switchTab('tabRoads', document.querySelectorAll('.tab-btn')[1]);
-      alert(`✔ Entidad de '${nombreEje}' convertida en Eje Activo (${pkAcum.toFixed(2)} m totales, ${verticesUTM.length} puntos). ¡Listo para replantear!`);
+      switchTab('tabTopo', document.querySelectorAll('.tab-btn')[1]);
+      alert(`✔ Entidad de '${nombreEje}' convertida en Eje Activo (${pkAcum.toFixed(2)} m totales, ${verticesUTM.length} puntos).`);
     }
 
     function toggleCapaDXF(nombreCapa, visible) {
@@ -1067,7 +1149,293 @@
     }
 
     // =========================================================================
-    // 6. OTROS FORMATOS CARTOGRÁFICOS
+    // 6. FUNCIONALIDADES DE REPLANTEO TOPOGRÁFICO Y CAMPO
+    // =========================================================================
+    
+    // A. REPLANTEO DE EJES Y ALINEACIONES
+    let ejeCarretera = [];
+    let carreteraLayerGroup = L.layerGroup().addTo(map);
+
+    function cargarEjeCarretera(event) {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader(); const ext = file.name.split('.').pop().toLowerCase();
+      reader.onload = function(e) {
+        const contenido = e.target.result; ejeCarretera = [];
+        if (ext === 'xml') {
+          const parser = new DOMParser(); const xmlDoc = parser.parseFromString(contenido, "text/xml");
+          const coordGeom = xmlDoc.getElementsByTagName("CoordGeom")[0];
+          if (coordGeom) {
+            let pkAcumulado = 0; const lineas = coordGeom.getElementsByTagName("Line");
+            for (let i = 0; i < lineas.length; i++) {
+              const start = lineas[i].getElementsByTagName("Start")[0].textContent.trim().split(" ");
+              const end = lineas[i].getElementsByTagName("End")[0].textContent.trim().split(" ");
+              const x1 = parseFloat(start[1]), y1 = parseFloat(start[0]), x2 = parseFloat(end[1]), y2 = parseFloat(end[0]);
+              if (i === 0) ejeCarretera.push({ pk: 0, x: x1, y: y1, z: 0 });
+              const dist = Math.hypot(x2 - x1, y2 - y1); pkAcumulado += dist;
+              ejeCarretera.push({ pk: pkAcumulado, x: x2, y: y2, z: 0 });
+            }
+          }
+        } else {
+          const lineas = contenido.split(/\r?\n/);
+          lineas.forEach(linea => {
+            const cols = linea.trim().split(/[\s,;]+/);
+            if (cols.length >= 3 && !isNaN(parseFloat(cols[1]))) {
+              ejeCarretera.push({ pk: parseFloat(cols[0]), x: parseFloat(cols[1]), y: parseFloat(cols[2]), z: cols[3] ? parseFloat(cols[3]) : 0 });
+            }
+          });
+        }
+        if (ejeCarretera.length > 0) {
+          dibujarEjeEnMapa();
+          document.getElementById('roadTelemetryBox').style.display = 'block';
+          alert(`✔ Eje cargado: ${ejeCarretera.length} puntos. Longitud total: ${ejeCarretera[ejeCarretera.length - 1].pk.toFixed(2)} m.`);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function dibujarEjeEnMapa() {
+      carreteraLayerGroup.clearLayers();
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const latLngs = [];
+
+      ejeCarretera.forEach((pt, index) => {
+        const latLng = utmALatLng(pt.x, pt.y, huso);
+        latLngs.push(latLng);
+
+        if (index % 5 === 0 || index === ejeCarretera.length - 1) {
+          const marker = L.circleMarker(latLng, { radius: 4, color: '#ff0055', fillColor: '#ff0055', fillOpacity: 1 });
+          marker.bindTooltip(`PK: ${pt.pk.toFixed(1)} m`, { permanent: false, direction: 'top' });
+          carreteraLayerGroup.addLayer(marker);
+        }
+      });
+
+      const polyline = L.polyline(latLngs, { color: '#ff0055', weight: 4, dashArray: '8, 4' });
+      carreteraLayerGroup.addLayer(polyline);
+      map.fitBounds(L.latLngBounds(latLngs), { padding: [30, 30] });
+    }
+
+    function calcularReplanteoCarretera(posGPS) {
+      if (ejeCarretera.length < 2) return;
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const [easting, northing] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
+      const hGPS = posGPS.coords.altitude || 0;
+      const cotaNAPActual = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
+
+      let distMinima = Infinity, pkCalculado = 0, offsetCalculado = 0, lado = "CENTRO", cotaRasante = 0;
+
+      for (let i = 0; i < ejeCarretera.length - 1; i++) {
+        const pA = ejeCarretera[i], pB = ejeCarretera[i + 1];
+        const dx = pB.x - pA.x, dy = pB.y - pA.y, len2 = dx * dx + dy * dy;
+        if (len2 === 0) continue;
+
+        const t = Math.max(0, Math.min(1, ((easting - pA.x) * dx + (northing - pA.y) * dy) / len2));
+        const pProj = { x: pA.x + t * dx, y: pA.y + t * dy };
+        const dist = Math.hypot(easting - pProj.x, northing - pProj.y);
+
+        if (dist < distMinima) {
+          distMinima = dist;
+          pkCalculado = pA.pk + t * (pB.pk - pA.pk);
+          cotaRasante = pA.z + t * (pB.z - pA.z);
+          const signoSide = (pB.x - pA.x) * (northing - pA.y) - (pB.y - pA.y) * (easting - pA.x);
+          lado = signoSide >= 0 ? "DERECHA" : "IZQUIERDA";
+          offsetCalculado = dist;
+        }
+      }
+
+      const deltaZ = cotaNAPActual - cotaRasante;
+      const estadoCota = deltaZ >= 0 ? `DESMONTE: Bajar ${deltaZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(deltaZ).toFixed(3)} m`;
+
+      document.getElementById('roadTelemetryBox').style.display = 'block';
+      document.getElementById('roadMetrics').innerHTML = `
+        <b>PK (Estación):</b> PK ${pkCalculado.toFixed(3)} m<br>
+        <b>Desplazamiento (Offset):</b> ${offsetCalculado.toFixed(3)} m (${lado})<br>
+        <b>Cota Rasante Proyecto:</b> ${cotaRasante.toFixed(3)} m<br>
+        <b>Cota Actual Terreno:</b> ${cotaNAPActual.toFixed(3)} m<br>
+        <b>Control Altimétrico:</b> <span style="color:${deltaZ >= 0 ? '#ef4444' : '#10b981'}; font-weight:bold;">${estadoCota}</span>
+      `;
+    }
+
+    // B. REPLANTEO PUNTO A PUNTO (COORDENADAS)
+    function seleccionarPuntoParaReplanteo() {
+      const index = document.getElementById('selectPuntoReplanteo').value;
+      if (index === "" || !listaPuntos[index]) return;
+      const p = listaPuntos[index];
+      document.getElementById('replantearX').value = p.easting;
+      document.getElementById('replantearY').value = p.northing;
+      document.getElementById('replantearZ').value = p.cotaNAP;
+    }
+
+    function calcularReplanteoPuntoDirecto(posGPS) {
+      const eTarget = parseFloat(document.getElementById('replantearX').value);
+      const nTarget = parseFloat(document.getElementById('replantearY').value);
+      const zTarget = parseFloat(document.getElementById('replantearZ').value) || 0;
+
+      if (isNaN(eTarget) || isNaN(nTarget)) return alert("Introduce coordenadas válidas Easting (X) y Northing (Y).");
+
+      window.puntoTargetReplanteo = { x: eTarget, y: nTarget, z: zTarget };
+
+      if (!posGPS && ultimaPosicionGPS) posGPS = ultimaPosicionGPS;
+      if (!posGPS) return alert("Esperando posición GNSS para guiar...");
+
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const [eCurrent, nCurrent] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
+      const hGPS = posGPS.coords.altitude || 0;
+      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
+
+      const dE = eTarget - eCurrent;
+      const dN = nTarget - nCurrent;
+      const distHoriz = Math.hypot(dE, dN);
+      let azimutRad = Math.atan2(dE, dN);
+      if (azimutRad < 0) azimutRad += 2 * Math.PI;
+      const azimutDeg = (azimutRad * 180 / Math.PI).toFixed(2);
+      const dZ = zCurrent - zTarget;
+
+      const dirE = dE >= 0 ? `Ir ESTE +${dE.toFixed(3)} m` : `Ir OESTE ${dE.toFixed(3)} m`;
+      const dirN = dN >= 0 ? `Ir NORTE +${dN.toFixed(3)} m` : `Ir SUR ${dN.toFixed(3)} m`;
+      const dirZ = dZ >= 0 ? `DESMONTE: Bajar ${dZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m`;
+
+      const resBox = document.getElementById('resReplanteoPunto');
+      resBox.style.display = 'flex';
+      resBox.innerHTML = `
+        <b>AZIMUT DE GUIADO:</b> ${azimutDeg}°<br>
+        <b>DISTANCIA AL PUNTO:</b> <span style="font-size:1.05rem; color:var(--accent-primary); font-weight:bold;">${distHoriz.toFixed(3)} m</span><br>
+        <b>VECTORES PLANIMÉTRICOS:</b> ${dirN} | ${dirE}<br>
+        <b>ALTIMETRÍA (Z):</b> <span style="color:${dZ >= 0 ? '#ef4444' : '#10b981'}; font-weight:bold;">${dirZ}</span>
+      `;
+    }
+
+    // C. CONTROL ALTIMÉTRICO DE RASANTES
+    function verificarCotaAltimetrica() {
+      const zProj = parseFloat(document.getElementById('cotaProyectoTarget').value);
+      if (isNaN(zProj)) return alert("Ingresa la Cota Rasante o de Proyecto.");
+
+      if (!ultimaPosicionGPS) return alert("Capturando GPS para verificar cota...");
+      const hGPS = ultimaPosicionGPS.coords.altitude || 0;
+      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, hGPS).cotaNAP;
+      const dZ = zCurrent - zProj;
+
+      const estado = dZ >= 0 ? `<span style="color:#ef4444;">DESMONTE: Bajar ${dZ.toFixed(3)} m</span>` : `<span style="color:#10b981;">RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m</span>`;
+      document.getElementById('resControlCota').innerHTML = `Cota Terreno: ${zCurrent.toFixed(3)} m | Cota Proyecto: ${zProj.toFixed(3)} m ➔ ${estado}`;
+    }
+
+    // D. LEVANTAMIENTO CON CÓDIGO DE CAMPO
+    function capturarPuntoGPSConCodigo() {
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const fuente = document.getElementById('gpsSourceSelect').value;
+      const codigo = document.getElementById('puntoCodigoInput').value || 'TERRENO';
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude, lng = pos.coords.longitude, hGPS = pos.coords.altitude || 0, acc = pos.coords.accuracy;
+        const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso);
+        const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);
+
+        const punto = {
+          id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`,
+          codigo: codigo,
+          easting: easting.toFixed(3), northing: northing.toFixed(3),
+          cotaNAP: altimetria.cotaNAP.toFixed(3), hGPS: hGPS.toFixed(3),
+          N: altimetria.ondulacionN.toFixed(2), acc: formatearPrecision(acc),
+          fuente: fuente === 'SETTOP' ? 'Settop RTK' : 'Tablet GPS'
+        };
+
+        listaPuntos.push(punto);
+        actualizarTablaYPuntosSelect();
+
+        centrarEnPosicionGPS();
+        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id} [${punto.codigo}]</b><br>H (NAP): ${punto.cotaNAP} m`).openPopup();
+        alert(`✔ Punto ${punto.id} [${punto.codigo}] registrado con éxito.`);
+      }, (err) => alert("Error capturando GPS: " + err.message), { enableHighAccuracy: true });
+    }
+
+    function actualizarTablaYPuntosSelect() {
+      const tbody = document.querySelector('#tablaPuntos tbody');
+      const select = document.getElementById('selectPuntoReplanteo');
+      tbody.innerHTML = '';
+      select.innerHTML = '<option value="">-- Seleccionar de Puntos Registrados --</option>';
+
+      listaPuntos.forEach((p, idx) => {
+        tbody.innerHTML += `<tr>
+          <td><b>${p.id}</b></td><td><span style="color:var(--accent-primary); font-weight:600;">${p.codigo}</span></td>
+          <td>${p.easting}</td><td>${p.northing}</td>
+          <td style="color:var(--accent-primary); font-weight:600;">${p.cotaNAP}</td>
+          <td>${p.hGPS}</td><td>${p.N}</td><td>${p.acc}</td><td>${p.fuente}</td>
+        </tr>`;
+
+        select.innerHTML += `<option value="${idx}">${p.id} [${p.codigo}] - E:${p.easting} N:${p.northing}</option>`;
+      });
+    }
+
+    // E. ESTACIONAMIENTO POR 2 PUNTOS
+    function calcularOrientacionBases() {
+      const p1Str = document.getElementById('estacionA').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('estacionB').value.split(/[\s,]+/);
+      if (p1Str.length < 2 || p2Str.length < 2) return alert("Introduce coordenadas válidas X,Y para ambas bases.");
+      const e1 = parseFloat(p1Str[0]), n1 = parseFloat(p1Str[1]), e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
+      const dx = e2 - e1, dy = n2 - n1, dist = Math.hypot(dx, dy);
+      let azRad = Math.atan2(dx, dy); if (azRad < 0) azRad += 2 * Math.PI;
+      const azDeg = (azRad * 180 / Math.PI).toFixed(4);
+      const azGon = (azRad * 200 / Math.PI).toFixed(4);
+
+      document.getElementById('resOrientacion').innerHTML = `
+        Azimut A ➔ B: <b>${azDeg}°</b> (${azGon} gons)<br>
+        Distancia Horizontal: <b>${dist.toFixed(3)} m</b>
+      `;
+    }
+
+    // =========================================================================
+    // 7. CÁLCULOS COGO & GEOMETRÍA
+    // =========================================================================
+    function calcularCOGOInverso() {
+      const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('cogoP2').value.split(/[\s,]+/);
+      if (p1Str.length < 2 || p2Str.length < 2) return alert("Introduce coordenadas válidas X,Y.");
+      const e1 = parseFloat(p1Str[0]), n1 = parseFloat(p1Str[1]), e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
+      const dx = e2 - e1, dy = n2 - n1, distHoriz = Math.hypot(dx, dy);
+      let azimutRad = Math.atan2(dx, dy); if (azimutRad < 0) azimutRad += 2 * Math.PI;
+
+      document.getElementById('resCOGOInverso').innerHTML = `
+        Dist Horiz: <b>${distHoriz.toFixed(3)} m</b><br>
+        Azimut: <b>${(azimutRad * 180 / Math.PI).toFixed(4)}°</b> (${(azimutRad * 200 / Math.PI).toFixed(4)} gons)
+      `;
+    }
+
+    function calcularRadiacionDirecta() {
+      const baseStr = document.getElementById('radP1').value.split(/[\s,]+/);
+      const azimut = parseFloat(document.getElementById('radAzimut').value);
+      const dist = parseFloat(document.getElementById('radDist').value);
+      if (baseStr.length < 2 || isNaN(azimut) || isNaN(dist)) return alert("Completa los campos.");
+      const eBase = parseFloat(baseStr[0]), nBase = parseFloat(baseStr[1]), azimutRad = azimut * Math.PI / 180;
+      document.getElementById('resRadiacion').innerHTML = `
+        Easting (X): <b>${(eBase + dist * Math.sin(azimutRad)).toFixed(3)} m</b><br>
+        Northing (Y): <b>${(nBase + dist * Math.cos(azimutRad)).toFixed(3)} m</b>
+      `;
+    }
+
+    function calcularInterseccionAzimuts() {
+      const p1Str = document.getElementById('intP1').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('intP2').value.split(/[\s,]+/);
+      if (p1Str.length < 3 || p2Str.length < 3) return alert("Introduce P1 (X, Y, Az1) y P2 (X, Y, Az2).");
+      
+      const x1 = parseFloat(p1Str[0]), y1 = parseFloat(p1Str[1]), az1 = parseFloat(p1Str[2]) * Math.PI / 180;
+      const x2 = parseFloat(p2Str[0]), y2 = parseFloat(p2Str[1]), az2 = parseFloat(p2Str[2]) * Math.PI / 180;
+
+      const m1 = Math.tan(Math.PI / 2 - az1);
+      const m2 = Math.tan(Math.PI / 2 - az2);
+
+      if (Math.abs(m1 - m2) < 1e-6) return alert("Las líneas son paralelas, no hay intersección.");
+
+      const xInt = (y2 - y1 + m1 * x1 - m2 * x2) / (m1 - m2);
+      const yInt = y1 + m1 * (xInt - x1);
+
+      document.getElementById('resInterseccion').innerHTML = `
+        Intersección Easting (X): <b>${xInt.toFixed(3)} m</b><br>
+        Intersección Northing (Y): <b>${yInt.toFixed(3)} m</b>
+      `;
+    }
+
+    // =========================================================================
+    // 8. FORMATOS DE IMPORTACIÓN Y EXPORTACIÓN
     // =========================================================================
     let tempImageSrc = null;
 
@@ -1127,9 +1495,7 @@
     }
 
     function importarKML(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         const parser = new DOMParser();
@@ -1166,9 +1532,7 @@
     }
 
     function importarGeoJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
@@ -1183,9 +1547,7 @@
     }
 
     function importarASCII(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         const lineas = e.target.result.split(/\r?\n/);
@@ -1273,172 +1635,13 @@
 
     function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
-    // 7. CARRETERAS Y EJE DE REPLANTEO
-    let ejeCarretera = [];
-    let carreteraLayerGroup = L.layerGroup().addTo(map);
-
-    function cargarEjeCarretera(event) {
-      const file = event.target.files[0]; if (!file) return;
-      const reader = new FileReader(); const ext = file.name.split('.').pop().toLowerCase();
-      reader.onload = function(e) {
-        const contenido = e.target.result; ejeCarretera = [];
-        if (ext === 'xml') {
-          const parser = new DOMParser(); const xmlDoc = parser.parseFromString(contenido, "text/xml");
-          const coordGeom = xmlDoc.getElementsByTagName("CoordGeom")[0];
-          if (coordGeom) {
-            let pkAcumulado = 0; const lineas = coordGeom.getElementsByTagName("Line");
-            for (let i = 0; i < lineas.length; i++) {
-              const start = lineas[i].getElementsByTagName("Start")[0].textContent.trim().split(" ");
-              const end = lineas[i].getElementsByTagName("End")[0].textContent.trim().split(" ");
-              const x1 = parseFloat(start[1]), y1 = parseFloat(start[0]), x2 = parseFloat(end[1]), y2 = parseFloat(end[0]);
-              if (i === 0) ejeCarretera.push({ pk: 0, x: x1, y: y1, z: 0 });
-              const dist = Math.hypot(x2 - x1, y2 - y1); pkAcumulado += dist;
-              ejeCarretera.push({ pk: pkAcumulado, x: x2, y: y2, z: 0 });
-            }
-          }
-        } else {
-          const lineas = contenido.split(/\r?\n/);
-          lineas.forEach(linea => {
-            const cols = linea.trim().split(/[\s,;]+/);
-            if (cols.length >= 3 && !isNaN(parseFloat(cols[1]))) {
-              ejeCarretera.push({ pk: parseFloat(cols[0]), x: parseFloat(cols[1]), y: parseFloat(cols[2]), z: cols[3] ? parseFloat(cols[3]) : 0 });
-            }
-          });
-        }
-        if (ejeCarretera.length > 0) {
-          dibujarEjeEnMapa(); document.getElementById('roadTelemetryBox').style.display = 'block';
-          alert(`✔ Eje cargado: ${ejeCarretera.length} puntos. Longitud total: ${ejeCarretera[ejeCarretera.length - 1].pk.toFixed(2)} m.`);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function dibujarEjeEnMapa() {
-      carreteraLayerGroup.clearLayers();
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const latLngs = [];
-
-      ejeCarretera.forEach((pt, index) => {
-        const latLng = utmALatLng(pt.x, pt.y, huso);
-        latLngs.push(latLng);
-
-        if (index % 5 === 0 || index === ejeCarretera.length - 1) {
-          const marker = L.circleMarker(latLng, { radius: 4, color: '#ff0055', fillColor: '#ff0055', fillOpacity: 1 });
-          marker.bindTooltip(`PK: ${pt.pk.toFixed(1)} m`, { permanent: false, direction: 'top' });
-          carreteraLayerGroup.addLayer(marker);
-        }
-      });
-
-      const polyline = L.polyline(latLngs, { color: '#ff0055', weight: 4, dashArray: '8, 4' });
-      carreteraLayerGroup.addLayer(polyline);
-      map.fitBounds(L.latLngBounds(latLngs), { padding: [30, 30] });
-    }
-
-    function calcularReplanteoCarretera(posGPS) {
-      if (ejeCarretera.length < 2) return;
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const [easting, northing] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
-      const hGPS = posGPS.coords.altitude || 0;
-      const cotaNAPActual = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
-
-      let distMinima = Infinity, pkCalculado = 0, offsetCalculado = 0, lado = "CENTRO", cotaRasante = 0;
-
-      for (let i = 0; i < ejeCarretera.length - 1; i++) {
-        const pA = ejeCarretera[i], pB = ejeCarretera[i + 1];
-        const dx = pB.x - pA.x, dy = pB.y - pA.y, len2 = dx * dx + dy * dy;
-        if (len2 === 0) continue;
-
-        const t = Math.max(0, Math.min(1, ((easting - pA.x) * dx + (northing - pA.y) * dy) / len2));
-        const pProj = { x: pA.x + t * dx, y: pA.y + t * dy };
-        const dist = Math.hypot(easting - pProj.x, northing - pProj.y);
-
-        if (dist < distMinima) {
-          distMinima = dist;
-          pkCalculado = pA.pk + t * (pB.pk - pA.pk);
-          cotaRasante = pA.z + t * (pB.z - pA.z);
-          const signoSide = (pB.x - pA.x) * (northing - pA.y) - (pB.y - pA.y) * (easting - pA.x);
-          lado = signoSide >= 0 ? "DERECHA" : "IZQUIERDA";
-          offsetCalculado = dist;
-        }
-      }
-
-      const deltaZ = cotaNAPActual - cotaRasante;
-      const estadoCota = deltaZ >= 0 ? `DESMONTE: Bajar ${deltaZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(deltaZ).toFixed(3)} m`;
-
-      document.getElementById('roadMetrics').innerHTML = `
-        <b>PK (Estación):</b> PK ${pkCalculado.toFixed(3)} m<br>
-        <b>Desplazamiento (Offset):</b> ${offsetCalculado.toFixed(3)} m (${lado})<br>
-        <b>Cota Rasante Proyecto:</b> ${cotaRasante.toFixed(3)} m<br>
-        <b>Cota Actual Terreno:</b> ${cotaNAPActual.toFixed(3)} m<br>
-        <b>Control Altimétrico:</b> <span style="color:${deltaZ >= 0 ? '#ef4444' : '#10b981'}; font-weight:bold;">${estadoCota}</span>
-      `;
-    }
-
-    // 8. COGO
-    function calcularCOGOInverso() {
-      const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
-      const p2Str = document.getElementById('cogoP2').value.split(/[\s,]+/);
-      if (p1Str.length < 2 || p2Str.length < 2) return alert("Introduce coordenadas válidas X,Y.");
-      const e1 = parseFloat(p1Str[0]), n1 = parseFloat(p1Str[1]), e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
-      const dx = e2 - e1, dy = n2 - n1, distHoriz = Math.hypot(dx, dy);
-      let azimutRad = Math.atan2(dx, dy); if (azimutRad < 0) azimutRad += 2 * Math.PI;
-
-      document.getElementById('resCOGOInverso').innerHTML = `
-        Distancia Horiz: <b>${distHoriz.toFixed(3)} m</b><br>
-        Azimut Sexagesimal: <b>${(azimutRad * 180 / Math.PI).toFixed(4)}°</b><br>
-        Azimut Centesimal: <b>${(azimutRad * 200 / Math.PI).toFixed(4)} g</b>
-      `;
-    }
-
-    function calcularRadiacionDirecta() {
-      const baseStr = document.getElementById('radP1').value.split(/[\s,]+/);
-      const azimut = parseFloat(document.getElementById('radAzimut').value);
-      const dist = parseFloat(document.getElementById('radDist').value);
-      if (baseStr.length < 2 || isNaN(azimut) || isNaN(dist)) return alert("Completa los campos.");
-      const eBase = parseFloat(baseStr[0]), nBase = parseFloat(baseStr[1]), azimutRad = azimut * Math.PI / 180;
-      document.getElementById('resRadiacion').innerHTML = `
-        Easting (X): <b>${(eBase + dist * Math.sin(azimutRad)).toFixed(3)} m</b><br>
-        Northing (Y): <b>${(nBase + dist * Math.cos(azimutRad)).toFixed(3)} m</b>
-      `;
-    }
-
-    // 9. REGISTRO Y EXPORTACIÓN
+    // EXPORTACIÓN DE DATOS
     let listaPuntos = [];
-
-    function capturarPuntoGPS() {
-      if (!navigator.geolocation) return alert("Sin GPS.");
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const fuente = document.getElementById('gpsSourceSelect').value;
-
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const lat = pos.coords.latitude, lng = pos.coords.longitude, hGPS = pos.coords.altitude || 0, acc = pos.coords.accuracy;
-        const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso);
-        const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);
-
-        const punto = {
-          id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`,
-          easting: easting.toFixed(3), northing: northing.toFixed(3),
-          cotaNAP: altimetria.cotaNAP.toFixed(3), hGPS: hGPS.toFixed(3),
-          N: altimetria.ondulacionN.toFixed(2), acc: formatearPrecision(acc),
-          fuente: fuente === 'SETTOP' ? 'Settop RTK' : 'Tablet GPS'
-        };
-
-        listaPuntos.push(punto);
-        document.querySelector('#tablaPuntos tbody').innerHTML += `<tr>
-          <td><b>${punto.id}</b></td><td>${punto.easting}</td><td>${punto.northing}</td>
-          <td style="color:var(--accent-primary); font-weight:600;">${punto.cotaNAP}</td>
-          <td>${punto.hGPS}</td><td>${punto.N}</td><td>${punto.acc}</td><td>${punto.fuente}</td>
-        </tr>`;
-
-        centrarEnPosicionGPS();
-        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id}</b><br>H (NAP): ${punto.cotaNAP} m`).openPopup();
-      }, (err) => alert("Error capturando GPS: " + err.message), { enableHighAccuracy: true });
-    }
 
     function exportarCSV() {
       if (listaPuntos.length === 0) return alert("No hay puntos.");
-      let csv = "ID,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente_GPS\n";
-      listaPuntos.forEach(p => { csv += `${p.id},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`; });
+      let csv = "ID,Codigo,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente_GPS\n";
+      listaPuntos.forEach(p => { csv += `${p.id},${p.codigo || 'TERRENO'},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`; });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `Puntos_ETRS89_H${document.getElementById('husoSelect').value}.csv`; a.click();
@@ -1449,7 +1652,7 @@
       let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
       listaPuntos.forEach(p => {
         dxf += `0\nPOINT\n8\nPUNTOS_TOPOGRAFIA\n10\n${p.easting}\n20\n${p.northing}\n30\n${p.cotaNAP}\n`;
-        dxf += `0\nTEXT\n8\nETIQUETAS_PUNTOS\n10\n${parseFloat(p.easting) + 0.5}\n20\n${p.northing}\n30\n${p.cotaNAP}\n40\n0.5\n1\n${p.id}\n`;
+        dxf += `0\nTEXT\n8\nETIQUETAS_PUNTOS\n10\n${parseFloat(p.easting) + 0.5}\n20\n${p.northing}\n30\n${p.cotaNAP}\n40\n0.5\n1\n${p.id} [${p.codigo || ''}]\n`;
       });
       dxf += "0\nENDSEC\n0\nEOF\n";
       const blob = new Blob([dxf], { type: 'application/dxf' });

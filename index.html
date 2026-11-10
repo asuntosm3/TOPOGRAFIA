@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v4.6 (3D Raycasting & CAD Picking Fix)</title>
+  <title>Topografía Pro 2026 - Field Station HUD v5.0 (Unified Live Stakeout Engine)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,6 +146,13 @@
     }
     .tab-btn.active svg { stroke: #000; }
 
+    .tab-btn.stakeout-active {
+      color: #fff !important; background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%) !important;
+      border-color: #ff0055 !important; box-shadow: 0 0 16px rgba(255, 0, 85, 0.6) !important;
+      animation: pulse-stakeout 2s infinite ease-in-out;
+    }
+    @keyframes pulse-stakeout { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
     .view-container { flex: 1; position: relative; overflow: hidden; }
     .tab-content { display: none; width: 100%; height: 100%; padding: 12px; overflow-y: auto; }
     .tab-content.active { display: flex; flex-direction: column; gap: 12px; }
@@ -247,16 +254,22 @@
     .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
     .grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 
-    .telemetry-road {
-      background: rgba(255, 0, 85, 0.08); border-left: 4px solid var(--accent-road);
-      padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.88rem; color: #f8fafc;
-      display: flex; flex-direction: column; gap: 6px;
+    /* ESTILOS HUD REPLANTEO EN VIVO */
+    .stakeout-hero-card {
+      background: linear-gradient(135deg, rgba(13, 19, 31, 0.95) 0%, rgba(8, 12, 20, 0.98) 100%);
+      border: 2px solid var(--accent-road); border-radius: 16px; padding: 20px;
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.25); position: relative; overflow: hidden;
     }
 
-    .telemetry-point {
-      background: rgba(0, 242, 254, 0.08); border-left: 4px solid var(--accent-primary);
-      padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.88rem; color: #f8fafc;
-      display: flex; flex-direction: column; gap: 6px;
+    .stakeout-big-val {
+      font-family: var(--font-mono); font-size: 2.4rem; font-weight: 800;
+      color: #ffffff; text-shadow: 0 0 16px rgba(0, 242, 254, 0.6); margin: 4px 0;
+    }
+
+    .stakeout-vector-box {
+      background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-accent);
+      border-radius: 12px; padding: 14px; font-family: var(--font-mono);
+      display: flex; flex-direction: column; gap: 8px;
     }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
@@ -293,7 +306,7 @@
       position: absolute; bottom: 20px; left: 20px; z-index: 100;
       background: rgba(8, 12, 20, 0.95); backdrop-filter: blur(20px);
       border: 1px solid var(--border-accent); border-radius: 12px;
-      padding: 14px; width: 320px; box-shadow: 0 8px 32px rgba(0, 242, 254, 0.3);
+      padding: 14px; width: 340px; box-shadow: 0 8px 32px rgba(0, 242, 254, 0.3);
       display: none; flex-direction: column; gap: 8px; font-family: var(--font-mono); font-size: 0.8rem;
     }
   </style>
@@ -308,7 +321,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v4.6 (3D RAYCASTING & CAD SELECTION FIX)</span>
+        <span class="brand-sub">FIELD STATION HUD v5.0 (UNIFIED LIVE STAKEOUT ENGINE)</span>
       </div>
     </div>
 
@@ -336,15 +349,22 @@
       <span>Visor CAD & Mapa</span>
     </button>
 
+    <!-- PESTAÑA DEDICADA DE REPLANTEO EN VIVO (SE ACTIVA AL SELECCIONAR ELEMENTOS) -->
+    <button id="btnTabReplanteo" class="tab-btn" onclick="switchTab('tabReplanteo', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>⚡ Replanteo en Vivo</span>
+    </button>
+
     <button class="tab-btn" onclick="switchTab('tabTopo', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M7 7l10 10M7 17L17 7"/></svg>
-      <span>Topografía (Replanteos & Campo & COGO)</span>
+      <span>Topografía & Campo</span>
     </button>
 
     <button class="tab-btn" onclick="switchTab('tabGNSS', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4m-8.4 0a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2m-14.2 0a10 10 0 0 1 0-14.2"/></svg>
       <span>Conexión GNSS / RTK</span>
     </button>
+
     <button class="tab-btn" onclick="switchTab('tabData', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       <span>Importar / Exportar</span>
@@ -415,29 +435,81 @@
       </div>
     </div>
 
-    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA -->
+    <!-- PESTAÑA NUEVA: HUD DE REPLANTEO EN VIVO (ACTIVACIÓN DINÁMICA) -->
+    <div id="tabReplanteo" class="tab-content">
+      <div class="stakeout-hero-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:12px;">
+          <div>
+            <span class="format-badge" id="stakeoutModeBadge" style="font-size:0.8rem; background:rgba(255,0,85,0.2); color:#ff0055; border-color:#ff0055;">
+              MODO: ESPERANDO SELECCIÓN
+            </span>
+            <h2 id="stakeoutTargetTitle" style="margin:4px 0 0 0; font-size:1.2rem; color:#fff;">Ningún elemento seleccionado</h2>
+          </div>
+          <button class="btn btn-primary" onclick="centrarEnPosicionGPS()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Refrescar GPS
+          </button>
+        </div>
+
+        <!-- TELEMETRÍA GIGANTE DE REPLANTEO EN TIEMPO REAL -->
+        <div class="grid-2col">
+          <div class="stakeout-vector-box">
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Distancia Al Objetivo / Offset</span>
+            <div id="stakeoutBigDistance" class="stakeout-big-val">0.000 m</div>
+            <div id="stakeoutSubText" style="font-size:0.85rem; color:var(--accent-primary);">--</div>
+          </div>
+
+          <div class="stakeout-vector-box">
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Control Altimétrico (Z / Rasante)</span>
+            <div id="stakeoutBigAltimetry" class="stakeout-big-val" style="color:#10b981;">0.000 m</div>
+            <div id="stakeoutAltimetryText" style="font-size:0.85rem; color:#cbd5e1;">--</div>
+          </div>
+        </div>
+
+        <!-- VECTORES PLANIMÉTRICOS Y GUIADO -->
+        <div id="stakeoutVectorMetrics" class="stakeout-vector-box" style="margin-top:12px; background:rgba(13,19,31,0.9);">
+          <b style="color:var(--accent-primary);">📐 Vectores Planimétricos de Desplazamiento</b>
+          <div id="stakeoutVectorsBody" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;">
+            <div>Norte/Sur: <b>--</b></div>
+            <div>Este/Oeste: <b>--</b></div>
+            <div>Azimut de Avanzar: <b>--</b></div>
+            <div>Cota Actual (NAP): <b>--</b></div>
+          </div>
+        </div>
+
+        <!-- CONTROLES ADICIONALES DE REPLANTEO -->
+        <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.4); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
+            <label style="font-size:0.78rem; color:var(--text-muted);">Offset Paralelo (m):</label>
+            <input type="number" id="inputStakeoutOffset" class="input-field" style="width:80px; padding:4px 8px;" value="0.00" step="0.05" onchange="actualizarHUDReplanteoVivo()">
+          </div>
+          <button class="btn btn-road" onclick="grabarPuntoAsBuilt()">
+            💾 Grabar Punto Replanteado (As-Built)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA: TOPOGRAFÍA & CAMPO -->
     <div id="tabTopo" class="tab-content">
       
       <!-- SECCIÓN 1: REPLANTEOS EN CAMPO -->
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-road);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-          1. Módulo de Replanteos Topográficos
+          1. Selección Manual de Elementos de Replanteo
         </div>
 
         <div class="grid-2col">
           <!-- A. Replanteo por Eje / Carretera -->
           <div style="display:flex; flex-direction:column; gap:8px;">
             <b style="font-size:0.83rem; color:var(--accent-primary);">⚡ A. Replanteo de Ejes / Polilíneas</b>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Carga ejes LandXML/EJE o selecciona líneas en el visor CAD 2D/3D.</p>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Carga ejes LandXML/EJE o toca líneas en el visor CAD 2D/3D.</p>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
               <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
               <button class="btn btn-road" onclick="document.getElementById('roadFileInput').click()">
                 Importar Eje (LandXML / EJE)
               </button>
-            </div>
-            <div id="roadTelemetryBox" style="display:none; margin-top:6px;">
-              <div id="roadMetrics" class="telemetry-road"></div>
             </div>
           </div>
 
@@ -454,8 +526,7 @@
               <input type="number" id="replantearY" class="input-field" placeholder="Northing Target (Y)">
               <input type="number" id="replantearZ" class="input-field" placeholder="Cota Target (Z)">
             </div>
-            <button class="btn btn-primary" onclick="calcularReplanteoPuntoDirecto()">Guiar a Punto Objetivo</button>
-            <div id="resReplanteoPunto" class="telemetry-point" style="display:none; margin-top:4px;"></div>
+            <button class="btn btn-road" onclick="iniciarReplanteoDesdeTopoTab()">⚡ Iniciar Replanteo en Vivo</button>
           </div>
         </div>
 
@@ -464,8 +535,7 @@
           <b style="font-size:0.83rem; color:var(--accent-primary);">📐 C. Control Altimétrico de Rasantes / Planos</b>
           <div style="display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; align-items:center;">
             <input type="number" id="cotaProyectoTarget" class="input-field" style="max-width:220px;" placeholder="Cota Proyecto / Rasante (m)">
-            <button class="btn btn-primary" onclick="verificarCotaAltimetrica()">Verificar Desmonte / Relleno Actual</button>
-            <div id="resControlCota" style="font-family:var(--font-mono); font-size:0.85rem; font-weight:600;"></div>
+            <button class="btn btn-road" onclick="iniciarReplanteoAltimetricoDesdeTopoTab()">⚡ Iniciar Control de Rasante</button>
           </div>
         </div>
 
@@ -551,7 +621,7 @@
 
     </div>
 
-    <!-- PESTAÑA 3: CONFIGURACIÓN GNSS -->
+    <!-- PESTAÑA: CONFIGURACIÓN GNSS -->
     <div id="tabGNSS" class="tab-content">
       <div class="grid-2col">
         <div class="glass-card">
@@ -575,7 +645,7 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 4: IMPORTAR / EXPORTAR -->
+    <!-- PESTAÑA: IMPORTAR / EXPORTAR -->
     <div id="tabData" class="tab-content">
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-primary);">Centro de Importación Cartográfica y Topográfica</div>
@@ -705,8 +775,8 @@
           <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
           <div id="prop3DBody">Toca una línea para ver sus propiedades...</div>
           <div style="display:flex; gap:6px; margin-top:6px;">
-            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="convertirElemento3DAEje()">⚡ Convertir a Eje</button>
-            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="replantearPuntoInicial3D()">🎯 Replantear P1</button>
+            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('EJE')">⚡ Replantear Elemento</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 Replantear P1</button>
           </div>
         </div>
       </div>
@@ -720,7 +790,8 @@
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      element.classList.add('active');
+      const targetBtn = element || document.getElementById(tabId === 'tabReplanteo' ? 'btnTabReplanteo' : '');
+      if (targetBtn) targetBtn.classList.add('active');
       document.getElementById(tabId).classList.add('active');
 
       if (tabId === 'tabMap') {
@@ -880,13 +951,180 @@
         }
         map.flyTo([lat, lng], 18, { animate: true });
         
-        if (ejeCarretera.length > 0) calcularReplanteoCarretera(pos);
-        if (window.puntoTargetReplanteo) calcularReplanteoPuntoDirecto(pos);
+        actualizarHUDReplanteoVivo(pos);
       }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
     }
 
     // =========================================================================
-    // 5. MOTOR DXF CON SELECCIÓN DE ALTA PRECISIÓN (2 CM) EN 2D Y 3D
+    // 5. MOTOR UNIFICADO DE REPLANTEO EN VIVO (`targetReplanteoActivo`)
+    // =========================================================================
+    window.targetReplanteoActivo = null;
+
+    function iniciarReplanteoElemento(tipo, datos, titulo) {
+      window.targetReplanteoActivo = { tipo: tipo, datos: datos, titulo: titulo || "Elemento Seleccionado" };
+
+      // Resaltar botón de pestaña
+      const btnTab = document.getElementById('btnTabReplanteo');
+      btnTab.classList.add('stakeout-active');
+
+      // Si el modal 3D está abierto, lo cerramos para ver la pestaña
+      cerrarVisor3D();
+
+      switchTab('tabReplanteo', btnTab);
+      centrarEnPosicionGPS();
+    }
+
+    function actualizarHUDReplanteoVivo(posGPS) {
+      if (!posGPS && ultimaPosicionGPS) posGPS = ultimaPosicionGPS;
+      if (!window.targetReplanteoActivo) return;
+
+      const target = window.targetReplanteoActivo;
+      const offsetInput = parseFloat(document.getElementById('inputStakeoutOffset').value) || 0;
+      const huso = parseInt(document.getElementById('husoSelect').value);
+
+      document.getElementById('stakeoutTargetTitle').innerText = target.titulo;
+
+      if (!posGPS) {
+        document.getElementById('stakeoutSubText').innerText = "Esperando señal GPS para guiado...";
+        return;
+      }
+
+      const [eCurrent, nCurrent] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
+      const hGPS = posGPS.coords.altitude || 0;
+      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
+
+      // REPLANTEO DE PUNTO
+      if (target.tipo === 'PUNTO') {
+        document.getElementById('stakeoutModeBadge').innerText = "MODO: REPLANTEO DE PUNTO";
+        const eTarget = target.datos.x, nTarget = target.datos.y, zTarget = target.datos.z || 0;
+
+        const dE = eTarget - eCurrent;
+        const dN = nTarget - nCurrent;
+        const distHoriz = Math.hypot(dE, dN);
+        let azRad = Math.atan2(dE, dN); if (azRad < 0) azRad += 2 * Math.PI;
+        const azDeg = (azRad * 180 / Math.PI).toFixed(1);
+        const dZ = zCurrent - zTarget;
+
+        document.getElementById('stakeoutBigDistance').innerText = `${distHoriz.toFixed(3)} m`;
+        document.getElementById('stakeoutSubText').innerText = `Azimut: ${azDeg}° | Punto: E:${eTarget.toFixed(2)} N:${nTarget.toFixed(2)}`;
+
+        const estadoZ = dZ >= 0 ? `DESMONTE: Bajar ${dZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').innerText = `${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').style.color = dZ >= 0 ? '#ef4444' : '#10b981';
+        document.getElementById('stakeoutAltimetryText').innerText = estadoZ;
+
+        document.getElementById('stakeoutVectorsBody').innerHTML = `
+          <div>Avanzar Norte/Sur: <b>${dN >= 0 ? 'Norte +' + dN.toFixed(3) : 'Sur ' + dN.toFixed(3)} m</b></div>
+          <div>Avanzar Este/Oeste: <b>${dE >= 0 ? 'Este +' + dE.toFixed(3) : 'Oeste ' + dE.toFixed(3)} m</b></div>
+          <div>Azimut Direccional: <b>${azDeg}°</b></div>
+          <div>Cota Terreno Actual: <b>${zCurrent.toFixed(3)} m</b></div>
+        `;
+      }
+      // REPLANTEO DE POLILÍNEA / EJE CAD
+      else if (target.tipo === 'EJE_LINEA') {
+        document.getElementById('stakeoutModeBadge').innerText = "MODO: REPLANTEO DE EJE / CAD";
+        const vertices = target.datos;
+        if (!vertices || vertices.length < 2) return;
+
+        let distMinima = Infinity, pkCalculado = 0, offsetCalculado = 0, lado = "CENTRO", cotaRasante = 0;
+
+        for (let i = 0; i < vertices.length - 1; i++) {
+          const pA = vertices[i], pB = vertices[i + 1];
+          const dx = pB.x - pA.x, dy = pB.y - pA.y, len2 = dx * dx + dy * dy;
+          if (len2 === 0) continue;
+
+          const t = Math.max(0, Math.min(1, ((eCurrent - pA.x) * dx + (nCurrent - pA.y) * dy) / len2));
+          const pProj = { x: pA.x + t * dx, y: pA.y + t * dy };
+          const dist = Math.hypot(eCurrent - pProj.x, nCurrent - pProj.y);
+
+          if (dist < distMinima) {
+            distMinima = dist;
+            pkCalculado = (pA.pk || 0) + t * ((pB.pk || 0) - (pA.pk || 0));
+            cotaRasante = (pA.z || 0) + t * ((pB.z || 0) - (pA.z || 0));
+            const signoSide = (pB.x - pA.x) * (nCurrent - pA.y) - (pB.y - pA.y) * (eCurrent - pA.x);
+            lado = signoSide >= 0 ? "DERECHA" : "IZQUIERDA";
+            offsetCalculado = dist - offsetInput;
+          }
+        }
+
+        const dZ = zCurrent - cotaRasante;
+        document.getElementById('stakeoutBigDistance').innerText = `${offsetCalculado.toFixed(3)} m`;
+        document.getElementById('stakeoutSubText').innerText = `Offset: ${offsetCalculado.toFixed(3)}m (${lado}) | PK: ${pkCalculado.toFixed(2)}m`;
+
+        const estadoZ = dZ >= 0 ? `DESMONTE: Bajar ${dZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').innerText = `${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').style.color = dZ >= 0 ? '#ef4444' : '#10b981';
+        document.getElementById('stakeoutAltimetryText').innerText = estadoZ;
+
+        document.getElementById('stakeoutVectorsBody').innerHTML = `
+          <div>Estación (PK Actual): <b>PK ${pkCalculado.toFixed(3)} m</b></div>
+          <div>Lado de Eje: <b>${lado}</b></div>
+          <div>Cota Rasante Proyecto: <b>${cotaRasante.toFixed(3)} m</b></div>
+          <div>Cota Terreno Terreno: <b>${zCurrent.toFixed(3)} m</b></div>
+        `;
+      }
+      // CONTROL ALTIMÉTRICO / RASANTE
+      else if (target.tipo === 'ALTIMETRIA') {
+        document.getElementById('stakeoutModeBadge').innerText = "MODO: CONTROL ALTIMÉTRICO / RASANTE";
+        const zTarget = target.datos.z;
+        const dZ = zCurrent - zTarget;
+
+        document.getElementById('stakeoutBigDistance').innerText = `Z ${zCurrent.toFixed(3)} m`;
+        document.getElementById('stakeoutSubText').innerText = `Rasante Objetivo: ${zTarget.toFixed(3)} m`;
+
+        const estadoZ = dZ >= 0 ? `DESMONTE: Bajar ${dZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').innerText = `${Math.abs(dZ).toFixed(3)} m`;
+        document.getElementById('stakeoutBigAltimetry').style.color = dZ >= 0 ? '#ef4444' : '#10b981';
+        document.getElementById('stakeoutAltimetryText').innerText = estadoZ;
+
+        document.getElementById('stakeoutVectorsBody').innerHTML = `
+          <div>Cota Terreno actual: <b>${zCurrent.toFixed(3)} m</b></div>
+          <div>Cota Rasante requerida: <b>${zTarget.toFixed(3)} m</b></div>
+          <div>Diferencia Altimétrica: <b>${dZ.toFixed(3)} m</b></div>
+          <div>Acción en Obra: <b>${dZ >= 0 ? 'DESMONTE' : 'RELLENO'}</b></div>
+        `;
+      }
+    }
+
+    function grabarPuntoAsBuilt() {
+      if (!ultimaPosicionGPS || !window.targetReplanteoActivo) return alert("Sin posición GPS o elemento activo.");
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const [easting, northing] = latLngATransformadaETRS89(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, huso);
+      const hGPS = ultimaPosicionGPS.coords.altitude || 0;
+      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, hGPS).cotaNAP;
+
+      const punto = {
+        id: `REP-${String(listaPuntos.length + 1).padStart(3, '0')}`,
+        codigo: `REPLANTEO_${window.targetReplanteoActivo.tipo}`,
+        easting: easting.toFixed(3), northing: northing.toFixed(3),
+        cotaNAP: zCurrent.toFixed(3), hGPS: hGPS.toFixed(3),
+        N: "50.20", acc: formatearPrecision(ultimaPosicionGPS.coords.accuracy),
+        fuente: 'RTK As-Built'
+      };
+
+      listaPuntos.push(punto);
+      actualizarTablaYPuntosSelect();
+      alert(`💾 Punto de verificación ${punto.id} registrado correctamente.`);
+    }
+
+    function iniciarReplanteoDesdeTopoTab() {
+      const x = parseFloat(document.getElementById('replantearX').value);
+      const y = parseFloat(document.getElementById('replantearY').value);
+      const z = parseFloat(document.getElementById('replantearZ').value) || 0;
+      if (isNaN(x) || isNaN(y)) return alert("Introduce coordenadas X e Y válidas.");
+
+      iniciarReplanteoElemento('PUNTO', { x: x, y: y, z: z }, `Punto Directo (${x.toFixed(1)}, ${y.toFixed(1)})`);
+    }
+
+    function iniciarReplanteoAltimetricoDesdeTopoTab() {
+      const zTarget = parseFloat(document.getElementById('cotaProyectoTarget').value);
+      if (isNaN(zTarget)) return alert("Ingresa la cota de rasante.");
+
+      iniciarReplanteoElemento('ALTIMETRIA', { z: zTarget }, `Control de Cota Z = ${zTarget.toFixed(3)} m`);
+    }
+
+    // =========================================================================
+    // 6. VISOR 2D LEAFLET CON ACTIVACIÓN DE REPLANTEO
     // =========================================================================
     let ultimoDXFContenido = null;
     let dxfCapasMap = {};
@@ -1042,7 +1280,7 @@
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado. ${dxfEntidadesRenderizadas.length} elementos seleccionables en 2D y 3D.`);
+          alert(`✔ DXF '${filename}' cargado. Todos los elementos listos para replantear en 2D y 3D.`);
         } else {
           alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
@@ -1051,7 +1289,6 @@
       }
     }
 
-    // BUSCADOR DE SELECCIÓN DE ALTA PRECISIÓN 2D
     map.on('click', function(e) {
       if (dxfEntidadesRenderizadas.length === 0) return;
 
@@ -1099,9 +1336,14 @@
           Capa: <b>${layerName}</b><br>
           Longitud: <b style="color:#4ade80;">${longitudTotal.toFixed(3)} m</b><br>
           Vértices: <b>${verticesUTM.length}</b><br><br>
-          <button class="btn btn-road" style="width:100%; padding:6px; font-size:0.75rem;" onclick="convertirVerticesAEjeDirecto()">
-            ⚡ Convertir en Eje de Replanteo
-          </button>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn btn-road" style="width:100%; padding:6px; font-size:0.75rem;" onclick="activarReplanteo2DDirecto('EJE')">
+              ⚡ Replantear Polilínea / Eje
+            </button>
+            <button class="btn btn-primary" style="width:100%; padding:6px; font-size:0.75rem;" onclick="activarReplanteo2DDirecto('P1')">
+              🎯 Replantear Punto Inicial (P1)
+            </button>
+          </div>
         </div>
       `;
 
@@ -1111,30 +1353,17 @@
       L.popup().setLatLng(layerGrafica.getBounds().getCenter()).setContent(popupHtml).openOn(map);
     }
 
-    function convertirVerticesAEjeDirecto() {
+    function activarReplanteo2DDirecto(modo) {
       if (!window.verticesAEjeSeleccionados) return;
-      convertirVerticesAEje(window.verticesAEjeSeleccionados, window.capaAEjeSeleccionada);
+      const v = window.verticesAEjeSeleccionados;
+      const capa = window.capaAEjeSeleccionada;
       map.closePopup();
-    }
 
-    function convertirVerticesAEje(verticesUTM, nombreEje) {
-      ejeCarretera = [];
-      let pkAcum = 0;
-
-      verticesUTM.forEach((v, index) => {
-        if (index === 0) {
-          ejeCarretera.push({ pk: 0, x: v.x, y: v.y, z: v.z || 0 });
-        } else {
-          const vAnt = verticesUTM[index - 1];
-          const dist = Math.hypot(v.x - vAnt.x, v.y - vAnt.y);
-          pkAcum += dist;
-          ejeCarretera.push({ pk: pkAcum, x: v.x, y: v.y, z: v.z || 0 });
-        }
-      });
-
-      dibujarEjeEnMapa();
-      switchTab('tabTopo', document.querySelectorAll('.tab-btn')[1]);
-      alert(`✔ Entidad de '${nombreEje}' convertida en Eje Activo (${pkAcum.toFixed(2)} m totales, ${verticesUTM.length} puntos).`);
+      if (modo === 'EJE') {
+        iniciarReplanteoElemento('EJE_LINEA', v, `Eje CAD (${capa})`);
+      } else if (modo === 'P1') {
+        iniciarReplanteoElemento('PUNTO', { x: v[0].x, y: v[0].y, z: v[0].z || 0 }, `Inicio P1 (${capa})`);
+      }
     }
 
     function toggleCapaDXF(nombreCapa, visible) {
@@ -1172,7 +1401,7 @@
     }
 
     // =========================================================================
-    // 6. VISOR 3D THREE.JS CON MOTOR DE SELECCIÓN RAYCASTING
+    // 7. VISOR 3D THREE.JS CON REPLANTEO DIRECTO EN VIVO
     // =========================================================================
     let scene3D, camera3D, renderer3D, controls3D, raycaster3D, mouse3D;
     let elemento3DSeleccionado = null;
@@ -1189,8 +1418,8 @@
           <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
           <div id="prop3DBody">Toca una línea para ver sus propiedades...</div>
           <div style="display:flex; gap:6px; margin-top:6px;">
-            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="convertirElemento3DAEje()">⚡ Convertir a Eje</button>
-            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="replantearPuntoInicial3D()">🎯 Replantear P1</button>
+            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('EJE')">⚡ Replantear Elemento</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 Replantear P1</button>
           </div>
         </div>
       `;
@@ -1207,7 +1436,7 @@
       controls3D.enableDamping = true;
 
       raycaster3D = new THREE.Raycaster();
-      raycaster3D.params.Line.threshold = 8; // Sensibilidad táctil alta en 3D
+      raycaster3D.params.Line.threshold = 8;
       mouse3D = new THREE.Vector2();
 
       scene3D.add(new THREE.AmbientLight(0xffffff, 0.8));
@@ -1223,7 +1452,7 @@
         const geom = new THREE.BufferGeometry().setFromPoints(points);
         const lineMesh = new THREE.Line(geom, mat);
         
-        lineMesh.userData = item; // Guardar referencia a la entidad CAD
+        lineMesh.userData = item;
         dxfGroup3D.add(lineMesh);
 
         item.verticesUTM.forEach(v => {
@@ -1243,7 +1472,6 @@
         controls3D.target.set(0, 0, 0); controls3D.update();
       }
 
-      // EVENTO DE SELECCIÓN POR RAYCASTING
       renderer3D.domElement.addEventListener('pointerdown', onPointerDown3D);
 
       function animate3D() {
@@ -1275,7 +1503,7 @@
 
         elemento3DSeleccionado = selectedObj;
         colorOriginal3DObj = selectedObj.material.color.getHex();
-        selectedObj.material.color.setHex(0xff0055); // Resaltado Rosa Neón
+        selectedObj.material.color.setHex(0xff0055);
 
         itemDXFSeleccionado3D = item;
         mostrarPropsHUD3D(item);
@@ -1303,31 +1531,24 @@
       panel.style.display = 'flex';
     }
 
-    function convertirElemento3DAEje() {
+    function activarReplanteo3DDirecto(modo) {
       if (!itemDXFSeleccionado3D) return;
-      convertirVerticesAEje(itemDXFSeleccionado3D.verticesUTM, itemDXFSeleccionado3D.layerName);
-      cerrarVisor3D();
-    }
+      const v = itemDXFSeleccionado3D.verticesUTM;
+      const capa = itemDXFSeleccionado3D.layerName;
 
-    function replantearPuntoInicial3D() {
-      if (!itemDXFSeleccionado3D || itemDXFSeleccionado3D.verticesUTM.length === 0) return;
-      const p1 = itemDXFSeleccionado3D.verticesUTM[0];
-      document.getElementById('replantearX').value = p1.x.toFixed(3);
-      document.getElementById('replantearY').value = p1.y.toFixed(3);
-      document.getElementById('replantearZ').value = (p1.z || 0).toFixed(3);
-
-      switchTab('tabTopo', document.querySelectorAll('.tab-btn')[1]);
-      cerrarVisor3D();
-      alert(`🎯 Punto inicial P1 (X:${p1.x.toFixed(3)}, Y:${p1.y.toFixed(3)}, Z:${(p1.z||0).toFixed(3)}) enviado a Replanteo de Puntos.`);
+      if (modo === 'EJE') {
+        iniciarReplanteoElemento('EJE_LINEA', v, `Eje CAD 3D (${capa})`);
+      } else if (modo === 'P1') {
+        iniciarReplanteoElemento('PUNTO', { x: v[0].x, y: v[0].y, z: v[0].z || 0 }, `Inicio 3D P1 (${capa})`);
+      }
     }
 
     function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
     // =========================================================================
-    // 7. FUNCIONALIDADES DE REPLANTEO TOPOGRÁFICO Y CAMPO
+    // 8. TOMA DE DATOS Y GEOMETRÍA EN CAMPO
     // =========================================================================
     let ejeCarretera = [];
-    let carreteraLayerGroup = L.layerGroup().addTo(map);
 
     function cargarEjeCarretera(event) {
       const file = event.target.files[0]; if (!file) return;
@@ -1358,74 +1579,10 @@
           });
         }
         if (ejeCarretera.length > 0) {
-          dibujarEjeEnMapa();
-          document.getElementById('roadTelemetryBox').style.display = 'block';
-          alert(`✔ Eje cargado: ${ejeCarretera.length} puntos. Longitud total: ${ejeCarretera[ejeCarretera.length - 1].pk.toFixed(2)} m.`);
+          iniciarReplanteoElemento('EJE_LINEA', ejeCarretera, `Eje Importado (${file.name})`);
         }
       };
       reader.readAsText(file);
-    }
-
-    function dibujarEjeEnMapa() {
-      carreteraLayerGroup.clearLayers();
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const latLngs = [];
-
-      ejeCarretera.forEach((pt, index) => {
-        const latLng = utmALatLng(pt.x, pt.y, huso);
-        latLngs.push(latLng);
-
-        if (index % 5 === 0 || index === ejeCarretera.length - 1) {
-          const marker = L.circleMarker(latLng, { radius: 4, color: '#ff0055', fillColor: '#ff0055', fillOpacity: 1 });
-          marker.bindTooltip(`PK: ${pt.pk.toFixed(1)} m`, { permanent: false, direction: 'top' });
-          carreteraLayerGroup.addLayer(marker);
-        }
-      });
-
-      const polyline = L.polyline(latLngs, { color: '#ff0055', weight: 4, dashArray: '8, 4' });
-      carreteraLayerGroup.addLayer(polyline);
-      map.fitBounds(L.latLngBounds(latLngs), { padding: [30, 30] });
-    }
-
-    function calcularReplanteoCarretera(posGPS) {
-      if (ejeCarretera.length < 2) return;
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const [easting, northing] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
-      const hGPS = posGPS.coords.altitude || 0;
-      const cotaNAPActual = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
-
-      let distMinima = Infinity, pkCalculado = 0, offsetCalculado = 0, lado = "CENTRO", cotaRasante = 0;
-
-      for (let i = 0; i < ejeCarretera.length - 1; i++) {
-        const pA = ejeCarretera[i], pB = ejeCarretera[i + 1];
-        const dx = pB.x - pA.x, dy = pB.y - pA.y, len2 = dx * dx + dy * dy;
-        if (len2 === 0) continue;
-
-        const t = Math.max(0, Math.min(1, ((easting - pA.x) * dx + (northing - pA.y) * dy) / len2));
-        const pProj = { x: pA.x + t * dx, y: pA.y + t * dy };
-        const dist = Math.hypot(easting - pProj.x, northing - pProj.y);
-
-        if (dist < distMinima) {
-          distMinima = dist;
-          pkCalculado = pA.pk + t * (pB.pk - pA.pk);
-          cotaRasante = pA.z + t * (pB.z - pA.z);
-          const signoSide = (pB.x - pA.x) * (northing - pA.y) - (pB.y - pA.y) * (easting - pA.x);
-          lado = signoSide >= 0 ? "DERECHA" : "IZQUIERDA";
-          offsetCalculado = dist;
-        }
-      }
-
-      const deltaZ = cotaNAPActual - cotaRasante;
-      const estadoCota = deltaZ >= 0 ? `DESMONTE: Bajar ${deltaZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(deltaZ).toFixed(3)} m`;
-
-      document.getElementById('roadTelemetryBox').style.display = 'block';
-      document.getElementById('roadMetrics').innerHTML = `
-        <b>PK (Estación):</b> PK ${pkCalculado.toFixed(3)} m<br>
-        <b>Desplazamiento (Offset):</b> ${offsetCalculado.toFixed(3)} m (${lado})<br>
-        <b>Cota Rasante Proyecto:</b> ${cotaRasante.toFixed(3)} m<br>
-        <b>Cota Actual Terreno:</b> ${cotaNAPActual.toFixed(3)} m<br>
-        <b>Control Altimétrico:</b> <span style="color:${deltaZ >= 0 ? '#ef4444' : '#10b981'}; font-weight:bold;">${estadoCota}</span>
-      `;
     }
 
     function seleccionarPuntoParaReplanteo() {
@@ -1435,58 +1592,6 @@
       document.getElementById('replantearX').value = p.easting;
       document.getElementById('replantearY').value = p.northing;
       document.getElementById('replantearZ').value = p.cotaNAP;
-    }
-
-    function calcularReplanteoPuntoDirecto(posGPS) {
-      const eTarget = parseFloat(document.getElementById('replantearX').value);
-      const nTarget = parseFloat(document.getElementById('replantearY').value);
-      const zTarget = parseFloat(document.getElementById('replantearZ').value) || 0;
-
-      if (isNaN(eTarget) || isNaN(nTarget)) return alert("Introduce coordenadas válidas Easting (X) y Northing (Y).");
-
-      window.puntoTargetReplanteo = { x: eTarget, y: nTarget, z: zTarget };
-
-      if (!posGPS && ultimaPosicionGPS) posGPS = ultimaPosicionGPS;
-      if (!posGPS) return alert("Esperando posición GNSS para guiar...");
-
-      const huso = parseInt(document.getElementById('husoSelect').value);
-      const [eCurrent, nCurrent] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
-      const hGPS = posGPS.coords.altitude || 0;
-      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
-
-      const dE = eTarget - eCurrent;
-      const dN = nTarget - nCurrent;
-      const distHoriz = Math.hypot(dE, dN);
-      let azimutRad = Math.atan2(dE, dN);
-      if (azimutRad < 0) azimutRad += 2 * Math.PI;
-      const azimutDeg = (azimutRad * 180 / Math.PI).toFixed(2);
-      const dZ = zCurrent - zTarget;
-
-      const dirE = dE >= 0 ? `Ir ESTE +${dE.toFixed(3)} m` : `Ir OESTE ${dE.toFixed(3)} m`;
-      const dirN = dN >= 0 ? `Ir NORTE +${dN.toFixed(3)} m` : `Ir SUR ${dN.toFixed(3)} m`;
-      const dirZ = dZ >= 0 ? `DESMONTE: Bajar ${dZ.toFixed(3)} m` : `RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m`;
-
-      const resBox = document.getElementById('resReplanteoPunto');
-      resBox.style.display = 'flex';
-      resBox.innerHTML = `
-        <b>AZIMUT DE GUIADO:</b> ${azimutDeg}°<br>
-        <b>DISTANCIA AL PUNTO:</b> <span style="font-size:1.05rem; color:var(--accent-primary); font-weight:bold;">${distHoriz.toFixed(3)} m</span><br>
-        <b>VECTORES PLANIMÉTRICOS:</b> ${dirN} | ${dirE}<br>
-        <b>ALTIMETRÍA (Z):</b> <span style="color:${dZ >= 0 ? '#ef4444' : '#10b981'}; font-weight:bold;">${dirZ}</span>
-      `;
-    }
-
-    function verificarCotaAltimetrica() {
-      const zProj = parseFloat(document.getElementById('cotaProyectoTarget').value);
-      if (isNaN(zProj)) return alert("Ingresa la Cota Rasante o de Proyecto.");
-
-      if (!ultimaPosicionGPS) return alert("Capturando GPS para verificar cota...");
-      const hGPS = ultimaPosicionGPS.coords.altitude || 0;
-      const zCurrent = GeoideIGN.elipsoidalAOrtometrica(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, hGPS).cotaNAP;
-      const dZ = zCurrent - zProj;
-
-      const estado = dZ >= 0 ? `<span style="color:#ef4444;">DESMONTE: Bajar ${dZ.toFixed(3)} m</span>` : `<span style="color:#10b981;">RELLENO: Subir ${Math.abs(dZ).toFixed(3)} m</span>`;
-      document.getElementById('resControlCota').innerHTML = `Cota Terreno: ${zCurrent.toFixed(3)} m | Cota Proyecto: ${zProj.toFixed(3)} m ➔ ${estado}`;
     }
 
     function capturarPuntoGPSConCodigo() {
@@ -1553,7 +1658,7 @@
     }
 
     // =========================================================================
-    // 8. CÁLCULOS COGO & GEOMETRÍA
+    // 9. CÁLCULOS COGO & FORMATOS DE EXPORTACIÓN
     // =========================================================================
     function calcularCOGOInverso() {
       const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
@@ -1603,9 +1708,6 @@
       `;
     }
 
-    // =========================================================================
-    // 9. FORMATOS DE IMPORTACIÓN Y EXPORTACIÓN
-    // =========================================================================
     let tempImageSrc = null;
 
     function prepararOrtofoto(e) {
@@ -1745,7 +1847,6 @@
       if (ultimoDXFContenido) procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
     }
 
-    // EXPORTACIÓN DE DATOS
     let listaPuntos = [];
 
     function exportarCSV() {

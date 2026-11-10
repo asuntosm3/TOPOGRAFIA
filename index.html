@@ -1,4 +1,18 @@
-﻿<!DOCTYPE html>
+﻿He actualizado la aplicación incorporando las mejoras interactivas para el visor DXF, corrigiendo la gestión de capas y añadiendo un entorno interactivo en 2D y 3D.
+Novedades en el Visor DXF e Interacción:
+ * Gestión Real de Capas CAD:
+   * Se ha corregido la lógica de ocultación (toggleCapaDXF). Ahora los elementos asociados a cada capa se añaden o eliminan dinámicamente de la escena (dxfLayerGroup.removeLayer / addLayer).
+   * Se incluye un control rápido para activar/desactivar todas las capas.
+ * Selección Interactiva y Conversión a Ejes de Replanteo:
+   * Al pulsar sobre cualquier línea o polilínea del DXF en el mapa, se desplegará una ventana de información con la longitud total, capa y número de vértices.
+   * Cuenta con la opción ⚡ Replantear (Convertir a Eje): transforma automáticamente los vértices UTM (X, Y, Z) de la entidad seleccionada en un eje de carretera con sus PKs acumulados y salta de inmediato al módulo de replanteo de carreteras con telemetría en tiempo real.
+ * Navegación y Zoom Ventana (Box Zoom):
+   * Se ha añadido un botón de Zoom Ventana en la barra de herramientas del mapa: permite realizar encuadres de zoom mediante arrastre de cursor o gesto táctil.
+   * Botón de Ajuste de Extensión (Zoom Extents) para volver a encuadrar todo el modelo DXF importado.
+ * Visor de Rotación y Órbita 3D (Three.js):
+   * Se incorporó una vista 3D completa mediante Three.js y OrbitControls.
+   * Al pulsar el botón de Vista 3D, se abre un entorno interactivo donde puedes rotar en órbita libre (clic izquierdo + arrastrar), desplazarte (clic derecho) y hacer zoom (rueda) sobre las geometrías tridimensionales del archivo DXF.
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -10,12 +24,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Librerías Cartográficas, Geoespaciales y Lectores CAD/PDF -->
+  <!-- Librerías Cartográficas, Geoespaciales, Lectores CAD/PDF y Motor 3D -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Three.js + OrbitControls para Visor 3D de CAD -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
@@ -180,15 +197,31 @@
     #mapWrapper { position: relative; width: 100%; height: 100%; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
     #map { width: 100%; height: 100%; background: #06090e; }
 
+    /* BARRA DE HERRAMIENTAS INTERACTIVAS EN MAPA */
+    .map-tools-bar {
+      position: absolute; top: 12px; right: 12px; z-index: 999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .tool-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(8, 12, 20, 0.9); backdrop-filter: blur(16px);
+      border: 1px solid var(--border-accent); color: var(--accent-primary);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .tool-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
+    .tool-btn.active { background: var(--accent-primary); color: #000; box-shadow: 0 0 12px rgba(0,242,254,0.6); }
+
     /* PANEL CAD / CAPAS FLOTANTE EN MAPA */
     .map-cad-panel {
       position: absolute; top: 12px; left: 12px; z-index: 999;
-      background: rgba(8, 12, 20, 0.92); backdrop-filter: blur(16px);
+      background: rgba(8, 12, 20, 0.94); backdrop-filter: blur(16px);
       border: 1px solid var(--border-accent); border-radius: 12px;
-      padding: 10px 14px; max-width: 280px; max-height: 250px; overflow-y: auto;
+      padding: 12px; max-width: 290px; max-height: 280px; overflow-y: auto;
       box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: none;
     }
-    .map-cad-panel h4 { margin: 0 0 8px 0; font-size: 0.78rem; font-family: var(--font-mono); color: var(--accent-cad); text-transform: uppercase; }
+    .map-cad-panel h4 { margin: 0 0 8px 0; font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-cad); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
 
     /* BOTÓN FLOTANTE LEAFLET CENTRADO GPS */
     .leaflet-touch .map-gps-btn,
@@ -236,11 +269,7 @@
     .btn-cad:hover { box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5); }
 
     .btn-raster { background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3); }
-    .btn-raster svg { stroke: #fff; }
-
     .btn-road { background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(255, 0, 85, 0.3); }
-    .btn-road svg { stroke: #fff; }
-    .btn-road:hover { box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5); }
 
     .input-field {
       background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); color: var(--text-main);
@@ -276,6 +305,30 @@
     .format-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; }
     .format-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
     .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* MODAL VISOR 3D INTERACTIVO */
+    .modal-3d-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(4, 7, 13, 0.92); backdrop-filter: blur(20px);
+      z-index: 9999; display: none; align-items: center; justify-content: center;
+    }
+    .modal-3d-box {
+      width: 90vw; height: 85vh; background: #06090e; border: 1px solid var(--border-accent);
+      border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 0 40px rgba(0, 242, 254, 0.25); position: relative;
+    }
+    .modal-3d-header {
+      padding: 12px 20px; background: rgba(13, 19, 31, 0.95); border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-3d-header h3 { margin: 0; font-size: 1rem; color: var(--accent-primary); font-family: var(--font-mono); }
+    #canvas3DContainer { flex: 1; width: 100%; height: 100%; cursor: grab; }
+    #canvas3DContainer:active { cursor: grabbing; }
+    .modal-3d-instructions {
+      position: absolute; bottom: 16px; left: 16px; z-index: 10;
+      background: rgba(8, 12, 20, 0.85); padding: 8px 14px; border-radius: 8px;
+      border: 1px solid var(--border); font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -288,7 +341,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v3.5</span>
+        <span class="brand-sub">FIELD STATION HUD v3.8</span>
       </div>
     </div>
 
@@ -336,12 +389,30 @@
 
   <div class="view-container">
 
-    <!-- PESTAÑA 1: VISOR CAD Y MAPA -->
+    <!-- PESTAÑA 1: VISOR CAD Y MAPA INTERACTIVO -->
     <div id="tabMap" class="tab-content active" style="padding: 8px;">
       <div id="mapWrapper">
         <div id="map"></div>
+
+        <!-- BARRA DE HERRAMIENTAS INTERACTIVAS EN MAPA -->
+        <div class="map-tools-bar">
+          <button class="tool-btn" title="Zoom Ventana (Arrastrar encuadre)" onclick="activarZoomVentana()" id="btnZoomBox">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/><circle cx="11" cy="11" r="4"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
+          <button class="tool-btn" title="Rotar Vista 3D (Visor Three.js orbit)" onclick="abrirVisor3D()" id="btn3DView">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </button>
+          <button class="tool-btn" title="Ver todo el CAD / Ajustar Extensión" onclick="ajustarExtensionDXF()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          </button>
+        </div>
+
+        <!-- PANEL DE CONTROL DE CAPAS CAD FLOTANTE -->
         <div id="mapCadPanel" class="map-cad-panel">
-          <h4>Capas DXF / CAD</h4>
+          <h4>
+            <span>Capas DXF / CAD</span>
+            <button onclick="toggleTodasCapas(true)" style="background:none; border:none; color:var(--accent-primary); font-size:0.7rem; cursor:pointer;">Todas</button>
+          </h4>
           <div id="mapCadLayersList"><i>Sin archivo DXF cargado</i></div>
         </div>
       </div>
@@ -355,7 +426,7 @@
           Módulo de Alineaciones y Ejes de Carreteras
         </div>
         <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Importa ejes exportados desde <b>TCP-MDT</b> o <b>ISTRAM-ISPOL</b> en formato <b>LandXML (.xml)</b> o <b>Eje ASCII (.eje / .csv)</b>.
+          Importa ejes desde <b>TCP-MDT / ISTRAM (LandXML / EJE)</b> o <b>selecciona una línea/polilínea directamente desde el Visor DXF</b>.
         </p>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
@@ -449,8 +520,6 @@
 
     <!-- PESTAÑA 5: IMPORTAR / EXPORTAR & DATOS -->
     <div id="tabData" class="tab-content">
-      
-      <!-- SECCIÓN DE IMPORTACIÓN MULTIFORMATO -->
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-primary);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -600,6 +669,20 @@
 
   </div>
 
+  <!-- MODAL VISOR 3D THREE.JS -->
+  <div id="modal3D" class="modal-3d-backdrop">
+    <div class="modal-3d-box">
+      <div class="modal-3d-header">
+        <h3>🧊 Visor 3D DXF CAD (Orbiting Controls)</h3>
+        <button class="btn btn-primary" onclick="cerrarVisor3D()" style="padding:4px 12px; font-size:0.75rem;">Cerrar 3D</button>
+      </div>
+      <div id="canvas3DContainer"></div>
+      <div class="modal-3d-instructions">
+        Rotar: Clic Izquierdo + Arrastrar | Pan: Clic Derecho + Arrastrar | Zoom: Rueda del Ratón
+      </div>
+    </div>
+  </div>
+
   <script>
     // 1. NAVEGACIÓN Y CAMBIO DE PESTAÑAS
     function switchTab(tabId, element) {
@@ -637,7 +720,7 @@
     };
 
     // 4. MAPA LEAFLET Y SERVICIOS WMS IGN
-    const map = L.map('map', { zoomControl: false }).setView([40.4167, -3.7037], 15);
+    const map = L.map('map', { zoomControl: false, boxZoom: true }).setView([40.4167, -3.7037], 15);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const pnoaLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
@@ -686,6 +769,28 @@
       }
     });
     map.addControl(new GpsCenterControl());
+
+    // HERRAMIENTA ZOOM VENTANA (BOX ZOOM)
+    let modoBoxZoom = false;
+    function activarZoomVentana() {
+      modoBoxZoom = !modoBoxZoom;
+      const btn = document.getElementById('btnZoomBox');
+      if (modoBoxZoom) {
+        btn.classList.add('active');
+        map.dragging.disable();
+        map.boxZoom.addHooks();
+        alert("🔍 Zoom Ventana activado: Mantén pulsado y arrastra en el mapa para encuadrar la zona.");
+      } else {
+        btn.classList.remove('active');
+        map.dragging.enable();
+      }
+    }
+
+    map.on('boxzoomend', function(e) {
+      modoBoxZoom = false;
+      document.getElementById('btnZoomBox').classList.remove('active');
+      map.dragging.enable();
+    });
 
     // 5. TELEMETRÍA Y CONTROL DE PRECISIÓN DE GPS (SIEMPRE VISIBLE)
     let userMarker = null;
@@ -794,10 +899,11 @@
       }, null, { enableHighAccuracy: true });
     }
 
-    // 6. MOTOR DE IMPORTACIÓN MULTIFORMATO
-
-    // --- A) IMPORTADOR CAD DXF (COMPLETO) ---
+    // 6. MOTOR DE IMPORTACIÓN Y VISOR CAD DXF INTERACTIVO
     let ultimoDXFContenido = null;
+    let dxfCapasMap = {}; // Mapa de capas { 'nombreCapa': [capaLeaflet1, capaLeaflet2] }
+    let dxfParsedData = null;
+    let dxfBoundsGlobal = null;
 
     function importarDXF(event) {
       const file = event.target.files[0];
@@ -814,18 +920,18 @@
     function procesarYRenderizarDXF(dxfText, filename) {
       try {
         const parser = new DxfParser();
-        const dxf = parser.parseSync(dxfText);
+        dxfParsedData = parser.parseSync(dxfText);
 
         dxfLayerGroup.clearLayers();
+        dxfCapasMap = {};
         const huso = parseInt(document.getElementById('husoSelect').value);
         const boundsList = [];
-        const capasDict = {};
 
-        if (!dxf || !dxf.entities) return alert("El archivo DXF no contiene entidades geométricas válidas.");
+        if (!dxfParsedData || !dxfParsedData.entities) return alert("El archivo DXF no contiene entidades geométricas válidas.");
 
-        dxf.entities.forEach(ent => {
+        dxfParsedData.entities.forEach((ent, index) => {
           const layerName = ent.layer || '0';
-          if (!capasDict[layerName]) capasDict[layerName] = [];
+          if (!dxfCapasMap[layerName]) dxfCapasMap[layerName] = [];
 
           let colorStyle = '#a855f7';
           if (ent.colorIndex === 1) colorStyle = '#ef4444';
@@ -834,26 +940,32 @@
           else if (ent.colorIndex === 4) colorStyle = '#00f2fe';
           else if (ent.colorIndex === 5) colorStyle = '#3b82f6';
 
-          // LÍNEA CAD
+          // LÍNEAS CAD INTERACTIVAS
           if (ent.type === 'LINE' && ent.vertices && ent.vertices.length >= 2) {
             const p1 = utmALatLng(ent.vertices[0].x, ent.vertices[0].y, huso);
             const p2 = utmALatLng(ent.vertices[1].x, ent.vertices[1].y, huso);
-            const line = L.polyline([p1, p2], { color: colorStyle, weight: 2, opacity: 0.85 });
-            dxfLayerGroup.addLayer(line);
+            const poly = L.polyline([p1, p2], { color: colorStyle, weight: 3, opacity: 0.9, interactive: true });
+            
+            asociarInteraccionEntidadCAD(poly, ent, [ent.vertices[0], ent.vertices[1]], layerName);
+
+            dxfLayerGroup.addLayer(poly);
             boundsList.push(p1, p2);
-            capasDict[layerName].push(line);
+            dxfCapasMap[layerName].push(poly);
           }
-          // POLILÍNEA CAD (LWPOLYLINE / POLYLINE)
+          // POLILÍNEAS CAD INTERACTIVAS (LWPOLYLINE / POLYLINE)
           else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
             const pts = ent.vertices.map(v => utmALatLng(v.x, v.y, huso));
             if (pts.length > 0) {
-              const poly = L.polyline(pts, { color: colorStyle, weight: 2, opacity: 0.85 });
+              const poly = L.polyline(pts, { color: colorStyle, weight: 3, opacity: 0.9, interactive: true });
+              
+              asociarInteraccionEntidadCAD(poly, ent, ent.vertices, layerName);
+
               dxfLayerGroup.addLayer(poly);
               pts.forEach(p => boundsList.push(p));
-              capasDict[layerName].push(poly);
+              dxfCapasMap[layerName].push(poly);
             }
           }
-          // CÍRCULO CAD
+          // CÍRCULOS Y ARCOS CAD
           else if (ent.type === 'CIRCLE' && ent.center) {
             const center = utmALatLng(ent.center.x, ent.center.y, huso);
             const numSegments = 32;
@@ -867,32 +979,26 @@
             const circlePoly = L.polyline(pts, { color: colorStyle, weight: 2 });
             dxfLayerGroup.addLayer(circlePoly);
             boundsList.push(center);
-            capasDict[layerName].push(circlePoly);
+            dxfCapasMap[layerName].push(circlePoly);
           }
-          // PUNTO CAD
+          // PUNTOS CAD
           else if (ent.type === 'POINT' && ent.position) {
             const pt = utmALatLng(ent.position.x, ent.position.y, huso);
             const marker = L.circleMarker(pt, { radius: 3, color: colorStyle, fillColor: colorStyle, fillOpacity: 1 });
             dxfLayerGroup.addLayer(marker);
             boundsList.push(pt);
-            capasDict[layerName].push(marker);
+            dxfCapasMap[layerName].push(marker);
           }
         });
 
-        // Panel de capas CAD flotante en mapa
-        const panelHtml = Object.keys(capasDict).map(capa => `
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:#cbd5e1; margin-bottom:4px; cursor:pointer;">
-            <input type="checkbox" checked onchange="toggleCapaDXF('${capa}', this.checked)"> ${capa} (${capasDict[capa].length})
-          </label>
-        `).join('');
-
-        document.getElementById('mapCadLayersList').innerHTML = panelHtml;
-        document.getElementById('mapCadPanel').style.display = 'block';
+        // CONSTRUCCIÓN DEL PANEL DE CONTROL DE CAPAS CON SELECCIÓN REAL
+        renderizarPanelCapasCAD();
 
         if (boundsList.length > 0) {
-          map.fitBounds(L.latLngBounds(boundsList), { padding: [30, 30] });
+          dxfBoundsGlobal = L.latLngBounds(boundsList);
+          map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado con éxito. ${dxf.entities.length} entidades importadas en Huso ${huso}.`);
+          alert(`✔ DXF '${filename}' cargado. ${dxfParsedData.entities.length} entidades importadas en Huso ${huso}. Haz clic sobre cualquier línea para convertirla en eje de replanteo.`);
         } else {
           alert("Advertencia: El DXF no contenía geometrías 2D compatibles.");
         }
@@ -901,11 +1007,193 @@
       }
     }
 
-    function toggleCapaDXF(nombreCapa, visible) {
-      // Control de visibilidad granular de capas CAD
+    // CONVERSIÓN DE ENTIDAD CAD SELECCIONADA A EJE DE REPLANTEO
+    function asociarInteraccionEntidadCAD(layerLeaflet, entidadDXF, verticesUTM, layerName) {
+      let longitudTotal = 0;
+      for (let i = 0; i < verticesUTM.length - 1; i++) {
+        longitudTotal += Math.hypot(verticesUTM[i+1].x - verticesUTM[i].x, verticesUTM[i+1].y - verticesUTM[i].y);
+      }
+
+      const popupContent = document.createElement('div');
+      popupContent.style.fontFamily = 'var(--font-mono)';
+      popupContent.style.fontSize = '0.8rem';
+      popupContent.innerHTML = `
+        <b style="color:var(--accent-primary)">Entidad CAD ${entidadDXF.type}</b><br>
+        Capa: <b>${layerName}</b><br>
+        Longitud: <b>${longitudTotal.toFixed(3)} m</b><br>
+        Vértices: <b>${verticesUTM.length}</b><br><br>
+      `;
+
+      const btnConvertir = document.createElement('button');
+      btnConvertir.className = 'btn btn-road';
+      btnConvertir.style.padding = '6px 10px';
+      btnConvertir.style.fontSize = '0.75rem';
+      btnConvertir.style.width = '100%';
+      btnConvertir.innerHTML = '⚡ Replantear (Convertir a Eje)';
+      btnConvertir.onclick = function() {
+        convertirVerticesAEje(verticesUTM, layerName);
+      };
+
+      popupContent.appendChild(btnConvertir);
+      layerLeaflet.bindPopup(popupContent);
     }
 
-    // --- B) ORTOFOTOS Y WORLD FILE (.tfw / .jgw) ---
+    function convertirVerticesAEje(verticesUTM, nombreEje) {
+      ejeCarretera = [];
+      let pkAcum = 0;
+
+      verticesUTM.forEach((v, index) => {
+        if (index === 0) {
+          ejeCarretera.push({ pk: 0, x: v.x, y: v.y, z: v.z || 0 });
+        } else {
+          const vAnt = verticesUTM[index - 1];
+          const dist = Math.hypot(v.x - vAnt.x, v.y - vAnt.y);
+          pkAcum += dist;
+          ejeCarretera.push({ pk: pkAcum, x: v.x, y: v.y, z: v.z || 0 });
+        }
+      });
+
+      dibujarEjeEnMapa();
+      document.getElementById('roadTelemetryBox').style.display = 'block';
+      switchTab('tabRoads', document.querySelectorAll('.tab-btn')[1]);
+      alert(`✔ Entidad CAD de capa '${nombreEje}' convertida con éxito en Eje de Carretera (${ejeCarretera.length} vértices, ${pkAcum.toFixed(2)} m totales). ¡Listo para replantear!`);
+    }
+
+    // CONTROL DE VISIBILIDAD DE CAPAS REAL
+    function toggleCapaDXF(nombreCapa, visible) {
+      if (!dxfCapasMap[nombreCapa]) return;
+      dxfCapasMap[nombreCapa].forEach(layer => {
+        if (visible) {
+          dxfLayerGroup.addLayer(layer);
+        } else {
+          dxfLayerGroup.removeLayer(layer);
+        }
+      });
+    }
+
+    function toggleTodasCapas(estado) {
+      Object.keys(dxfCapasMap).forEach(capa => {
+        toggleCapaDXF(capa, estado);
+      });
+      renderizarPanelCapasCAD();
+    }
+
+    function renderizarPanelCapasCAD() {
+      const panelHtml = Object.keys(dxfCapasMap).map(capa => {
+        const estaVisible = dxfLayerGroup.hasLayer(dxfCapasMap[capa][0]);
+        return `
+          <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; color:#cbd5e1; margin-bottom:6px; cursor:pointer;">
+            <input type="checkbox" ${estaVisible ? 'checked' : ''} onchange="toggleCapaDXF('${capa}', this.checked)">
+            <span>${capa}</span>
+            <span style="margin-left:auto; font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono);">(${dxfCapasMap[capa].length})</span>
+          </label>
+        `;
+      }).join('');
+
+      document.getElementById('mapCadLayersList').innerHTML = panelHtml;
+      document.getElementById('mapCadPanel').style.display = 'block';
+    }
+
+    function ajustarExtensionDXF() {
+      if (dxfBoundsGlobal) {
+        map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
+      } else {
+        alert("No hay ningún archivo DXF o vector cargado actualmente.");
+      }
+    }
+
+    // VISOR 3D DE DXF CON THREE.JS Y ORBIT CONTROLS (ROTACIÓN Y ÓRBITA LIBRE)
+    let scene3D, camera3D, renderer3D, controls3D;
+
+    function abrirVisor3D() {
+      if (!dxfParsedData || !dxfParsedData.entities) return alert("Carga primero un archivo DXF para visualizarlo en 3D.");
+
+      document.getElementById('modal3D').style.display = 'flex';
+      const container = document.getElementById('canvas3DContainer');
+      container.innerHTML = '';
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      scene3D = new THREE.Scene();
+      scene3D.background = new THREE.Color(0x06090e);
+
+      camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000);
+      renderer3D = new THREE.WebGLRenderer({ antialias: true });
+      renderer3D.setSize(width, height);
+      container.appendChild(renderer3D.domElement);
+
+      controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
+      controls3D.enableDamping = true;
+
+      // Luces y rejilla 3D
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene3D.add(ambientLight);
+
+      // Renderizar geometrías DXF en espacio 3D real
+      const dxfGroup3D = new THREE.Group();
+      let centerX = 0, centerY = 0, centerZ = 0, countV = 0;
+
+      dxfParsedData.entities.forEach(ent => {
+        let materialColor = 0x00f2fe;
+        if (ent.colorIndex === 1) materialColor = 0xef4444;
+        else if (ent.colorIndex === 2) materialColor = 0xf59e0b;
+        else if (ent.colorIndex === 3) materialColor = 0x10b981;
+        else if (ent.colorIndex === 5) materialColor = 0x3b82f6;
+
+        const mat = new THREE.LineBasicMaterial({ color: materialColor });
+
+        if (ent.type === 'LINE' && ent.vertices) {
+          const points = [
+            new THREE.Vector3(ent.vertices[0].x, ent.vertices[0].z || 0, -ent.vertices[0].y),
+            new THREE.Vector3(ent.vertices[1].x, ent.vertices[1].z || 0, -ent.vertices[1].y)
+          ];
+          const geom = new THREE.BufferGeometry().setFromPoints(points);
+          dxfGroup3D.add(new THREE.Line(geom, mat));
+
+          centerX += ent.vertices[0].x + ent.vertices[1].x;
+          centerY += (ent.vertices[0].z || 0) + (ent.vertices[1].z || 0);
+          centerZ += (-ent.vertices[0].y) + (-ent.vertices[1].y);
+          countV += 2;
+        } else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
+          const points = ent.vertices.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
+          const geom = new THREE.BufferGeometry().setFromPoints(points);
+          dxfGroup3D.add(new THREE.Line(geom, mat));
+
+          ent.vertices.forEach(v => {
+            centerX += v.x; centerY += (v.z || 0); centerZ += (-v.y); countV++;
+          });
+        }
+      });
+
+      if (countV > 0) {
+        centerX /= countV; centerY /= countV; centerZ /= countV;
+        dxfGroup3D.position.set(-centerX, -centerY, -centerZ);
+        scene3D.add(dxfGroup3D);
+
+        const grid = new THREE.GridHelper(500, 50, 0x00f2fe, 0x1e293b);
+        scene3D.add(grid);
+
+        camera3D.position.set(0, 300, 300);
+        controls3D.target.set(0, 0, 0);
+        controls3D.update();
+      }
+
+      function animate3D() {
+        if (document.getElementById('modal3D').style.display === 'flex') {
+          requestAnimationFrame(animate3D);
+          controls3D.update();
+          renderer3D.render(scene3D, camera3D);
+        }
+      }
+      animate3D();
+    }
+
+    function cerrarVisor3D() {
+      document.getElementById('modal3D').style.display = 'none';
+    }
+
+    // OTROS FORMATOS CARTOGRÁFICOS
     let tempImageSrc = null;
 
     function prepararOrtofoto(event) {
@@ -915,7 +1203,7 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         tempImageSrc = e.target.result;
-        alert("📷 Imagen cargada. Ahora selecciona su correspondiente archivo World File (.tfw / .jgw) para georreferenciarla.");
+        alert("📷 Imagen cargada. Selecciona su archivo World File (.tfw / .jgw) para georreferenciarla.");
       };
       reader.readAsDataURL(file);
     }
@@ -930,39 +1218,25 @@
         const lines = e.target.result.trim().split(/\r?\n/);
         if (lines.length < 6) return alert("Archivo World File (.tfw/.jgw) no válido.");
 
-        const A = parseFloat(lines[0]); // Píxel size X
-        const D = parseFloat(lines[1]); // Rotación
-        const B = parseFloat(lines[2]); // Rotación
-        const E = parseFloat(lines[3]); // Píxel size Y (negativo)
-        const C = parseFloat(lines[4]); // Center X píxel (0,0)
-        const F = parseFloat(lines[5]); // Center Y píxel (0,0)
+        const A = parseFloat(lines[0]), D = parseFloat(lines[1]), B = parseFloat(lines[2]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
 
         const img = new Image();
         img.onload = function() {
           const huso = parseInt(document.getElementById('husoSelect').value);
-          const W = img.width;
-          const H = img.height;
+          const W = img.width, H = img.height;
+          const xMin = C, yMax = F, xMax = C + A * W, yMin = F + E * H;
+          const sw = utmALatLng(xMin, yMin, huso), ne = utmALatLng(xMax, yMax, huso);
 
-          const xMin = C;
-          const yMax = F;
-          const xMax = C + A * W;
-          const yMin = F + E * H;
-
-          const sw = utmALatLng(xMin, yMin, huso);
-          const ne = utmALatLng(xMax, yMax, huso);
-
-          const overlay = L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
-          rasterLayerGroup.addLayer(overlay);
+          L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
           map.fitBounds([sw, ne]);
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ Ortofoto georreferenciada superpuesta correctamente en ETRS89 H${huso}.`);
+          alert(`✔ Ortofoto superpuesta correctamente en ETRS89 H${huso}.`);
         };
         img.src = tempImageSrc;
       };
       reader.readAsText(file);
     }
 
-    // --- C) PDF GEORREFERENCIADO / CON ENCUADRE ---
     function importarPDFGeorreferenciado(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -975,8 +1249,7 @@
             const viewport = page.getViewport({ scale: 1.5 });
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+            canvas.height = viewport.height; canvas.width = viewport.width;
 
             page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
               const imgData = canvas.toDataURL('image/png');
@@ -986,13 +1259,11 @@
                 const parts = boundsStr.split(',').map(n => parseFloat(n.trim()));
                 if (parts.length === 4) {
                   const huso = parseInt(document.getElementById('husoSelect').value);
-                  const sw = utmALatLng(parts[0], parts[1], huso);
-                  const ne = utmALatLng(parts[2], parts[3], huso);
-
+                  const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
                   L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
                   map.fitBounds([sw, ne]);
                   switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-                  alert("✔ GeoPDF renderizado y georreferenciado en el visor cartográfico.");
+                  alert("✔ GeoPDF renderizado en el visor cartográfico.");
                 }
               }
             });
@@ -1002,7 +1273,6 @@
       reader.readAsArrayBuffer(file);
     }
 
-    // --- D) KML GOOGLE EARTH ---
     function importarKML(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1017,10 +1287,8 @@
         for (let i = 0; i < placemarks.length; i++) {
           const coords = placemarks[i].getElementsByTagName("coordinates")[0];
           if (coords) {
-            const rawText = coords.textContent.trim();
-            const tuples = rawText.split(/\s+/);
+            const tuples = coords.textContent.trim().split(/\s+/);
             const latLngs = [];
-
             tuples.forEach(t => {
               const parts = t.split(',').map(n => parseFloat(n));
               if (parts.length >= 2 && !isNaN(parts[0])) {
@@ -1028,25 +1296,21 @@
                 bounds.push([parts[1], parts[0]]);
               }
             });
-
             if (latLngs.length === 1) {
-              L.marker(latLngs[0]).addTo(vectorImportLayerGroup).bindPopup(placemarks[i].getElementsByTagName("name")[0]?.textContent || "Punto KML");
+              L.marker(latLngs[0]).addTo(vectorImportLayerGroup);
             } else if (latLngs.length > 1) {
               L.polyline(latLngs, { color: '#10b981', weight: 3 }).addTo(vectorImportLayerGroup);
             }
           }
         }
-
         if (bounds.length > 0) {
           map.fitBounds(L.latLngBounds(bounds));
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ Archivo KML cargado con ${placemarks.length} elementos vectoriales.`);
         }
       };
       reader.readAsText(file);
     }
 
-    // --- E) GEOJSON ---
     function importarGeoJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1055,19 +1319,14 @@
       reader.onload = function(e) {
         try {
           const json = JSON.parse(e.target.result);
-          const geoLayer = L.geoJSON(json, {
-            style: { color: '#f59e0b', weight: 3, opacity: 0.85 }
-          }).addTo(vectorImportLayerGroup);
-
+          const geoLayer = L.geoJSON(json, { style: { color: '#f59e0b', weight: 3 } }).addTo(vectorImportLayerGroup);
           map.fitBounds(geoLayer.getBounds());
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert("✔ Capa GeoJSON importada con éxito.");
         } catch (err) { alert("Error GeoJSON: " + err.message); }
       };
       reader.readAsText(file);
     }
 
-    // --- F) ASCII / CSV / GSI LEICA / TOPCON ---
     function importarASCII(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1081,26 +1340,15 @@
         lineas.forEach(l => {
           const cols = l.trim().split(/[\s,;\t]+/);
           if (cols.length >= 3 && !isNaN(parseFloat(cols[1])) && !isNaN(parseFloat(cols[2]))) {
-            const id = cols[0];
-            const x = parseFloat(cols[1]);
-            const y = parseFloat(cols[2]);
-            const z = cols[3] ? parseFloat(cols[3]) : 0;
-            const code = cols[4] || 'PT';
-
+            const id = cols[0], x = parseFloat(cols[1]), y = parseFloat(cols[2]), z = cols[3] ? parseFloat(cols[3]) : 0;
             const latLng = utmALatLng(x, y, huso);
             L.circleMarker(latLng, { radius: 4, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.9 })
-              .addTo(vectorImportLayerGroup)
-              .bindPopup(`<b>${id}</b> (${code})<br>E: ${x.toFixed(3)}<br>N: ${y.toFixed(3)}<br>Z: ${z.toFixed(3)}`);
-            
+              .addTo(vectorImportLayerGroup).bindPopup(`<b>${id}</b><br>E: ${x.toFixed(3)}<br>N: ${y.toFixed(3)}<br>Z: ${z.toFixed(3)}`);
             contador++;
           }
         });
-
         if (contador > 0) {
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ ${contador} Puntos topográficos ASCII/GSI importados en ETRS89 H${huso}.`);
-        } else {
-          alert("No se pudieron parsear coordenadas válidas del archivo de puntos.");
         }
       };
       reader.readAsText(file);

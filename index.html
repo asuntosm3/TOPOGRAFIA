@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v4.5</title>
+  <title>Topografía Pro 2026 - Field Station HUD v4.6 (3D Raycasting & CAD Picking Fix)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -272,21 +272,30 @@
     .format-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
     .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
 
+    /* MODAL 3D Y HUD FLOTANTE 3D */
     .modal-3d-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 7, 13, 0.92); backdrop-filter: blur(20px);
       z-index: 9999; display: none; align-items: center; justify-content: center;
     }
     .modal-3d-box {
-      width: 90vw; height: 85vh; background: #06090e; border: 1px solid var(--border-accent);
+      width: 92vw; height: 88vh; background: #06090e; border: 1px solid var(--border-accent);
       border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
       box-shadow: 0 0 40px rgba(0, 242, 254, 0.25); position: relative;
     }
     .modal-3d-header {
       padding: 12px 20px; background: rgba(13, 19, 31, 0.95); border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: center; z-index: 10;
     }
-    #canvas3DContainer { flex: 1; width: 100%; height: 100%; cursor: grab; }
+    #canvas3DContainer { flex: 1; width: 100%; height: 100%; cursor: crosshair; position: relative; }
+
+    .panel-props-3d {
+      position: absolute; bottom: 20px; left: 20px; z-index: 100;
+      background: rgba(8, 12, 20, 0.95); backdrop-filter: blur(20px);
+      border: 1px solid var(--border-accent); border-radius: 12px;
+      padding: 14px; width: 320px; box-shadow: 0 8px 32px rgba(0, 242, 254, 0.3);
+      display: none; flex-direction: column; gap: 8px; font-family: var(--font-mono); font-size: 0.8rem;
+    }
   </style>
 </head>
 <body>
@@ -299,7 +308,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v4.5 (ESTACIÓN UNIFICADA DE TOPOGRAFÍA)</span>
+        <span class="brand-sub">FIELD STATION HUD v4.6 (3D RAYCASTING & CAD SELECTION FIX)</span>
       </div>
     </div>
 
@@ -327,7 +336,6 @@
       <span>Visor CAD & Mapa</span>
     </button>
 
-    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA -->
     <button class="tab-btn" onclick="switchTab('tabTopo', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M7 7l10 10M7 17L17 7"/></svg>
       <span>Topografía (Replanteos & Campo & COGO)</span>
@@ -358,7 +366,7 @@
           <button class="tool-btn" title="Zoom Ventana" onclick="activarZoomVentana()" id="btnZoomBox">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/><circle cx="11" cy="11" r="4"/><path d="M21 21l-4.35-4.35"/></svg>
           </button>
-          <button class="tool-btn" title="Visor 3D Three.js" onclick="abrirVisor3D()" id="btn3DView">
+          <button class="tool-btn" title="Visor 3D Three.js con Raycasting" onclick="abrirVisor3D()" id="btn3DView">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           </button>
           <button class="tool-btn" title="Encuadrar CAD" onclick="ajustarExtensionDXF()">
@@ -407,7 +415,7 @@
       </div>
     </div>
 
-    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA (REPLANTEOS + LEVANTAMIENTOS + COGO) -->
+    <!-- PESTAÑA UNIFICADA DE TOPOGRAFÍA -->
     <div id="tabTopo" class="tab-content">
       
       <!-- SECCIÓN 1: REPLANTEOS EN CAMPO -->
@@ -421,7 +429,7 @@
           <!-- A. Replanteo por Eje / Carretera -->
           <div style="display:flex; flex-direction:column; gap:8px;">
             <b style="font-size:0.83rem; color:var(--accent-primary);">⚡ A. Replanteo de Ejes / Polilíneas</b>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Carga ejes LandXML/EJE o toca líneas en el visor CAD.</p>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Carga ejes LandXML/EJE o selecciona líneas en el visor CAD 2D/3D.</p>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
               <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
               <button class="btn btn-road" onclick="document.getElementById('roadFileInput').click()">
@@ -683,14 +691,26 @@
 
   </div>
 
-  <!-- MODAL VISOR 3D -->
+  <!-- MODAL VISOR 3D Y PANEL DE PROPIEDADES 3D -->
   <div id="modal3D" class="modal-3d-backdrop">
     <div class="modal-3d-box">
       <div class="modal-3d-header">
-        <h3>🧊 Visor 3D DXF CAD (Orbiting Controls)</h3>
+        <h3>🧊 Visor 3D DXF CAD (Raycasting & Selection Enabled)</h3>
         <button class="btn btn-primary" onclick="cerrarVisor3D()" style="padding:4px 12px; font-size:0.75rem;">Cerrar 3D</button>
       </div>
-      <div id="canvas3DContainer"></div>
+
+      <div id="canvas3DContainer">
+        <!-- HUD FLOTANTE DE PROPIEDADES EN 3D -->
+        <div id="panelProps3D" class="panel-props-3d">
+          <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
+          <div id="prop3DBody">Toca una línea para ver sus propiedades...</div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="convertirElemento3DAEje()">⚡ Convertir a Eje</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="replantearPuntoInicial3D()">🎯 Replantear P1</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -866,7 +886,7 @@
     }
 
     // =========================================================================
-    // 5. MOTOR DXF CON SELECCIÓN DE ALTA PRECISIÓN (2 CM)
+    // 5. MOTOR DXF CON SELECCIÓN DE ALTA PRECISIÓN (2 CM) EN 2D Y 3D
     // =========================================================================
     let ultimoDXFContenido = null;
     let dxfCapasMap = {};
@@ -985,11 +1005,20 @@
             const latLngs = verticesUTM.map(v => utmALatLng(v.x, v.y, huso));
             const featureGroup = L.featureGroup();
 
-            const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9 });
-            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 14, opacity: 0 });
+            const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9, interactive: true });
+            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 16, opacity: 0, interactive: true });
 
             featureGroup.addLayer(visibleLine);
             featureGroup.addLayer(touchBuffer);
+
+            const itemDXF = {
+              entidad: ent,
+              verticesUTM: verticesUTM,
+              layerName: layerName,
+              grafica: visibleLine,
+              latLngs: latLngs,
+              colorHex: colorStyle
+            };
 
             const handler = function(e) {
               L.DomEvent.stopPropagation(e);
@@ -1003,13 +1032,7 @@
             latLngs.forEach(p => boundsList.push(p));
             dxfCapasMap[layerName].push(featureGroup);
 
-            dxfEntidadesRenderizadas.push({
-              entidad: ent,
-              verticesUTM: verticesUTM,
-              layerName: layerName,
-              grafica: visibleLine,
-              latLngs: latLngs
-            });
+            dxfEntidadesRenderizadas.push(itemDXF);
           }
         });
 
@@ -1019,7 +1042,7 @@
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado correctamente. Entidades de línea y arcos listos para replanteo.`);
+          alert(`✔ DXF '${filename}' cargado. ${dxfEntidadesRenderizadas.length} elementos seleccionables en 2D y 3D.`);
         } else {
           alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
@@ -1028,7 +1051,7 @@
       }
     }
 
-    // HIT-TEST DE ALTA PRECISIÓN PARA LÍNEAS PARALELAS CERCANAS
+    // BUSCADOR DE SELECCIÓN DE ALTA PRECISIÓN 2D
     map.on('click', function(e) {
       if (dxfEntidadesRenderizadas.length === 0) return;
 
@@ -1049,7 +1072,7 @@
         }
       });
 
-      if (menorDistanciaPx <= 20 && mejorElemento) {
+      if (menorDistanciaPx <= 22 && mejorElemento) {
         seleccionarYActivarElementoCAD(mejorElemento.grafica, mejorElemento.entidad, mejorElemento.verticesUTM, mejorElemento.layerName);
       }
     });
@@ -1075,7 +1098,7 @@
           <b style="color:var(--accent-primary);">Alineación CAD (${entidadDXF.type})</b><br>
           Capa: <b>${layerName}</b><br>
           Longitud: <b style="color:#4ade80;">${longitudTotal.toFixed(3)} m</b><br>
-          Puntos/Curvas: <b>${verticesUTM.length}</b><br><br>
+          Vértices: <b>${verticesUTM.length}</b><br><br>
           <button class="btn btn-road" style="width:100%; padding:6px; font-size:0.75rem;" onclick="convertirVerticesAEjeDirecto()">
             ⚡ Convertir en Eje de Replanteo
           </button>
@@ -1149,10 +1172,160 @@
     }
 
     // =========================================================================
-    // 6. FUNCIONALIDADES DE REPLANTEO TOPOGRÁFICO Y CAMPO
+    // 6. VISOR 3D THREE.JS CON MOTOR DE SELECCIÓN RAYCASTING
     // =========================================================================
-    
-    // A. REPLANTEO DE EJES Y ALINEACIONES
+    let scene3D, camera3D, renderer3D, controls3D, raycaster3D, mouse3D;
+    let elemento3DSeleccionado = null;
+    let colorOriginal3DObj = null;
+    let itemDXFSeleccionado3D = null;
+
+    function abrirVisor3D() {
+      if (!dxfParsedData || !dxfParsedData.entities) return alert("Carga primero un archivo DXF.");
+
+      document.getElementById('modal3D').style.display = 'flex';
+      const container = document.getElementById('canvas3DContainer');
+      container.innerHTML = `
+        <div id="panelProps3D" class="panel-props-3d">
+          <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
+          <div id="prop3DBody">Toca una línea para ver sus propiedades...</div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="convertirElemento3DAEje()">⚡ Convertir a Eje</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="replantearPuntoInicial3D()">🎯 Replantear P1</button>
+          </div>
+        </div>
+      `;
+
+      const width = container.clientWidth, height = container.clientHeight;
+
+      scene3D = new THREE.Scene(); scene3D.background = new THREE.Color(0x06090e);
+      camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000);
+      renderer3D = new THREE.WebGLRenderer({ antialias: true });
+      renderer3D.setSize(width, height);
+      container.appendChild(renderer3D.domElement);
+
+      controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
+      controls3D.enableDamping = true;
+
+      raycaster3D = new THREE.Raycaster();
+      raycaster3D.params.Line.threshold = 8; // Sensibilidad táctil alta en 3D
+      mouse3D = new THREE.Vector2();
+
+      scene3D.add(new THREE.AmbientLight(0xffffff, 0.8));
+
+      const dxfGroup3D = new THREE.Group();
+      dxfGroup3D.name = "dxfGroup3D";
+      let centerX = 0, centerY = 0, centerZ = 0, countV = 0;
+
+      dxfEntidadesRenderizadas.forEach(item => {
+        const hexColor = parseInt(item.colorHex.replace('#', '0x')) || 0x00f2fe;
+        const mat = new THREE.LineBasicMaterial({ color: hexColor, linewidth: 2 });
+        const points = item.verticesUTM.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
+        const geom = new THREE.BufferGeometry().setFromPoints(points);
+        const lineMesh = new THREE.Line(geom, mat);
+        
+        lineMesh.userData = item; // Guardar referencia a la entidad CAD
+        dxfGroup3D.add(lineMesh);
+
+        item.verticesUTM.forEach(v => {
+          centerX += v.x; centerY += (v.z || 0); centerZ += (-v.y); countV++;
+        });
+      });
+
+      if (countV > 0) {
+        centerX /= countV; centerY /= countV; centerZ /= countV;
+        dxfGroup3D.position.set(-centerX, -centerY, -centerZ);
+        scene3D.add(dxfGroup3D);
+
+        const grid = new THREE.GridHelper(500, 50, 0x00f2fe, 0x1e293b);
+        scene3D.add(grid);
+
+        camera3D.position.set(0, 300, 300);
+        controls3D.target.set(0, 0, 0); controls3D.update();
+      }
+
+      // EVENTO DE SELECCIÓN POR RAYCASTING
+      renderer3D.domElement.addEventListener('pointerdown', onPointerDown3D);
+
+      function animate3D() {
+        if (document.getElementById('modal3D').style.display === 'flex') {
+          requestAnimationFrame(animate3D); controls3D.update(); renderer3D.render(scene3D, camera3D);
+        }
+      }
+      animate3D();
+    }
+
+    function onPointerDown3D(event) {
+      const rect = renderer3D.domElement.getBoundingClientRect();
+      mouse3D.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse3D.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster3D.setFromCamera(mouse3D, camera3D);
+      const group = scene3D.getObjectByName("dxfGroup3D");
+      if (!group) return;
+
+      const intersects = raycaster3D.intersectObjects(group.children, true);
+
+      if (intersects.length > 0) {
+        const selectedObj = intersects[0].object;
+        const item = selectedObj.userData;
+
+        if (elemento3DSeleccionado) {
+          elemento3DSeleccionado.material.color.setHex(colorOriginal3DObj);
+        }
+
+        elemento3DSeleccionado = selectedObj;
+        colorOriginal3DObj = selectedObj.material.color.getHex();
+        selectedObj.material.color.setHex(0xff0055); // Resaltado Rosa Neón
+
+        itemDXFSeleccionado3D = item;
+        mostrarPropsHUD3D(item);
+      }
+    }
+
+    function mostrarPropsHUD3D(item) {
+      const panel = document.getElementById('panelProps3D');
+      let len3D = 0;
+      let minZ = Infinity, maxZ = -Infinity;
+
+      for (let i = 0; i < item.verticesUTM.length - 1; i++) {
+        const v1 = item.verticesUTM[i], v2 = item.verticesUTM[i+1];
+        len3D += Math.hypot(v2.x - v1.x, v2.y - v1.y, (v2.z || 0) - (v1.z || 0));
+        minZ = Math.min(minZ, v1.z || 0, v2.z || 0);
+        maxZ = Math.max(maxZ, v1.z || 0, v2.z || 0);
+      }
+
+      document.getElementById('prop3DTitle').innerHTML = `🔹 ${item.entidad.type} (${item.layerName})`;
+      document.getElementById('prop3DBody').innerHTML = `
+        Longitud 3D: <b style="color:#4ade80;">${len3D.toFixed(3)} m</b><br>
+        Vértices: <b>${item.verticesUTM.length}</b><br>
+        Cota Z: <b>${minZ.toFixed(2)} m</b> a <b>${maxZ.toFixed(2)} m</b>
+      `;
+      panel.style.display = 'flex';
+    }
+
+    function convertirElemento3DAEje() {
+      if (!itemDXFSeleccionado3D) return;
+      convertirVerticesAEje(itemDXFSeleccionado3D.verticesUTM, itemDXFSeleccionado3D.layerName);
+      cerrarVisor3D();
+    }
+
+    function replantearPuntoInicial3D() {
+      if (!itemDXFSeleccionado3D || itemDXFSeleccionado3D.verticesUTM.length === 0) return;
+      const p1 = itemDXFSeleccionado3D.verticesUTM[0];
+      document.getElementById('replantearX').value = p1.x.toFixed(3);
+      document.getElementById('replantearY').value = p1.y.toFixed(3);
+      document.getElementById('replantearZ').value = (p1.z || 0).toFixed(3);
+
+      switchTab('tabTopo', document.querySelectorAll('.tab-btn')[1]);
+      cerrarVisor3D();
+      alert(`🎯 Punto inicial P1 (X:${p1.x.toFixed(3)}, Y:${p1.y.toFixed(3)}, Z:${(p1.z||0).toFixed(3)}) enviado a Replanteo de Puntos.`);
+    }
+
+    function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
+
+    // =========================================================================
+    // 7. FUNCIONALIDADES DE REPLANTEO TOPOGRÁFICO Y CAMPO
+    // =========================================================================
     let ejeCarretera = [];
     let carreteraLayerGroup = L.layerGroup().addTo(map);
 
@@ -1255,7 +1428,6 @@
       `;
     }
 
-    // B. REPLANTEO PUNTO A PUNTO (COORDENADAS)
     function seleccionarPuntoParaReplanteo() {
       const index = document.getElementById('selectPuntoReplanteo').value;
       if (index === "" || !listaPuntos[index]) return;
@@ -1304,7 +1476,6 @@
       `;
     }
 
-    // C. CONTROL ALTIMÉTRICO DE RASANTES
     function verificarCotaAltimetrica() {
       const zProj = parseFloat(document.getElementById('cotaProyectoTarget').value);
       if (isNaN(zProj)) return alert("Ingresa la Cota Rasante o de Proyecto.");
@@ -1318,7 +1489,6 @@
       document.getElementById('resControlCota').innerHTML = `Cota Terreno: ${zCurrent.toFixed(3)} m | Cota Proyecto: ${zProj.toFixed(3)} m ➔ ${estado}`;
     }
 
-    // D. LEVANTAMIENTO CON CÓDIGO DE CAMPO
     function capturarPuntoGPSConCodigo() {
       if (!navigator.geolocation) return alert("Sin soporte GPS.");
       const huso = parseInt(document.getElementById('husoSelect').value);
@@ -1366,7 +1536,6 @@
       });
     }
 
-    // E. ESTACIONAMIENTO POR 2 PUNTOS
     function calcularOrientacionBases() {
       const p1Str = document.getElementById('estacionA').value.split(/[\s,]+/);
       const p2Str = document.getElementById('estacionB').value.split(/[\s,]+/);
@@ -1384,7 +1553,7 @@
     }
 
     // =========================================================================
-    // 7. CÁLCULOS COGO & GEOMETRÍA
+    // 8. CÁLCULOS COGO & GEOMETRÍA
     // =========================================================================
     function calcularCOGOInverso() {
       const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
@@ -1435,7 +1604,7 @@
     }
 
     // =========================================================================
-    // 8. FORMATOS DE IMPORTACIÓN Y EXPORTACIÓN
+    // 9. FORMATOS DE IMPORTACIÓN Y EXPORTACIÓN
     // =========================================================================
     let tempImageSrc = null;
 
@@ -1575,65 +1744,6 @@
     function reproyectarCapasMapa() {
       if (ultimoDXFContenido) procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
     }
-
-    // VISOR 3D THREE.JS
-    let scene3D, camera3D, renderer3D, controls3D;
-
-    function abrirVisor3D() {
-      if (!dxfParsedData || !dxfParsedData.entities) return alert("Carga primero un archivo DXF.");
-
-      document.getElementById('modal3D').style.display = 'flex';
-      const container = document.getElementById('canvas3DContainer');
-      container.innerHTML = '';
-
-      const width = container.clientWidth, height = container.clientHeight;
-
-      scene3D = new THREE.Scene(); scene3D.background = new THREE.Color(0x06090e);
-      camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000);
-      renderer3D = new THREE.WebGLRenderer({ antialias: true });
-      renderer3D.setSize(width, height);
-      container.appendChild(renderer3D.domElement);
-
-      controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
-      controls3D.enableDamping = true;
-
-      scene3D.add(new THREE.AmbientLight(0xffffff, 0.8));
-
-      const dxfGroup3D = new THREE.Group();
-      let centerX = 0, centerY = 0, centerZ = 0, countV = 0;
-
-      dxfEntidadesRenderizadas.forEach(item => {
-        const mat = new THREE.LineBasicMaterial({ color: 0x00f2fe });
-        const points = item.verticesUTM.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
-        const geom = new THREE.BufferGeometry().setFromPoints(points);
-        dxfGroup3D.add(new THREE.Line(geom, mat));
-
-        item.verticesUTM.forEach(v => {
-          centerX += v.x; centerY += (v.z || 0); centerZ += (-v.y); countV++;
-        });
-      });
-
-      if (countV > 0) {
-        centerX /= countV; centerY /= countV; centerZ /= countV;
-        dxfGroup3D.position.set(-centerX, -centerY, -centerZ);
-        scene3D.add(dxfGroup3D);
-
-        const grid = new THREE.GridHelper(500, 50, 0x00f2fe, 0x1e293b);
-        scene3D.add(grid);
-
-        camera3D.position.set(0, 300, 300);
-        controls3D.target.set(0, 0, 0); controls3D.update();
-      }
-
-      function animate3D() {
-        if (document.getElementById('modal3D').style.display === 'flex') {
-          requestAnimationFrame(animate3D); controls3D.update(); renderer3D.render(scene3D, camera3D);
-        }
-      }
-      animate3D();
-    }
-
-    function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
     // EXPORTACIÓN DE DATOS
     let listaPuntos = [];

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v4.1</title>
+  <title>Topografía Pro 2026 - Field Station HUD v4.2 (Micro-Zoom 2cm Fix)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -294,7 +294,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v4.1 (CARTOGRAFÍA TOTAL IGN/ESRI/CATASTRO)</span>
+        <span class="brand-sub">FIELD STATION HUD v4.2 (MICRO-ZOOM 2CM & HIGH PRECISION)</span>
       </div>
     </div>
 
@@ -362,7 +362,7 @@
           </button>
         </div>
 
-        <!-- PANEL FLOTANTE 1: CAPAS CARTOGRÁFICAS (IGN / ESRI / CATASTRO / TODOS / NINGUNO) -->
+        <!-- PANEL FLOTANTE 1: CAPAS CARTOGRÁFICAS -->
         <div id="mapCartoPanel" class="map-cad-panel" style="right: 60px; left: auto;">
           <h4>
             <span>🌍 Mapas & Cartografía</span>
@@ -647,23 +647,32 @@
       }
     };
 
-    // 3. MAPA LEAFLET & GESTOR COMPLETO DE CAPAS CARTOGRÁFICAS
-    const map = L.map('map', { zoomControl: false, boxZoom: true }).setView([40.4167, -3.7037], 15);
+    // 3. MAPA LEAFLET CON SOPORTE DE MICRO-ZOOM ULTRA-PROFUNDO (MAXZOOM: 28)
+    const map = L.map('map', { 
+      zoomControl: false, 
+      boxZoom: true,
+      maxZoom: 28,
+      minZoom: 2
+    }).setView([40.4167, -3.7037], 15);
+    
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // DEFINICIÓN DE SERVICIOS CARTOGRÁFICOS (IGN, ESRI, CATASTRO)
+    // SERVICIOS CARTOGRÁFICOS CON MAXZOOM: 28 Y MAXNATIVEZOOM: 19
     const cartoLayers = {
       pnoa: L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
-        layers: 'OI.OrthoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0', attribution: '© IGN PNOA'
+        layers: 'OI.OrthoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0',
+        maxZoom: 28, maxNativeZoom: 19, attribution: '© IGN PNOA'
       }),
       ignBase: L.tileLayer.wms('https://www.ign.es/wms-inspire/ign-base', {
-        layers: 'IGNBaseTodo', format: 'image/png', transparent: true, version: '1.3.0', attribution: '© IGN España'
+        layers: 'IGNBaseTodo', format: 'image/png', transparent: true, version: '1.3.0',
+        maxZoom: 28, maxNativeZoom: 19, attribution: '© IGN España'
       }),
       esri: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 19, attribution: '© Esri'
+        maxZoom: 28, maxNativeZoom: 19, attribution: '© Esri'
       }),
       catastro: L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
-        layers: 'Catastro', format: 'image/png', transparent: true, version: '1.1.1', attribution: '© Catastro'
+        layers: 'Catastro', format: 'image/png', transparent: true, version: '1.1.1',
+        maxZoom: 28, maxNativeZoom: 19, attribution: '© Catastro'
       })
     };
 
@@ -671,7 +680,6 @@
     cartoLayers.pnoa.addTo(map);
     cartoLayers.catastro.addTo(map);
 
-    // CONTROL DE CAPAS CARTOGRÁFICAS (TODOS / NINGUNO / SELECCIÓN LIBRE)
     function togglePanelCartografia() {
       const panel = document.getElementById('mapCartoPanel');
       panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
@@ -775,7 +783,7 @@
     }
 
     // =========================================================================
-    // 5. MOTOR DXF CON ARCOS, BULGE Y SELECCIÓN FÁCIL
+    // 5. MOTOR DXF CON SELECCIÓN DE ALTA PRECISIÓN (2 CM)
     // =========================================================================
     let ultimoDXFContenido = null;
     let dxfCapasMap = {};
@@ -895,7 +903,7 @@
             const featureGroup = L.featureGroup();
 
             const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9 });
-            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 24, opacity: 0 });
+            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 14, opacity: 0 }); // Buffer ajustado para líneas de 2cm
 
             featureGroup.addLayer(visibleLine);
             featureGroup.addLayer(touchBuffer);
@@ -928,7 +936,7 @@
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado correctamente. Entidades de línea y arcos renderizadas en Huso ${huso}. Haz clic en cualquier elemento para replantear.`);
+          alert(`✔ DXF '${filename}' cargado correctamente. Soporte de zoom milimétrico activo.`);
         } else {
           alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
@@ -937,7 +945,7 @@
       }
     }
 
-    // HIT-TEST POR PROXIMIDAD EN MAPA
+    // HIT-TEST DE ALTA PRECISIÓN: Selecciona exactamente la línea más cercana al clic
     map.on('click', function(e) {
       if (dxfEntidadesRenderizadas.length === 0) return;
 
@@ -958,7 +966,7 @@
         }
       });
 
-      if (menorDistanciaPx <= 25 && mejorElemento) {
+      if (menorDistanciaPx <= 20 && mejorElemento) {
         seleccionarYActivarElementoCAD(mejorElemento.grafica, mejorElemento.entidad, mejorElemento.verticesUTM, mejorElemento.layerName);
       }
     });

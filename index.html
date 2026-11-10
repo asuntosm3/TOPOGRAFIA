@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD</title>
+  <title>Topografía Pro 2026 - Field Station HUD (Arcos & Replanteo Fix)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- Three.js + OrbitControls para Visor 3D de CAD -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -45,8 +44,7 @@
     * { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background-color: var(--bg-base);
       background-image: 
         radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.05) 0%, transparent 70%),
@@ -56,10 +54,8 @@
       color: var(--text-main);
       font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden;
     }
 
     /* HEADER TÉCNICO HUD */
@@ -68,11 +64,8 @@
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       padding: 8px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 1000; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
 
     .brand { display: flex; align-items: center; gap: 12px; }
@@ -94,7 +87,6 @@
     }
     .brand-sub { font-size: 0.68rem; font-family: var(--font-mono); color: var(--accent-primary); letter-spacing: 0.12em; text-transform: uppercase; }
 
-    /* BADGE GLOBAL DE GPS CON PRECISIÓN */
     .header-controls { display: flex; gap: 12px; align-items: center; }
 
     .rtk-status-badge {
@@ -102,10 +94,8 @@
       padding: 6px 14px; border-radius: 20px;
       font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
       border: 1px solid var(--border);
-      background: rgba(13, 19, 31, 0.9);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
+      background: rgba(13, 19, 31, 0.9); backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); transition: all 0.3s ease;
     }
 
     .status-led {
@@ -149,7 +139,6 @@
       font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;
     }
     .tab-btn svg { width: 16px; height: 16px; stroke-width: 2; }
-
     .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
     .tab-btn.active {
       color: #000; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
@@ -161,12 +150,11 @@
     .tab-content { display: none; width: 100%; height: 100%; padding: 12px; overflow-y: auto; }
     .tab-content.active { display: flex; flex-direction: column; gap: 12px; }
 
-    /* TARJETAS DE DISEÑO TÉCNICO HUD */
+    /* TARJETAS Y CONTENEDOR DE MAPA */
     .glass-card {
       background: var(--bg-surface); backdrop-filter: blur(16px);
       border: 1px solid var(--border); border-radius: 14px; padding: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      position: relative; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); position: relative; overflow: hidden;
     }
     .glass-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
@@ -178,12 +166,11 @@
       margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
       text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-mono);
     }
-    .card-title svg { width: 18px; height: 18px; }
 
     #mapWrapper { position: relative; width: 100%; height: 100%; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
     #map { width: 100%; height: 100%; background: #06090e; }
 
-    /* BARRA DE HERRAMIENTAS INTERACTIVAS EN MAPA */
+    /* CONTROLES FLOTANTES */
     .map-tools-bar {
       position: absolute; top: 12px; right: 12px; z-index: 999;
       display: flex; flex-direction: column; gap: 8px;
@@ -193,13 +180,11 @@
       background: rgba(8, 12, 20, 0.9); backdrop-filter: blur(16px);
       border: 1px solid var(--border-accent); color: var(--accent-primary);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     }
     .tool-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
     .tool-btn.active { background: var(--accent-primary); color: #000; box-shadow: 0 0 12px rgba(0,242,254,0.6); }
 
-    /* PANEL CAD / CAPAS FLOTANTE EN MAPA */
     .map-cad-panel {
       position: absolute; top: 12px; left: 12px; z-index: 999;
       background: rgba(8, 12, 20, 0.94); backdrop-filter: blur(16px);
@@ -209,23 +194,15 @@
     }
     .map-cad-panel h4 { margin: 0 0 8px 0; font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-cad); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
 
-    /* BOTÓN FLOTANTE LEAFLET CENTRADO GPS */
-    .leaflet-touch .map-gps-btn,
-    .map-gps-btn {
-      background: rgba(8, 12, 20, 0.9) !important;
-      backdrop-filter: blur(16px);
-      border: 2px solid var(--accent-primary) !important;
-      color: var(--accent-primary) !important;
-      width: 48px !important; height: 48px !important;
-      border-radius: 50% !important;
+    .leaflet-touch .map-gps-btn, .map-gps-btn {
+      background: rgba(8, 12, 20, 0.9) !important; backdrop-filter: blur(16px);
+      border: 2px solid var(--accent-primary) !important; color: var(--accent-primary) !important;
+      width: 48px !important; height: 48px !important; border-radius: 50% !important;
       display: flex !important; align-items: center !important; justify-content: center !important;
-      cursor: pointer !important;
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4) !important;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      cursor: pointer !important; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4) !important;
       margin-bottom: 16px !important; margin-right: 16px !important;
     }
     .map-gps-btn:hover { transform: scale(1.08); background: var(--accent-primary) !important; color: #000 !important; }
-    .map-gps-btn:active { transform: scale(0.92); }
 
     .user-gps-pulse { width: 16px; height: 16px; background: #00f2fe; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 16px #00f2fe; position: relative; }
     .user-gps-pulse::after {
@@ -235,7 +212,7 @@
     }
     @keyframes pulse-ring { 0% { transform: scale(0.3); opacity: 1; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
 
-    /* BOTONES MODERNOS CON SVG */
+    /* BOTONES Y FORMULARIO */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);
@@ -244,55 +221,37 @@
     }
     .btn svg { width: 16px; height: 16px; }
     .btn:hover { border-color: var(--border-accent); background: rgba(255, 255, 255, 0.05); transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-
+    
     .btn-primary { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #000; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 242, 254, 0.3); }
-    .btn-primary svg { stroke: #000; }
-    .btn-primary:hover { box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5); }
-
     .btn-cad { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3); }
-    .btn-cad svg { stroke: #fff; }
-    .btn-cad:hover { box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5); }
-
-    .btn-raster { background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3); }
+    .btn-raster { background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); color: #fff; border: none; font-weight: 700; }
     .btn-road { background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(255, 0, 85, 0.3); }
 
     .input-field {
       background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); color: var(--text-main);
-      padding: 10px 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.85rem;
-      outline: none; width: 100%; transition: all 0.2s ease;
+      padding: 10px 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.85rem; outline: none; width: 100%;
     }
-    .input-field:focus { border-color: var(--accent-primary); box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
 
     .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
     .grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 
     .telemetry-road {
       background: rgba(255, 0, 85, 0.08); border-left: 4px solid var(--accent-road);
-      padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.88rem;
-      color: #f8fafc; display: flex; flex-direction: column; gap: 6px;
+      padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.88rem; color: #f8fafc;
+      display: flex; flex-direction: column; gap: 6px;
     }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
-    th {
-      background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 12px;
-      text-align: left; border-bottom: 1px solid var(--border); font-size: 0.75rem;
-      font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em;
-    }
+    th { background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-family: var(--font-mono); text-transform: uppercase; }
     td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); font-family: var(--font-mono); }
-    tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
     .format-card {
-      background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px; transition: all 0.2s ease;
+      background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
       display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
     }
-    .format-card:hover { border-color: var(--border-accent); background: rgba(15, 23, 42, 0.9); transform: translateY(-2px); }
     .format-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; }
     .format-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
-    .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* MODAL VISOR 3D INTERACTIVO */
     .modal-3d-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 7, 13, 0.92); backdrop-filter: blur(20px);
@@ -307,14 +266,7 @@
       padding: 12px 20px; background: rgba(13, 19, 31, 0.95); border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
     }
-    .modal-3d-header h3 { margin: 0; font-size: 1rem; color: var(--accent-primary); font-family: var(--font-mono); }
     #canvas3DContainer { flex: 1; width: 100%; height: 100%; cursor: grab; }
-    #canvas3DContainer:active { cursor: grabbing; }
-    .modal-3d-instructions {
-      position: absolute; bottom: 16px; left: 16px; z-index: 10;
-      background: rgba(8, 12, 20, 0.85); padding: 8px 14px; border-radius: 8px;
-      border: 1px solid var(--border); font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);
-    }
   </style>
 </head>
 <body>
@@ -327,12 +279,11 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v3.8</span>
+        <span class="brand-sub">FIELD STATION HUD v3.9 (ARCOS & REPLANTEO FIX)</span>
       </div>
     </div>
 
     <div class="header-controls">
-      <!-- BADGE CON PRECISIÓN CONTINUA -->
       <div id="rtkBadge" class="rtk-status-badge status-single">
         <span class="status-led"></span>
         <span id="rtkStatusText">GNSS: BUSCANDO SEÑAL</span>
@@ -349,7 +300,7 @@
     </div>
   </header>
 
-  <!-- NAVEGACIÓN MODULAR TÉCNICA -->
+  <!-- NAVEGACIÓN MODULAR -->
   <nav class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('tabMap', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
@@ -380,20 +331,18 @@
       <div id="mapWrapper">
         <div id="map"></div>
 
-        <!-- BARRA DE HERRAMIENTAS INTERACTIVAS EN MAPA -->
         <div class="map-tools-bar">
-          <button class="tool-btn" title="Zoom Ventana (Arrastrar encuadre)" onclick="activarZoomVentana()" id="btnZoomBox">
+          <button class="tool-btn" title="Zoom Ventana" onclick="activarZoomVentana()" id="btnZoomBox">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/><circle cx="11" cy="11" r="4"/><path d="M21 21l-4.35-4.35"/></svg>
           </button>
-          <button class="tool-btn" title="Rotar Vista 3D (Visor Three.js orbit)" onclick="abrirVisor3D()" id="btn3DView">
+          <button class="tool-btn" title="Visor 3D Three.js" onclick="abrirVisor3D()" id="btn3DView">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           </button>
-          <button class="tool-btn" title="Ver todo el CAD / Ajustar Extensión" onclick="ajustarExtensionDXF()">
+          <button class="tool-btn" title="Encuadrar CAD" onclick="ajustarExtensionDXF()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           </button>
         </div>
 
-        <!-- PANEL DE CONTROL DE CAPAS CAD FLOTANTE -->
         <div id="mapCadPanel" class="map-cad-panel">
           <h4>
             <span>Capas DXF / CAD</span>
@@ -412,7 +361,7 @@
           Módulo de Alineaciones y Ejes de Carreteras
         </div>
         <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Importa ejes desde <b>TCP-MDT / ISTRAM (LandXML / EJE)</b> o <b>selecciona una línea/polilínea directamente desde el Visor DXF</b>.
+          Importa ejes desde <b>TCP-MDT / ISTRAM (LandXML / EJE)</b> o <b>toca cualquier línea/arco directamente en el Visor CAD</b>.
         </p>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <input type="file" id="roadFileInput" accept=".xml,.eje,.csv,.txt" style="display:none;" onchange="cargarEjeCarretera(event)">
@@ -427,7 +376,6 @@
         </div>
       </div>
 
-      <!-- TELEMETRÍA DE REPLANTEO DE CARRETERA -->
       <div id="roadTelemetryBox" class="glass-card" style="display:none;">
         <div class="card-title">Telemetría de Replanteo de Eje (PK + Offset + Rasante)</div>
         <div id="roadMetrics" class="telemetry-road">
@@ -440,48 +388,33 @@
     <div id="tabCOGO" class="tab-content">
       <div class="grid-2col">
         <div class="glass-card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 21V3l18 18"/></svg>
-            COGO Inverso (Distancia & Azimut)
-          </div>
+          <div class="card-title">COGO Inverso (Distancia & Azimut)</div>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <input type="text" id="cogoP1" class="input-field" placeholder="Punto 1 (Easting, Northing, Cota)">
             <input type="text" id="cogoP2" class="input-field" placeholder="Punto 2 (Easting, Northing, Cota)">
-            <button class="btn btn-primary" onclick="calcularCOGOInverso()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
-              Calcular Distancia y Azimut
-            </button>
+            <button class="btn btn-primary" onclick="calcularCOGOInverso()">Calcular Distancia y Azimut</button>
             <div id="resCOGOInverso" style="font-family:var(--font-mono); font-size:0.83rem; color:var(--accent-primary); margin-top:4px;"></div>
           </div>
         </div>
 
         <div class="glass-card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="12" x2="16" y2="8"/></svg>
-            Radiación Directa (Punto Nuevo)
-          </div>
+          <div class="card-title">Radiación Directa (Punto Nuevo)</div>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <input type="text" id="radP1" class="input-field" placeholder="Estación Base (Easting, Northing, Cota)">
             <input type="number" id="radAzimut" class="input-field" placeholder="Azimut (grados decimales °)">
             <input type="number" id="radDist" class="input-field" placeholder="Distancia Horizontal (m)">
-            <button class="btn btn-primary" onclick="calcularRadiacionDirecta()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
-              Calcular Nuevo Punto
-            </button>
+            <button class="btn btn-primary" onclick="calcularRadiacionDirecta()">Calcular Nuevo Punto</button>
             <div id="resRadiacion" style="font-family:var(--font-mono); font-size:0.83rem; color:var(--accent-primary); margin-top:4px;"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PESTAÑA 4: CONFIGURACIÓN GNSS / RTK -->
+    <!-- PESTAÑA 4: CONFIGURACIÓN GNSS -->
     <div id="tabGNSS" class="tab-content">
       <div class="grid-2col">
         <div class="glass-card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4m-8.4 0a6 6 0 0 1 0-8.4"/></svg>
-            Selección de Receptor GNSS
-          </div>
+          <div class="card-title">Selección de Receptor GNSS</div>
           <div style="margin-bottom: 12px;">
             <label style="font-size:0.82rem; color:var(--text-muted);">Fuente de datos de ubicación:</label>
             <select id="gpsSourceSelect" class="input-field" style="margin-top:6px;" onchange="cambiarFuenteGPS()">
@@ -492,10 +425,7 @@
         </div>
 
         <div class="glass-card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            Caster NTRIP (IGN España)
-          </div>
+          <div class="card-title">Caster NTRIP (IGN España)</div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <input type="text" class="input-field" value="ergnss-caster.ign.es:2101" readonly>
             <input type="text" class="input-field" value="Mountpoint: NEAREST3 (RTCM 3.2)" readonly>
@@ -504,45 +434,26 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 5: IMPORTAR / EXPORTAR & DATOS -->
+    <!-- PESTAÑA 5: IMPORTAR / EXPORTAR -->
     <div id="tabData" class="tab-content">
       <div class="glass-card">
-        <div class="card-title" style="color: var(--accent-primary);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Centro de Importación Cartográfica y Topográfica
-        </div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Soporte multiformato directo con conversión a ETRS89 (Husos 28, 29, 30, 31) y superposición nativa en el mapa Leaflet / PNOA.
-        </p>
+        <div class="card-title" style="color: var(--accent-primary);">Centro de Importación Cartográfica y Topográfica</div>
+        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">Soporte multiformato con conversión automática ETRS89 y trazado de arcos de precisión.</p>
 
         <div class="grid-3col" style="margin-top:14px;">
-          
-          <!-- 1. DXF AutoCAD -->
           <div class="format-card">
             <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-cad)" stroke-width="2" width="20" height="20"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                AutoCAD DXF
-                <span class="format-badge">.dxf</span>
-              </div>
-              <div class="format-desc">Geometría CAD 2D/3D (Líneas, Polilíneas, Círculos, Arcos, Puntos y Capas).</div>
+              <div class="format-header">AutoCAD DXF <span class="format-badge">.dxf</span></div>
+              <div class="format-desc">Geometría CAD (Líneas, Polilíneas curvas con Bulge, Arcos, Círculos).</div>
             </div>
             <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="importarDXF(event)">
-            <button class="btn btn-cad" onclick="document.getElementById('dxfFileInput').click()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Cargar DXF CAD
-            </button>
+            <button class="btn btn-cad" onclick="document.getElementById('dxfFileInput').click()">Cargar DXF CAD</button>
           </div>
 
-          <!-- 2. GeoTIFF / Ortofoto + World File -->
           <div class="format-card">
             <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-raster)" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Ortofoto + World File
-                <span class="format-badge">.tfw / .tif / .jgw</span>
-              </div>
-              <div class="format-desc">Imágenes raster (TIF, JPG, PNG) posicionadas con archivo de calibración (.tfw/.jgw).</div>
+              <div class="format-header">Ortofoto + World File <span class="format-badge">.tfw / .tif</span></div>
+              <div class="format-desc">Imágenes raster calibradas mediante archivo World File.</div>
             </div>
             <div style="display:flex; gap:6px;">
               <input type="file" id="rasterImgInput" accept=".tif,.tiff,.jpg,.jpeg,.png" style="display:none;" onchange="prepararOrtofoto(event)">
@@ -552,110 +463,41 @@
             </div>
           </div>
 
-          <!-- 3. GeoPDF Georreferenciado -->
           <div class="format-card">
             <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6"/><path d="M12 12v6"/></svg>
-                PDF Georreferenciado
-                <span class="format-badge">.pdf</span>
-              </div>
-              <div class="format-desc">Planos y mapas PDF con posicionamiento espacial o encuadre de coordenadas ETRS89.</div>
+              <div class="format-header">PDF Georreferenciado <span class="format-badge">.pdf</span></div>
+              <div class="format-desc">Planos PDF con enmarque de coordenadas ETRS89.</div>
             </div>
             <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="importarPDFGeorreferenciado(event)">
-            <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="document.getElementById('pdfFileInput').click()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Cargar GeoPDF
-            </button>
+            <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="document.getElementById('pdfFileInput').click()">Cargar GeoPDF</button>
           </div>
-
-          <!-- 4. KML / KMZ Google Earth -->
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" width="20" height="20"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                Google Earth KML
-                <span class="format-badge">.kml / .kmz</span>
-              </div>
-              <div class="format-desc">Vectores, trazados de campo, perímetros y puntos exportados de Google Earth.</div>
-            </div>
-            <input type="file" id="kmlFileInput" accept=".kml,.xml" style="display:none;" onchange="importarKML(event)">
-            <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="document.getElementById('kmlFileInput').click()">Cargar KML</button>
-          </div>
-
-          <!-- 5. GeoJSON Vectorial -->
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="20" height="20"><path d="M16 16l5-5-5-5M8 8l-5 5 5 5"/></svg>
-                GIS GeoJSON
-                <span class="format-badge">.json / .geojson</span>
-              </div>
-              <div class="format-desc">Capa de datos SIG estandarizada con geometrías y atributos asociados.</div>
-            </div>
-            <input type="file" id="geojsonFileInput" accept=".geojson,.json" style="display:none;" onchange="importarGeoJSON(event)">
-            <button class="btn" style="border-color:#f59e0b; color:#f59e0b;" onclick="document.getElementById('geojsonFileInput').click()">Cargar GeoJSON</button>
-          </div>
-
-          <!-- 6. Puntos ASCII / CSV / GSI Leica -->
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                Puntos ASCII / GSI
-                <span class="format-badge">.csv / .txt / .gsi</span>
-              </div>
-              <div class="format-desc">Listados de taquimetría de Estación Total o GNSS (ID, X, Y, Z, Código).</div>
-            </div>
-            <input type="file" id="asciiFileInput" accept=".csv,.txt,.gsi,.sdr" style="display:none;" onchange="importarASCII(event)">
-            <button class="btn btn-primary" onclick="document.getElementById('asciiFileInput').click()">Importar Puntos</button>
-          </div>
-
         </div>
       </div>
 
-      <!-- SECCIÓN DE EXPORTACIÓN Y LISTADO DE PUNTOS -->
       <div class="glass-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-          <div class="card-title" style="margin:0;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-            Listado de Puntos Registrados (ETRS89 / REDNAP)
-          </div>
+          <div class="card-title" style="margin:0;">Listado de Puntos Registrados (ETRS89 / REDNAP)</div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-primary" onclick="exportarCSV()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Exportar CSV
-            </button>
-            <button class="btn btn-cad" onclick="exportarDXF()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>
-              Exportar DXF
-            </button>
+            <button class="btn btn-primary" onclick="exportarCSV()">Exportar CSV</button>
+            <button class="btn btn-cad" onclick="exportarDXF()">Exportar DXF</button>
           </div>
         </div>
         <div style="overflow-x:auto;">
           <table id="tablaPuntos">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Easting (E)</th>
-                <th>Northing (N)</th>
-                <th>Cota NAP (H)</th>
-                <th>Cota Elips. (h)</th>
-                <th>N (Geoide)</th>
-                <th>Precisión (±)</th>
-                <th>Fuente</th>
+                <th>ID</th><th>Easting (E)</th><th>Northing (N)</th><th>Cota NAP (H)</th><th>Cota Elips. (h)</th><th>N (Geoide)</th><th>Precisión (±)</th><th>Fuente</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
-
     </div>
 
   </div>
 
-  <!-- MODAL VISOR 3D THREE.JS -->
+  <!-- MODAL VISOR 3D -->
   <div id="modal3D" class="modal-3d-backdrop">
     <div class="modal-3d-box">
       <div class="modal-3d-header">
@@ -663,9 +505,6 @@
         <button class="btn btn-primary" onclick="cerrarVisor3D()" style="padding:4px 12px; font-size:0.75rem;">Cerrar 3D</button>
       </div>
       <div id="canvas3DContainer"></div>
-      <div class="modal-3d-instructions">
-        Rotar: Clic Izquierdo + Arrastrar | Pan: Clic Derecho + Arrastrar | Zoom: Rueda del Ratón
-      </div>
     </div>
   </div>
 
@@ -683,7 +522,7 @@
       }
     }
 
-    // 2. CONFIGURACIÓN GEODÉSICA ETRS89 (UTM HUSOS ESPAÑA)
+    // 2. PROYECCIONES ETRS89
     proj4.defs("EPSG:25828", "+proj=utm +zone=28 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
     proj4.defs("EPSG:25829", "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
     proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
@@ -698,90 +537,60 @@
       return [lat, lng];
     }
 
-    // 3. MODELO DE GEOIDE IGN REDNAP
+    // GEOIDE REDNAP
     const GeoideIGN = {
       elipsoidalAOrtometrica: function(lat, lng, hElipsoidal) {
         return { cotaNAP: hElipsoidal - 50.2, ondulacionN: 50.2 };
       }
     };
 
-    // 4. MAPA LEAFLET Y SERVICIOS WMS IGN
+    // 3. MAPA LEAFLET
     const map = L.map('map', { zoomControl: false, boxZoom: true }).setView([40.4167, -3.7037], 15);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const pnoaLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
-      layers: 'OI.OrtoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0',
-      attribution: '© IGN - PNOA'
+      layers: 'OI.OrtoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0'
     }).addTo(map);
-
-    const esriSatLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, attribution: '© Esri'
-    });
 
     const catastroLayer = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
-      layers: 'Catastro', format: 'image/png', transparent: true, version: '1.1.1',
-      attribution: '© Catastro'
+      layers: 'Catastro', format: 'image/png', transparent: true, version: '1.1.1'
     }).addTo(map);
 
-    const ignBaseLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/ign-base', {
-      layers: 'IGNBaseTodo', format: 'image/png', transparent: false, version: '1.3.0',
-      attribution: '© IGN'
-    });
+    L.control.layers({ "PNOA Ortofoto": pnoaLayer }, { "Catastro Vectorial": catastroLayer }, { position: 'topright' }).addTo(map);
 
-    L.control.layers(
-      { "PNOA Ortofoto": pnoaLayer, "Esri Satélite": esriSatLayer, "Topográfico IGN": ignBaseLayer },
-      { "Catastro Vectorial": catastroLayer },
-      { position: 'topright' }
-    ).addTo(map);
-
-    // GRUPOS DE CAPAS PARA IMPORTACIONES
     const dxfLayerGroup = L.layerGroup().addTo(map);
-    const rasterLayerGroup = L.layerGroup().addTo(map);
     const vectorImportLayerGroup = L.layerGroup().addTo(map);
 
-    // INYECCIÓN NATIVA DEL BOTÓN GPS CENTRADO
+    // BOTÓN GPS
     const GpsCenterControl = L.Control.extend({
       options: { position: 'bottomright' },
       onAdd: function(map) {
         const btn = L.DomUtil.create('button', 'map-gps-btn');
         btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`;
         btn.title = "Centrar en mi Posición";
-        btn.onclick = function(e) {
-          L.DomEvent.stopPropagation(e);
-          L.DomEvent.preventDefault(e);
-          centrarEnPosicionGPS();
-        };
+        btn.onclick = function(e) { L.DomEvent.stopPropagation(e); centrarEnPosicionGPS(); };
         return btn;
       }
     });
     map.addControl(new GpsCenterControl());
 
-    // HERRAMIENTA ZOOM VENTANA (BOX ZOOM)
     let modoBoxZoom = false;
     function activarZoomVentana() {
       modoBoxZoom = !modoBoxZoom;
       const btn = document.getElementById('btnZoomBox');
       if (modoBoxZoom) {
-        btn.classList.add('active');
-        map.dragging.disable();
-        map.boxZoom.addHooks();
-        alert("🔍 Zoom Ventana activado: Mantén pulsado y arrastra en el mapa para encuadrar la zona.");
+        btn.classList.add('active'); map.dragging.disable(); map.boxZoom.addHooks();
       } else {
-        btn.classList.remove('active');
-        map.dragging.enable();
+        btn.classList.remove('active'); map.dragging.enable();
       }
     }
 
-    map.on('boxzoomend', function(e) {
-      modoBoxZoom = false;
-      document.getElementById('btnZoomBox').classList.remove('active');
-      map.dragging.enable();
+    map.on('boxzoomend', function() {
+      modoBoxZoom = false; document.getElementById('btnZoomBox').classList.remove('active'); map.dragging.enable();
     });
 
-    // 5. TELEMETRÍA Y CONTROL DE PRECISIÓN DE GPS (SIEMPRE VISIBLE)
-    let userMarker = null;
-    let userAccuracyCircle = null;
-    let ultimaPosicionGPS = null;
+    // 4. TELEMETRÍA GPS
+    let userMarker = null, userAccuracyCircle = null, ultimaPosicionGPS = null;
 
     function formatearPrecision(acc) {
       if (acc === null || acc === undefined || isNaN(acc)) return "±--";
@@ -789,20 +598,7 @@
     }
 
     function cambiarFuenteGPS() {
-      const fuente = document.getElementById('gpsSourceSelect').value;
-      if (ultimaPosicionGPS) {
-        actualizarBadgeRTK(ultimaPosicionGPS.coords.accuracy);
-      } else {
-        const badge = document.getElementById('rtkBadge');
-        const text = document.getElementById('rtkStatusText');
-        if (fuente === 'INTERNAL') {
-          badge.className = 'rtk-status-badge status-internal';
-          text.innerHTML = `📱 TABLET | SIN SEÑAL`;
-        } else {
-          badge.className = 'rtk-status-badge status-single';
-          text.innerHTML = `📡 SETTOP RTK | ESPERANDO FIX`;
-        }
-      }
+      if (ultimaPosicionGPS) actualizarBadgeRTK(ultimaPosicionGPS.coords.accuracy);
     }
 
     function actualizarBadgeRTK(acc) {
@@ -815,81 +611,98 @@
         badge.className = 'rtk-status-badge status-internal';
         text.innerHTML = `📱 TABLET GPS | ${precisionStr}`;
       } else {
-        if (acc <= 0.05) {
-          badge.className = 'rtk-status-badge status-fix';
-          text.innerHTML = `🟢 SETTOP FIX | ${precisionStr}`;
-        } else if (acc <= 0.5) {
-          badge.className = 'rtk-status-badge status-float';
-          text.innerHTML = `🟡 SETTOP FLOAT | ${precisionStr}`;
-        } else {
-          badge.className = 'rtk-status-badge status-single';
-          text.innerHTML = `🔴 SETTOP AUTÓNOMO | ${precisionStr}`;
-        }
+        if (acc <= 0.05) { badge.className = 'rtk-status-badge status-fix'; text.innerHTML = `🟢 SETTOP FIX | ${precisionStr}`; }
+        else if (acc <= 0.5) { badge.className = 'rtk-status-badge status-float'; text.innerHTML = `🟡 SETTOP FLOAT | ${precisionStr}`; }
+        else { badge.className = 'rtk-status-badge status-single'; text.innerHTML = `🔴 SETTOP AUTÓNOMO | ${precisionStr}`; }
       }
     }
 
     function centrarEnPosicionGPS() {
-      const tabMap = document.getElementById('tabMap');
-      if (!tabMap.classList.contains('active')) {
-        const firstTab = document.querySelectorAll('.tab-btn')[0];
-        if (firstTab) firstTab.click();
-      }
-
-      setTimeout(() => {
-        map.invalidateSize();
-        if (!navigator.geolocation) return alert("Sin soporte Geolocation GPS en este dispositivo.");
-
-        navigator.geolocation.getCurrentPosition((pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const accuracy = pos.coords.accuracy;
-          ultimaPosicionGPS = pos;
-
-          actualizarBadgeRTK(accuracy);
-
-          if (userMarker) {
-            userMarker.setLatLng([lat, lng]);
-            userAccuracyCircle.setLatLng([lat, lng]);
-            userAccuracyCircle.setRadius(accuracy);
-          } else {
-            const userIcon = L.divIcon({
-              className: 'user-gps-marker',
-              html: '<div class="user-gps-pulse"></div>',
-              iconSize: [16, 16],
-              iconAnchor: [8, 8]
-            });
-
-            userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
-            userAccuracyCircle = L.circle([lat, lng], {
-              radius: accuracy,
-              color: '#00f2fe',
-              fillColor: '#00f2fe',
-              fillOpacity: 0.15,
-              weight: 1
-            }).addTo(map);
-          }
-
-          map.flyTo([lat, lng], 18, { animate: true, duration: 1.0 });
-
-          if (ejeCarretera.length > 0) {
-            calcularReplanteoCarretera(pos);
-          }
-        }, (err) => alert("Error al obtener señal GPS: " + err.message), { enableHighAccuracy: true });
-      }, 150);
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((pos) => {
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude, lng = pos.coords.longitude, accuracy = pos.coords.accuracy;
         ultimaPosicionGPS = pos;
-        actualizarBadgeRTK(pos.coords.accuracy);
-      }, null, { enableHighAccuracy: true });
+        actualizarBadgeRTK(accuracy);
+
+        if (userMarker) {
+          userMarker.setLatLng([lat, lng]);
+          userAccuracyCircle.setLatLng([lat, lng]).setRadius(accuracy);
+        } else {
+          const userIcon = L.divIcon({ className: 'user-gps-marker', html: '<div class="user-gps-pulse"></div>', iconSize: [16, 16], iconAnchor: [8, 8] });
+          userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
+          userAccuracyCircle = L.circle([lat, lng], { radius: accuracy, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.15 }).addTo(map);
+        }
+        map.flyTo([lat, lng], 18, { animate: true });
+        if (ejeCarretera.length > 0) calcularReplanteoCarretera(pos);
+      }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
     }
 
-    // 6. MOTOR DE IMPORTACIÓN Y VISOR CAD DXF INTERACTIVO
+    // =========================================================================
+    // 5. MOTOR DXF: GEOMETRÍA DE ARCOS, BULGE Y SELECCIÓN TÁCTIL DE REPLANTEO
+    // =========================================================================
     let ultimoDXFContenido = null;
-    let dxfCapasMap = {}; // Mapa de capas { 'nombreCapa': [capaLeaflet1, capaLeaflet2] }
+    let dxfCapasMap = {};
     let dxfParsedData = null;
     let dxfBoundsGlobal = null;
+    let dxfEntidadesRenderizadas = []; // Almacena entidades para selección por proximidad
+
+    // MATEMÁTICAS: Discretización de Arcos en Polilíneas (Bulge)
+    function interpolarSegmentoBulge(v1, v2) {
+      if (!v1.bulge || Math.abs(v1.bulge) < 1e-6) {
+        return [{ x: v1.x, y: v1.y, z: v1.z || 0 }, { x: v2.x, y: v2.y, z: v2.z || 0 }];
+      }
+      const b = v1.bulge;
+      const dx = v2.x - v1.x;
+      const dy = v2.y - v1.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1e-6) return [{ x: v1.x, y: v1.y, z: v1.z || 0 }];
+
+      const theta = 4 * Math.atan(b);
+      const radius = dist / (2 * Math.sin(Math.abs(theta) / 2));
+      const chordMidX = (v1.x + v2.x) / 2;
+      const chordMidY = (v1.y + v2.y) / 2;
+      const d = dist / (2 * Math.tan(theta / 2));
+      
+      const nx = -dy / dist;
+      const ny = dx / dist;
+
+      const cx = chordMidX + d * nx;
+      const cy = chordMidY + d * ny;
+
+      let startAngle = Math.atan2(v1.y - cy, v1.x - cx);
+      let endAngle = Math.atan2(v2.y - cy, v2.x - cx);
+
+      if (b < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI;
+      if (b > 0 && endAngle < startAngle) endAngle += 2 * Math.PI;
+
+      const numSegments = Math.max(8, Math.ceil(Math.abs(theta) * 12 / Math.PI));
+      const step = (endAngle - startAngle) / numSegments;
+      const pts = [];
+
+      for (let i = 0; i <= numSegments; i++) {
+        const a = startAngle + step * i;
+        pts.push({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a), z: v1.z || 0 });
+      }
+      return pts;
+    }
+
+    // MATEMÁTICAS: Discretización de Entidad ARC
+    function interpolarEntidadArc(ent) {
+      const c = ent.center;
+      const r = ent.radius;
+      let sa = ent.startAngle;
+      let ea = ent.endAngle;
+
+      if (ea < sa) ea += 2 * Math.PI;
+      const numSegments = Math.max(16, Math.ceil((ea - sa) * 18 / Math.PI));
+      const pts = [];
+
+      for (let i = 0; i <= numSegments; i++) {
+        const a = sa + ((ea - sa) * i) / numSegments;
+        pts.push({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a), z: c.z || 0 });
+      }
+      return pts;
+    }
 
     function importarDXF(event) {
       const file = event.target.files[0];
@@ -910,12 +723,13 @@
 
         dxfLayerGroup.clearLayers();
         dxfCapasMap = {};
+        dxfEntidadesRenderizadas = [];
         const huso = parseInt(document.getElementById('husoSelect').value);
         const boundsList = [];
 
-        if (!dxfParsedData || !dxfParsedData.entities) return alert("El archivo DXF no contiene entidades geométricas válidas.");
+        if (!dxfParsedData || !dxfParsedData.entities) return alert("El archivo DXF no contiene entidades válidas.");
 
-        dxfParsedData.entities.forEach((ent, index) => {
+        dxfParsedData.entities.forEach((ent) => {
           const layerName = ent.layer || '0';
           if (!dxfCapasMap[layerName]) dxfCapasMap[layerName] = [];
 
@@ -926,102 +740,149 @@
           else if (ent.colorIndex === 4) colorStyle = '#00f2fe';
           else if (ent.colorIndex === 5) colorStyle = '#3b82f6';
 
-          // LÍNEAS CAD INTERACTIVAS
+          let verticesUTM = [];
+
+          // 1. LÍNEAS DIRECTAS
           if (ent.type === 'LINE' && ent.vertices && ent.vertices.length >= 2) {
-            const p1 = utmALatLng(ent.vertices[0].x, ent.vertices[0].y, huso);
-            const p2 = utmALatLng(ent.vertices[1].x, ent.vertices[1].y, huso);
-            const poly = L.polyline([p1, p2], { color: colorStyle, weight: 3, opacity: 0.9, interactive: true });
-            
-            asociarInteraccionEntidadCAD(poly, ent, [ent.vertices[0], ent.vertices[1]], layerName);
-
-            dxfLayerGroup.addLayer(poly);
-            boundsList.push(p1, p2);
-            dxfCapasMap[layerName].push(poly);
+            verticesUTM = [
+              { x: ent.vertices[0].x, y: ent.vertices[0].y, z: ent.vertices[0].z || 0 },
+              { x: ent.vertices[1].x, y: ent.vertices[1].y, z: ent.vertices[1].z || 0 }
+            ];
           }
-          // POLILÍNEAS CAD INTERACTIVAS (LWPOLYLINE / POLYLINE)
+          // 2. POLILÍNEAS CON O SIN ARCOS (BULGE)
           else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
-            const pts = ent.vertices.map(v => utmALatLng(v.x, v.y, huso));
-            if (pts.length > 0) {
-              const poly = L.polyline(pts, { color: colorStyle, weight: 3, opacity: 0.9, interactive: true });
-              
-              asociarInteraccionEntidadCAD(poly, ent, ent.vertices, layerName);
+            for (let i = 0; i < ent.vertices.length - 1; i++) {
+              const segPts = interpolarSegmentoBulge(ent.vertices[i], ent.vertices[i + 1]);
+              if (i > 0) segPts.shift(); // Evitar duplicar el punto de empalme
+              verticesUTM.push(...segPts);
+            }
+            if ((ent.shape || ent.isClosed) && ent.vertices.length > 2) {
+              const segPts = interpolarSegmentoBulge(ent.vertices[ent.vertices.length - 1], ent.vertices[0]);
+              segPts.shift();
+              verticesUTM.push(...segPts);
+            }
+          }
+          // 3. ENTIDADES ARC (ARCOS INDEPENDIENTES)
+          else if (ent.type === 'ARC' && ent.center && ent.radius !== undefined) {
+            verticesUTM = interpolarEntidadArc(ent);
+          }
 
-              dxfLayerGroup.addLayer(poly);
-              pts.forEach(p => boundsList.push(p));
-              dxfCapasMap[layerName].push(poly);
-            }
-          }
-          // CÍRCULOS Y ARCOS CAD
-          else if (ent.type === 'CIRCLE' && ent.center) {
-            const center = utmALatLng(ent.center.x, ent.center.y, huso);
-            const numSegments = 32;
-            const pts = [];
-            for (let i = 0; i <= numSegments; i++) {
-              const theta = (i / numSegments) * 2 * Math.PI;
-              const dx = ent.radius * Math.cos(theta);
-              const dy = ent.radius * Math.sin(theta);
-              pts.push(utmALatLng(ent.center.x + dx, ent.center.y + dy, huso));
-            }
-            const circlePoly = L.polyline(pts, { color: colorStyle, weight: 2 });
-            dxfLayerGroup.addLayer(circlePoly);
-            boundsList.push(center);
-            dxfCapasMap[layerName].push(circlePoly);
-          }
-          // PUNTOS CAD
-          else if (ent.type === 'POINT' && ent.position) {
-            const pt = utmALatLng(ent.position.x, ent.position.y, huso);
-            const marker = L.circleMarker(pt, { radius: 3, color: colorStyle, fillColor: colorStyle, fillOpacity: 1 });
-            dxfLayerGroup.addLayer(marker);
-            boundsList.push(pt);
-            dxfCapasMap[layerName].push(marker);
+          // RENDERIZADO EN LEAFLET SI HAY VÉRTICES VÁLIDOS
+          if (verticesUTM.length >= 2) {
+            const latLngs = verticesUTM.map(v => utmALatLng(v.x, v.y, huso));
+            
+            // GRUPO GRÁFICO CON BUFFER TÁCTIL GRUESO INVISIBLE (weight: 24) PARA SELECCIÓN FÁCIL
+            const featureGroup = L.featureGroup();
+
+            const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9 });
+            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 24, opacity: 0 }); // Buffer táctil
+
+            featureGroup.addLayer(visibleLine);
+            featureGroup.addLayer(touchBuffer);
+
+            // Vinculación de clic directo
+            const handler = function(e) {
+              L.DomEvent.stopPropagation(e);
+              seleccionarYActivarElementoCAD(visibleLine, ent, verticesUTM, layerName);
+            };
+
+            visibleLine.on('click', handler);
+            touchBuffer.on('click', handler);
+
+            dxfLayerGroup.addLayer(featureGroup);
+            latLngs.forEach(p => boundsList.push(p));
+            dxfCapasMap[layerName].push(featureGroup);
+
+            dxfEntidadesRenderizadas.push({
+              entidad: ent,
+              verticesUTM: verticesUTM,
+              layerName: layerName,
+              grafica: visibleLine,
+              latLngs: latLngs
+            });
           }
         });
 
-        // CONSTRUCCIÓN DEL PANEL DE CONTROL DE CAPAS CON SELECCIÓN REAL
         renderizarPanelCapasCAD();
 
         if (boundsList.length > 0) {
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado. ${dxfParsedData.entities.length} entidades importadas en Huso ${huso}. Haz clic sobre cualquier línea para convertirla en eje de replanteo.`);
+          alert(`✔ DXF '${filename}' procesado correctamente. Entidades de línea y arcos renderizadas en Huso ${huso}. Haz clic en cualquier elemento para replantear.`);
         } else {
-          alert("Advertencia: El DXF no contenía geometrías 2D compatibles.");
+          alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
       } catch (err) {
-        alert("Error al procesar el archivo DXF: " + err.message);
+        alert("Error al parsear archivo DXF: " + err.message);
       }
     }
 
-    // CONVERSIÓN DE ENTIDAD CAD SELECCIONADA A EJE DE REPLANTEO
-    function asociarInteraccionEntidadCAD(layerLeaflet, entidadDXF, verticesUTM, layerName) {
+    // HIT-TEST POR PROXIMIDAD EN EL MAPA (Selección si se toca cerca de una línea/arco)
+    map.on('click', function(e) {
+      if (dxfEntidadesRenderizadas.length === 0) return;
+
+      const clickPoint = map.latLngToLayerPoint(e.latlng);
+      let mejorElemento = null;
+      let menorDistanciaPx = Infinity;
+
+      dxfEntidadesRenderizadas.forEach(item => {
+        for (let i = 0; i < item.latLngs.length - 1; i++) {
+          const p1 = map.latLngToLayerPoint(item.latLngs[i]);
+          const p2 = map.latLngToLayerPoint(item.latLngs[i + 1]);
+          const distPx = L.LineUtil.pointToSegmentDistance(clickPoint, p1, p2);
+
+          if (distPx < menorDistanciaPx) {
+            menorDistanciaPx = distPx;
+            mejorElemento = item;
+          }
+        }
+      });
+
+      // Si el clic está dentro de 25 píxeles de cualquier elemento, lo selecciona automáticamente
+      if (menorDistanciaPx <= 25 && mejorElemento) {
+        seleccionarYActivarElementoCAD(mejorElemento.grafica, mejorElemento.entidad, mejorElemento.verticesUTM, mejorElemento.layerName);
+      }
+    });
+
+    let elementoResaltadoActivo = null;
+
+    function seleccionarYActivarElementoCAD(layerGrafica, entidadDXF, verticesUTM, layerName) {
+      if (elementoResaltadoActivo) {
+        elementoResaltadoActivo.setStyle({ color: elementoResaltadoActivo.colorOriginal || '#a855f7', weight: 3 });
+      }
+
+      elementoResaltadoActivo = layerGrafica;
+      elementoResaltadoActivo.colorOriginal = layerGrafica.options.color;
+      layerGrafica.setStyle({ color: '#ff0055', weight: 6 });
+
       let longitudTotal = 0;
       for (let i = 0; i < verticesUTM.length - 1; i++) {
         longitudTotal += Math.hypot(verticesUTM[i+1].x - verticesUTM[i].x, verticesUTM[i+1].y - verticesUTM[i].y);
       }
 
-      const popupContent = document.createElement('div');
-      popupContent.style.fontFamily = 'var(--font-mono)';
-      popupContent.style.fontSize = '0.8rem';
-      popupContent.innerHTML = `
-        <b style="color:var(--accent-primary)">Entidad CAD ${entidadDXF.type}</b><br>
-        Capa: <b>${layerName}</b><br>
-        Longitud: <b>${longitudTotal.toFixed(3)} m</b><br>
-        Vértices: <b>${verticesUTM.length}</b><br><br>
+      const popupHtml = `
+        <div style="font-family:var(--font-mono); font-size:0.8rem; color:#fff;">
+          <b style="color:var(--accent-primary);">Alineación CAD (${entidadDXF.type})</b><br>
+          Capa: <b>${layerName}</b><br>
+          Longitud: <b style="color:#4ade80;">${longitudTotal.toFixed(3)} m</b><br>
+          Puntos/Curvas: <b>${verticesUTM.length}</b><br><br>
+          <button class="btn btn-road" style="width:100%; padding:6px; font-size:0.75rem;" onclick="convertirVerticesAEjeDirecto()">
+            ⚡ Convertir en Eje de Replanteo
+          </button>
+        </div>
       `;
 
-      const btnConvertir = document.createElement('button');
-      btnConvertir.className = 'btn btn-road';
-      btnConvertir.style.padding = '6px 10px';
-      btnConvertir.style.fontSize = '0.75rem';
-      btnConvertir.style.width = '100%';
-      btnConvertir.innerHTML = '⚡ Replantear (Convertir a Eje)';
-      btnConvertir.onclick = function() {
-        convertirVerticesAEje(verticesUTM, layerName);
-      };
+      window.verticesAEjeSeleccionados = verticesUTM;
+      window.capaAEjeSeleccionada = layerName;
 
-      popupContent.appendChild(btnConvertir);
-      layerLeaflet.bindPopup(popupContent);
+      L.popup().setLatLng(layerGrafica.getBounds().getCenter()).setContent(popupHtml).openOn(map);
+    }
+
+    function convertirVerticesAEjeDirecto() {
+      if (!window.verticesAEjeSeleccionados) return;
+      convertirVerticesAEje(window.verticesAEjeSeleccionados, window.capaAEjeSeleccionada);
+      map.closePopup();
     }
 
     function convertirVerticesAEje(verticesUTM, nombreEje) {
@@ -1042,25 +903,19 @@
       dibujarEjeEnMapa();
       document.getElementById('roadTelemetryBox').style.display = 'block';
       switchTab('tabRoads', document.querySelectorAll('.tab-btn')[1]);
-      alert(`✔ Entidad CAD de capa '${nombreEje}' convertida con éxito en Eje de Carretera (${ejeCarretera.length} vértices, ${pkAcum.toFixed(2)} m totales). ¡Listo para replantear!`);
+      alert(`✔ Entidad de '${nombreEje}' convertida en Eje Activo (${pkAcum.toFixed(2)} m totales, ${verticesUTM.length} puntos). ¡Listo para replantear!`);
     }
 
-    // CONTROL DE VISIBILIDAD DE CAPAS REAL
     function toggleCapaDXF(nombreCapa, visible) {
       if (!dxfCapasMap[nombreCapa]) return;
-      dxfCapasMap[nombreCapa].forEach(layer => {
-        if (visible) {
-          dxfLayerGroup.addLayer(layer);
-        } else {
-          dxfLayerGroup.removeLayer(layer);
-        }
+      dxfCapasMap[nombreCapa].forEach(layerGroup => {
+        if (visible) dxfLayerGroup.addLayer(layerGroup);
+        else dxfLayerGroup.removeLayer(layerGroup);
       });
     }
 
     function toggleTodasCapas(estado) {
-      Object.keys(dxfCapasMap).forEach(capa => {
-        toggleCapaDXF(capa, estado);
-      });
+      Object.keys(dxfCapasMap).forEach(capa => toggleCapaDXF(capa, estado));
       renderizarPanelCapasCAD();
     }
 
@@ -1081,29 +936,23 @@
     }
 
     function ajustarExtensionDXF() {
-      if (dxfBoundsGlobal) {
-        map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
-      } else {
-        alert("No hay ningún archivo DXF o vector cargado actualmente.");
-      }
+      if (dxfBoundsGlobal) map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
+      else alert("No hay ningún archivo DXF cargado.");
     }
 
-    // VISOR 3D DE DXF CON THREE.JS Y ORBIT CONTROLS (ROTACIÓN Y ÓRBITA LIBRE)
+    // VISOR 3D THREE.JS
     let scene3D, camera3D, renderer3D, controls3D;
 
     function abrirVisor3D() {
-      if (!dxfParsedData || !dxfParsedData.entities) return alert("Carga primero un archivo DXF para visualizarlo en 3D.");
+      if (!dxfParsedData || !dxfParsedData.entities) return alert("Carga primero un archivo DXF.");
 
       document.getElementById('modal3D').style.display = 'flex';
       const container = document.getElementById('canvas3DContainer');
       container.innerHTML = '';
 
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      const width = container.clientWidth, height = container.clientHeight;
 
-      scene3D = new THREE.Scene();
-      scene3D.background = new THREE.Color(0x06090e);
-
+      scene3D = new THREE.Scene(); scene3D.background = new THREE.Color(0x06090e);
       camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 100000);
       renderer3D = new THREE.WebGLRenderer({ antialias: true });
       renderer3D.setSize(width, height);
@@ -1112,44 +961,20 @@
       controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
       controls3D.enableDamping = true;
 
-      // Luces y rejilla 3D
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      scene3D.add(ambientLight);
+      scene3D.add(new THREE.AmbientLight(0xffffff, 0.8));
 
-      // Renderizar geometrías DXF en espacio 3D real
       const dxfGroup3D = new THREE.Group();
       let centerX = 0, centerY = 0, centerZ = 0, countV = 0;
 
-      dxfParsedData.entities.forEach(ent => {
-        let materialColor = 0x00f2fe;
-        if (ent.colorIndex === 1) materialColor = 0xef4444;
-        else if (ent.colorIndex === 2) materialColor = 0xf59e0b;
-        else if (ent.colorIndex === 3) materialColor = 0x10b981;
-        else if (ent.colorIndex === 5) materialColor = 0x3b82f6;
+      dxfEntidadesRenderizadas.forEach(item => {
+        const mat = new THREE.LineBasicMaterial({ color: 0x00f2fe });
+        const points = item.verticesUTM.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
+        const geom = new THREE.BufferGeometry().setFromPoints(points);
+        dxfGroup3D.add(new THREE.Line(geom, mat));
 
-        const mat = new THREE.LineBasicMaterial({ color: materialColor });
-
-        if (ent.type === 'LINE' && ent.vertices) {
-          const points = [
-            new THREE.Vector3(ent.vertices[0].x, ent.vertices[0].z || 0, -ent.vertices[0].y),
-            new THREE.Vector3(ent.vertices[1].x, ent.vertices[1].z || 0, -ent.vertices[1].y)
-          ];
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          dxfGroup3D.add(new THREE.Line(geom, mat));
-
-          centerX += ent.vertices[0].x + ent.vertices[1].x;
-          centerY += (ent.vertices[0].z || 0) + (ent.vertices[1].z || 0);
-          centerZ += (-ent.vertices[0].y) + (-ent.vertices[1].y);
-          countV += 2;
-        } else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
-          const points = ent.vertices.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          dxfGroup3D.add(new THREE.Line(geom, mat));
-
-          ent.vertices.forEach(v => {
-            centerX += v.x; centerY += (v.z || 0); centerZ += (-v.y); countV++;
-          });
-        }
+        item.verticesUTM.forEach(v => {
+          centerX += v.x; centerY += (v.z || 0); centerZ += (-v.y); countV++;
+        });
       });
 
       if (countV > 0) {
@@ -1161,95 +986,67 @@
         scene3D.add(grid);
 
         camera3D.position.set(0, 300, 300);
-        controls3D.target.set(0, 0, 0);
-        controls3D.update();
+        controls3D.target.set(0, 0, 0); controls3D.update();
       }
 
       function animate3D() {
         if (document.getElementById('modal3D').style.display === 'flex') {
-          requestAnimationFrame(animate3D);
-          controls3D.update();
-          renderer3D.render(scene3D, camera3D);
+          requestAnimationFrame(animate3D); controls3D.update(); renderer3D.render(scene3D, camera3D);
         }
       }
       animate3D();
     }
 
-    function cerrarVisor3D() {
-      document.getElementById('modal3D').style.display = 'none';
-    }
+    function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
-    // OTROS FORMATOS CARTOGRÁFICOS
+    // RASTER & GeoPDF
     let tempImageSrc = null;
-
-    function prepararOrtofoto(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+    function prepararOrtofoto(e) {
+      const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
-        tempImageSrc = e.target.result;
-        alert("📷 Imagen cargada. Selecciona su archivo World File (.tfw / .jgw) para georreferenciarla.");
-      };
+      reader.onload = function(evt) { tempImageSrc = evt.target.result; alert("Imagen cargada. Selecciona su WorldFile (.tfw)."); };
       reader.readAsDataURL(file);
     }
 
-    function cargarWorldFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      if (!tempImageSrc) return alert("Primero debes seleccionar el archivo de imagen (.tif / .jpg / .png).");
-
+    function cargarWorldFile(e) {
+      const file = e.target.files[0]; if (!file || !tempImageSrc) return alert("Selecciona primero la imagen.");
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const lines = e.target.result.trim().split(/\r?\n/);
-        if (lines.length < 6) return alert("Archivo World File (.tfw/.jgw) no válido.");
-
-        const A = parseFloat(lines[0]), D = parseFloat(lines[1]), B = parseFloat(lines[2]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
-
+      reader.onload = function(evt) {
+        const lines = evt.target.result.trim().split(/\r?\n/);
+        if (lines.length < 6) return alert("WorldFile no válido.");
+        const A = parseFloat(lines[0]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
         const img = new Image();
         img.onload = function() {
           const huso = parseInt(document.getElementById('husoSelect').value);
-          const W = img.width, H = img.height;
-          const xMin = C, yMax = F, xMax = C + A * W, yMin = F + E * H;
-          const sw = utmALatLng(xMin, yMin, huso), ne = utmALatLng(xMax, yMax, huso);
-
+          const sw = utmALatLng(C, F + E * img.height, huso), ne = utmALatLng(C + A * img.width, F, huso);
           L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
-          map.fitBounds([sw, ne]);
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ Ortofoto superpuesta correctamente en ETRS89 H${huso}.`);
+          map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
         };
         img.src = tempImageSrc;
       };
       reader.readAsText(file);
     }
 
-    function importarPDFGeorreferenciado(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+    function importarPDFGeorreferenciado(e) {
+      const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const typedarray = new Uint8Array(e.target.result);
+      reader.onload = function(evt) {
+        const typedarray = new Uint8Array(evt.target.result);
         pdfjsLib.getDocument(typedarray).promise.then(pdf => {
           pdf.getPage(1).then(page => {
             const viewport = page.getViewport({ scale: 1.5 });
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
             canvas.height = viewport.height; canvas.width = viewport.width;
-
             page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
               const imgData = canvas.toDataURL('image/png');
-              const boundsStr = prompt("Introduce las coordenadas ETRS89 del plano PDF:\nFormato: EastingMin, NorthingMin, EastingMax, NorthingMax", "430000, 4470000, 431000, 4471000");
-              
+              const boundsStr = prompt("Introduce coordenadas ETRS89 (EastingMin, NorthingMin, EastingMax, NorthingMax):", "430000, 4470000, 431000, 4471000");
               if (boundsStr) {
                 const parts = boundsStr.split(',').map(n => parseFloat(n.trim()));
                 if (parts.length === 4) {
                   const huso = parseInt(document.getElementById('husoSelect').value);
                   const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
                   L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
-                  map.fitBounds([sw, ne]);
-                  switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-                  alert("✔ GeoPDF renderizado en el visor cartográfico.");
+                  map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
                 }
               }
             });
@@ -1259,128 +1056,30 @@
       reader.readAsArrayBuffer(file);
     }
 
-    function importarKML(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(e.target.result, "text/xml");
-        const placemarks = xml.getElementsByTagName("Placemark");
-        const bounds = [];
-
-        for (let i = 0; i < placemarks.length; i++) {
-          const coords = placemarks[i].getElementsByTagName("coordinates")[0];
-          if (coords) {
-            const tuples = coords.textContent.trim().split(/\s+/);
-            const latLngs = [];
-            tuples.forEach(t => {
-              const parts = t.split(',').map(n => parseFloat(n));
-              if (parts.length >= 2 && !isNaN(parts[0])) {
-                latLngs.push([parts[1], parts[0]]);
-                bounds.push([parts[1], parts[0]]);
-              }
-            });
-            if (latLngs.length === 1) {
-              L.marker(latLngs[0]).addTo(vectorImportLayerGroup);
-            } else if (latLngs.length > 1) {
-              L.polyline(latLngs, { color: '#10b981', weight: 3 }).addTo(vectorImportLayerGroup);
-            }
-          }
-        }
-        if (bounds.length > 0) {
-          map.fitBounds(L.latLngBounds(bounds));
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function importarGeoJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const json = JSON.parse(e.target.result);
-          const geoLayer = L.geoJSON(json, { style: { color: '#f59e0b', weight: 3 } }).addTo(vectorImportLayerGroup);
-          map.fitBounds(geoLayer.getBounds());
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-        } catch (err) { alert("Error GeoJSON: " + err.message); }
-      };
-      reader.readAsText(file);
-    }
-
-    function importarASCII(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const lineas = e.target.result.split(/\r?\n/);
-        const huso = parseInt(document.getElementById('husoSelect').value);
-        let contador = 0;
-
-        lineas.forEach(l => {
-          const cols = l.trim().split(/[\s,;\t]+/);
-          if (cols.length >= 3 && !isNaN(parseFloat(cols[1])) && !isNaN(parseFloat(cols[2]))) {
-            const id = cols[0], x = parseFloat(cols[1]), y = parseFloat(cols[2]), z = cols[3] ? parseFloat(cols[3]) : 0;
-            const latLng = utmALatLng(x, y, huso);
-            L.circleMarker(latLng, { radius: 4, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.9 })
-              .addTo(vectorImportLayerGroup).bindPopup(`<b>${id}</b><br>E: ${x.toFixed(3)}<br>N: ${y.toFixed(3)}<br>Z: ${z.toFixed(3)}`);
-            contador++;
-          }
-        });
-        if (contador > 0) {
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-        }
-      };
-      reader.readAsText(file);
-    }
-
     function reproyectarCapasMapa() {
-      if (ultimoDXFContenido) {
-        procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
-      }
+      if (ultimoDXFContenido) procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
     }
 
-    // 7. MÓDULO DE REPLANTEO DE CARRETERAS (TCP-MDT / ISTRAM-ISPOL / LANDXML)
+    // 6. CARRETERAS Y EJE DE REPLANTEO
     let ejeCarretera = [];
     let carreteraLayerGroup = L.layerGroup().addTo(map);
 
     function cargarEjeCarretera(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      const ext = file.name.split('.').pop().toLowerCase();
-
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader(); const ext = file.name.split('.').pop().toLowerCase();
       reader.onload = function(e) {
-        const contenido = e.target.result;
-        ejeCarretera = [];
-
+        const contenido = e.target.result; ejeCarretera = [];
         if (ext === 'xml') {
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(contenido, "text/xml");
+          const parser = new DOMParser(); const xmlDoc = parser.parseFromString(contenido, "text/xml");
           const coordGeom = xmlDoc.getElementsByTagName("CoordGeom")[0];
-          
           if (coordGeom) {
-            let pkAcumulado = 0;
-            const lineas = coordGeom.getElementsByTagName("Line");
-            
+            let pkAcumulado = 0; const lineas = coordGeom.getElementsByTagName("Line");
             for (let i = 0; i < lineas.length; i++) {
               const start = lineas[i].getElementsByTagName("Start")[0].textContent.trim().split(" ");
               const end = lineas[i].getElementsByTagName("End")[0].textContent.trim().split(" ");
-              
-              const x1 = parseFloat(start[1]), y1 = parseFloat(start[0]);
-              const x2 = parseFloat(end[1]), y2 = parseFloat(end[0]);
-
+              const x1 = parseFloat(start[1]), y1 = parseFloat(start[0]), x2 = parseFloat(end[1]), y2 = parseFloat(end[0]);
               if (i === 0) ejeCarretera.push({ pk: 0, x: x1, y: y1, z: 0 });
-              
-              const dist = Math.hypot(x2 - x1, y2 - y1);
-              pkAcumulado += dist;
+              const dist = Math.hypot(x2 - x1, y2 - y1); pkAcumulado += dist;
               ejeCarretera.push({ pk: pkAcumulado, x: x2, y: y2, z: 0 });
             }
           }
@@ -1389,25 +1088,15 @@
           lineas.forEach(linea => {
             const cols = linea.trim().split(/[\s,;]+/);
             if (cols.length >= 3 && !isNaN(parseFloat(cols[1]))) {
-              ejeCarretera.push({
-                pk: parseFloat(cols[0]),
-                x: parseFloat(cols[1]),
-                y: parseFloat(cols[2]),
-                z: cols[3] ? parseFloat(cols[3]) : 0
-              });
+              ejeCarretera.push({ pk: parseFloat(cols[0]), x: parseFloat(cols[1]), y: parseFloat(cols[2]), z: cols[3] ? parseFloat(cols[3]) : 0 });
             }
           });
         }
-
         if (ejeCarretera.length > 0) {
-          dibujarEjeEnMapa();
-          document.getElementById('roadTelemetryBox').style.display = 'block';
-          alert(`✔ Eje de carretera cargado: ${ejeCarretera.length} puntos. Longitud total: ${ejeCarretera[ejeCarretera.length - 1].pk.toFixed(2)} m.`);
-        } else {
-          alert("Error: No se pudieron extraer vértices válidos del archivo.");
+          dibujarEjeEnMapa(); document.getElementById('roadTelemetryBox').style.display = 'block';
+          alert(`✔ Eje cargado: ${ejeCarretera.length} puntos. Longitud total: ${ejeCarretera[ejeCarretera.length - 1].pk.toFixed(2)} m.`);
         }
       };
-
       reader.readAsText(file);
     }
 
@@ -1434,26 +1123,16 @@
 
     function calcularReplanteoCarretera(posGPS) {
       if (ejeCarretera.length < 2) return;
-
       const huso = parseInt(document.getElementById('husoSelect').value);
       const [easting, northing] = latLngATransformadaETRS89(posGPS.coords.latitude, posGPS.coords.longitude, huso);
       const hGPS = posGPS.coords.altitude || 0;
       const cotaNAPActual = GeoideIGN.elipsoidalAOrtometrica(posGPS.coords.latitude, posGPS.coords.longitude, hGPS).cotaNAP;
 
-      let distMinima = Infinity;
-      let pkCalculado = 0;
-      let offsetCalculado = 0;
-      let lado = "CENTRO";
-      let cotaRasante = 0;
+      let distMinima = Infinity, pkCalculado = 0, offsetCalculado = 0, lado = "CENTRO", cotaRasante = 0;
 
       for (let i = 0; i < ejeCarretera.length - 1; i++) {
-        const pA = ejeCarretera[i];
-        const pB = ejeCarretera[i + 1];
-
-        const dx = pB.x - pA.x;
-        const dy = pB.y - pA.y;
-        const len2 = dx * dx + dy * dy;
-
+        const pA = ejeCarretera[i], pB = ejeCarretera[i + 1];
+        const dx = pB.x - pA.x, dy = pB.y - pA.y, len2 = dx * dx + dy * dy;
         if (len2 === 0) continue;
 
         const t = Math.max(0, Math.min(1, ((easting - pA.x) * dx + (northing - pA.y) * dy) / len2));
@@ -1464,7 +1143,6 @@
           distMinima = dist;
           pkCalculado = pA.pk + t * (pB.pk - pA.pk);
           cotaRasante = pA.z + t * (pB.z - pA.z);
-
           const signoSide = (pB.x - pA.x) * (northing - pA.y) - (pB.y - pA.y) * (easting - pA.x);
           lado = signoSide >= 0 ? "DERECHA" : "IZQUIERDA";
           offsetCalculado = dist;
@@ -1483,30 +1161,19 @@
       `;
     }
 
-    // 8. CÁLCULOS COGO
+    // 7. COGO
     function calcularCOGOInverso() {
       const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
       const p2Str = document.getElementById('cogoP2').value.split(/[\s,]+/);
-
-      if (p1Str.length < 2 || p2Str.length < 2) return alert("Introduce coordenadas válidas X,Y para ambos puntos.");
-
-      const e1 = parseFloat(p1Str[0]), n1 = parseFloat(p1Str[1]);
-      const e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
-
-      const dx = e2 - e1;
-      const dy = n2 - n1;
-
-      const distHoriz = Math.hypot(dx, dy);
-      let azimutRad = Math.atan2(dx, dy);
-      if (azimutRad < 0) azimutRad += 2 * Math.PI;
-
-      const azimutDeg = azimutRad * (180 / Math.PI);
-      const azimutGons = azimutRad * (200 / Math.PI);
+      if (p1Str.length < 2 || p2Str.length < 2) return alert("Introduce coordenadas válidas X,Y.");
+      const e1 = parseFloat(p1Str[0]), n1 = parseFloat(p1Str[1]), e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
+      const dx = e2 - e1, dy = n2 - n1, distHoriz = Math.hypot(dx, dy);
+      let azimutRad = Math.atan2(dx, dy); if (azimutRad < 0) azimutRad += 2 * Math.PI;
 
       document.getElementById('resCOGOInverso').innerHTML = `
         Distancia Horiz: <b>${distHoriz.toFixed(3)} m</b><br>
-        Azimut Sexagesimal: <b>${azimutDeg.toFixed(4)}°</b><br>
-        Azimut Centesimal: <b>${azimutGons.toFixed(4)} g</b>
+        Azimut Sexagesimal: <b>${(azimutRad * 180 / Math.PI).toFixed(4)}°</b><br>
+        Azimut Centesimal: <b>${(azimutRad * 200 / Math.PI).toFixed(4)} g</b>
       `;
     }
 
@@ -1514,104 +1181,69 @@
       const baseStr = document.getElementById('radP1').value.split(/[\s,]+/);
       const azimut = parseFloat(document.getElementById('radAzimut').value);
       const dist = parseFloat(document.getElementById('radDist').value);
-
-      if (baseStr.length < 2 || isNaN(azimut) || isNaN(dist)) return alert("Rellena todos los campos de la radiación.");
-
-      const eBase = parseFloat(baseStr[0]), nBase = parseFloat(baseStr[1]);
-      const azimutRad = azimut * (Math.PI / 180);
-
-      const eNuevo = eBase + dist * Math.sin(azimutRad);
-      const nNuevo = nBase + dist * Math.cos(azimutRad);
-
+      if (baseStr.length < 2 || isNaN(azimut) || isNaN(dist)) return alert("Completa los campos.");
+      const eBase = parseFloat(baseStr[0]), nBase = parseFloat(baseStr[1]), azimutRad = azimut * Math.PI / 180;
       document.getElementById('resRadiacion').innerHTML = `
-        <b>Nuevo Punto Calculado:</b><br>
-        Easting (X): <b>${eNuevo.toFixed(3)} m</b><br>
-        Northing (Y): <b>${nNuevo.toFixed(3)} m</b>
+        Easting (X): <b>${(eBase + dist * Math.sin(azimutRad)).toFixed(3)} m</b><br>
+        Northing (Y): <b>${(nBase + dist * Math.cos(azimutRad)).toFixed(3)} m</b>
       `;
     }
 
-    // 9. CAPTURA Y EXPORTACIÓN (CSV / DXF)
+    // 8. REGISTRO Y EXPORTACIÓN
     let listaPuntos = [];
 
     function capturarPuntoGPS() {
-      if (!navigator.geolocation) return alert("Sin soporte GPS.");
-
+      if (!navigator.geolocation) return alert("Sin GPS.");
       const huso = parseInt(document.getElementById('husoSelect').value);
       const fuente = document.getElementById('gpsSourceSelect').value;
 
       navigator.geolocation.getCurrentPosition((pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const hGPS = pos.coords.altitude || 0;
-        const acc = pos.coords.accuracy;
-
-        actualizarBadgeRTK(acc);
-
+        const lat = pos.coords.latitude, lng = pos.coords.longitude, hGPS = pos.coords.altitude || 0, acc = pos.coords.accuracy;
         const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso);
         const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);
-        const precisionText = formatearPrecision(acc);
 
         const punto = {
           id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`,
-          easting: easting.toFixed(3),
-          northing: northing.toFixed(3),
-          cotaNAP: altimetria.cotaNAP.toFixed(3),
-          hGPS: hGPS.toFixed(3),
-          N: altimetria.ondulacionN.toFixed(2),
-          acc: precisionText,
+          easting: easting.toFixed(3), northing: northing.toFixed(3),
+          cotaNAP: altimetria.cotaNAP.toFixed(3), hGPS: hGPS.toFixed(3),
+          N: altimetria.ondulacionN.toFixed(2), acc: formatearPrecision(acc),
           fuente: fuente === 'SETTOP' ? 'Settop RTK' : 'Tablet GPS'
         };
 
         listaPuntos.push(punto);
-        
-        const tbody = document.querySelector('#tablaPuntos tbody');
-        tbody.innerHTML += `<tr>
-          <td><b>${punto.id}</b></td>
-          <td>${punto.easting}</td>
-          <td>${punto.northing}</td>
+        document.querySelector('#tablaPuntos tbody').innerHTML += `<tr>
+          <td><b>${punto.id}</b></td><td>${punto.easting}</td><td>${punto.northing}</td>
           <td style="color:var(--accent-primary); font-weight:600;">${punto.cotaNAP}</td>
-          <td>${punto.hGPS}</td>
-          <td>${punto.N}</td>
-          <td>${punto.acc}</td>
-          <td>${punto.fuente}</td>
+          <td>${punto.hGPS}</td><td>${punto.N}</td><td>${punto.acc}</td><td>${punto.fuente}</td>
         </tr>`;
 
         centrarEnPosicionGPS();
-        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id}</b> (${punto.fuente})<br>H (NAP): ${punto.cotaNAP} m<br>Precisión: ${punto.acc}`).openPopup();
+        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id}</b><br>H (NAP): ${punto.cotaNAP} m`).openPopup();
       }, (err) => alert("Error capturando GPS: " + err.message), { enableHighAccuracy: true });
     }
 
     function exportarCSV() {
-      if (listaPuntos.length === 0) return alert("No hay puntos guardados.");
+      if (listaPuntos.length === 0) return alert("No hay puntos.");
       let csv = "ID,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente_GPS\n";
-      listaPuntos.forEach(p => {
-        csv += `${p.id},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`;
-      });
+      listaPuntos.forEach(p => { csv += `${p.id},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`; });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Puntos_ETRS89_H${document.getElementById('husoSelect').value}.csv`);
-      a.click();
+      const a = document.createElement('a'); a.href = url; a.download = `Puntos_ETRS89_H${document.getElementById('husoSelect').value}.csv`; a.click();
     }
 
     function exportarDXF() {
-      if (listaPuntos.length === 0) return alert("No hay puntos guardados.");
-
+      if (listaPuntos.length === 0) return alert("No hay puntos.");
       let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
       listaPuntos.forEach(p => {
         dxf += `0\nPOINT\n8\nPUNTOS_TOPOGRAFIA\n10\n${p.easting}\n20\n${p.northing}\n30\n${p.cotaNAP}\n`;
         dxf += `0\nTEXT\n8\nETIQUETAS_PUNTOS\n10\n${parseFloat(p.easting) + 0.5}\n20\n${p.northing}\n30\n${p.cotaNAP}\n40\n0.5\n1\n${p.id}\n`;
       });
       dxf += "0\nENDSEC\n0\nEOF\n";
-
       const blob = new Blob([dxf], { type: 'application/dxf' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Topografia_Puntos_ETRS89_H${document.getElementById('husoSelect').value}.dxf`);
-      a.click();
+      const a = document.createElement('a'); a.href = url; a.download = `Topografia_Puntos_ETRS89_H${document.getElementById('husoSelect').value}.dxf`; a.click();
     }
   </script>
 </body>
 </html>
+

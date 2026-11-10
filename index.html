@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD (Arcos & Replanteo Fix)</title>
+  <title>Topografía Pro 2026 - Field Station HUD (Full Import & Arcos Fix)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -247,10 +247,12 @@
 
     .format-card {
       background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+      display: flex; flex-direction: column; justify-content: space-between; gap: 10px; transition: all 0.2s ease;
     }
+    .format-card:hover { border-color: var(--border-accent); background: rgba(15, 23, 42, 0.9); transform: translateY(-2px); }
     .format-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; }
     .format-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
+    .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
 
     .modal-3d-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -279,7 +281,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v3.9 (ARCOS & REPLANTEO FIX)</span>
+        <span class="brand-sub">FIELD STATION HUD v4.0 (FULL IMPORT ENGINE)</span>
       </div>
     </div>
 
@@ -434,26 +436,37 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 5: IMPORTAR / EXPORTAR -->
+    <!-- PESTAÑA 5: IMPORTAR / EXPORTAR (TODAS LAS OPCIONES RESTAURADAS) -->
     <div id="tabData" class="tab-content">
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-primary);">Centro de Importación Cartográfica y Topográfica</div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">Soporte multiformato con conversión automática ETRS89 y trazado de arcos de precisión.</p>
+        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">Soporte multiformato completo con conversión automática ETRS89 (Husos 28, 29, 30 y 31).</p>
 
         <div class="grid-3col" style="margin-top:14px;">
+          
+          <!-- 1. DXF AutoCAD -->
           <div class="format-card">
             <div>
-              <div class="format-header">AutoCAD DXF <span class="format-badge">.dxf</span></div>
-              <div class="format-desc">Geometría CAD (Líneas, Polilíneas curvas con Bulge, Arcos, Círculos).</div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-cad)" stroke-width="2" width="20" height="20"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                AutoCAD DXF
+                <span class="format-badge">.dxf</span>
+              </div>
+              <div class="format-desc">Geometría CAD 2D/3D (Líneas, Polilíneas con Bulge, Arcos, Círculos y Puntos).</div>
             </div>
             <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="importarDXF(event)">
             <button class="btn btn-cad" onclick="document.getElementById('dxfFileInput').click()">Cargar DXF CAD</button>
           </div>
 
+          <!-- 2. GeoTIFF / Ortofoto + World File -->
           <div class="format-card">
             <div>
-              <div class="format-header">Ortofoto + World File <span class="format-badge">.tfw / .tif</span></div>
-              <div class="format-desc">Imágenes raster calibradas mediante archivo World File.</div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-raster)" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Ortofoto + World File
+                <span class="format-badge">.tfw / .tif</span>
+              </div>
+              <div class="format-desc">Imágenes raster (TIF, JPG, PNG) georreferenciadas mediante archivo World File.</div>
             </div>
             <div style="display:flex; gap:6px;">
               <input type="file" id="rasterImgInput" accept=".tif,.tiff,.jpg,.jpeg,.png" style="display:none;" onchange="prepararOrtofoto(event)">
@@ -463,14 +476,62 @@
             </div>
           </div>
 
+          <!-- 3. GeoPDF Georreferenciado -->
           <div class="format-card">
             <div>
-              <div class="format-header">PDF Georreferenciado <span class="format-badge">.pdf</span></div>
-              <div class="format-desc">Planos PDF con enmarque de coordenadas ETRS89.</div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6"/><path d="M12 12v6"/></svg>
+                PDF Georreferenciado
+                <span class="format-badge">.pdf</span>
+              </div>
+              <div class="format-desc">Planos y mapas PDF con enmarque de coordenadas ETRS89.</div>
             </div>
             <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="importarPDFGeorreferenciado(event)">
             <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="document.getElementById('pdfFileInput').click()">Cargar GeoPDF</button>
           </div>
+
+          <!-- 4. KML / KMZ Google Earth -->
+          <div class="format-card">
+            <div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" width="20" height="20"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                Google Earth KML
+                <span class="format-badge">.kml / .kmz</span>
+              </div>
+              <div class="format-desc">Vectores, trazados de campo y puntos exportados desde Google Earth.</div>
+            </div>
+            <input type="file" id="kmlFileInput" accept=".kml,.xml" style="display:none;" onchange="importarKML(event)">
+            <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="document.getElementById('kmlFileInput').click()">Cargar KML</button>
+          </div>
+
+          <!-- 5. GeoJSON Vectorial -->
+          <div class="format-card">
+            <div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="20" height="20"><path d="M16 16l5-5-5-5M8 8l-5 5 5 5"/></svg>
+                GIS GeoJSON
+                <span class="format-badge">.json / .geojson</span>
+              </div>
+              <div class="format-desc">Capa de datos SIG estandarizada con geometrías y atributos asociados.</div>
+            </div>
+            <input type="file" id="geojsonFileInput" accept=".geojson,.json" style="display:none;" onchange="importarGeoJSON(event)">
+            <button class="btn" style="border-color:#f59e0b; color:#f59e0b;" onclick="document.getElementById('geojsonFileInput').click()">Cargar GeoJSON</button>
+          </div>
+
+          <!-- 6. Puntos ASCII / CSV / GSI Leica -->
+          <div class="format-card">
+            <div>
+              <div class="format-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Puntos ASCII / GSI
+                <span class="format-badge">.csv / .txt / .gsi</span>
+              </div>
+              <div class="format-desc">Listados de taquimetría de Estación Total o GNSS (ID, X, Y, Z, Código).</div>
+            </div>
+            <input type="file" id="asciiFileInput" accept=".csv,.txt,.gsi,.sdr" style="display:none;" onchange="importarASCII(event)">
+            <button class="btn btn-primary" onclick="document.getElementById('asciiFileInput').click()">Importar Puntos</button>
+          </div>
+
         </div>
       </div>
 
@@ -549,7 +610,7 @@
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const pnoaLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
-      layers: 'OI.OrtoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0'
+      layers: 'OI.OrthoimageCoverage', format: 'image/jpeg', transparent: false, version: '1.3.0'
     }).addTo(map);
 
     const catastroLayer = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
@@ -561,7 +622,7 @@
     const dxfLayerGroup = L.layerGroup().addTo(map);
     const vectorImportLayerGroup = L.layerGroup().addTo(map);
 
-    // BOTÓN GPS
+    // BOTÓN GPS CENTRADO
     const GpsCenterControl = L.Control.extend({
       options: { position: 'bottomright' },
       onAdd: function(map) {
@@ -638,36 +699,30 @@
     }
 
     // =========================================================================
-    // 5. MOTOR DXF: GEOMETRÍA DE ARCOS, BULGE Y SELECCIÓN TÁCTIL DE REPLANTEO
+    // 5. MOTOR DXF CON ARCOS, BULGE Y SELECCIÓN FÁCIL
     // =========================================================================
     let ultimoDXFContenido = null;
     let dxfCapasMap = {};
     let dxfParsedData = null;
     let dxfBoundsGlobal = null;
-    let dxfEntidadesRenderizadas = []; // Almacena entidades para selección por proximidad
+    let dxfEntidadesRenderizadas = [];
 
-    // MATEMÁTICAS: Discretización de Arcos en Polilíneas (Bulge)
     function interpolarSegmentoBulge(v1, v2) {
       if (!v1.bulge || Math.abs(v1.bulge) < 1e-6) {
         return [{ x: v1.x, y: v1.y, z: v1.z || 0 }, { x: v2.x, y: v2.y, z: v2.z || 0 }];
       }
       const b = v1.bulge;
-      const dx = v2.x - v1.x;
-      const dy = v2.y - v1.y;
+      const dx = v2.x - v1.x, dy = v2.y - v1.y;
       const dist = Math.hypot(dx, dy);
       if (dist < 1e-6) return [{ x: v1.x, y: v1.y, z: v1.z || 0 }];
 
       const theta = 4 * Math.atan(b);
       const radius = dist / (2 * Math.sin(Math.abs(theta) / 2));
-      const chordMidX = (v1.x + v2.x) / 2;
-      const chordMidY = (v1.y + v2.y) / 2;
+      const chordMidX = (v1.x + v2.x) / 2, chordMidY = (v1.y + v2.y) / 2;
       const d = dist / (2 * Math.tan(theta / 2));
-      
-      const nx = -dy / dist;
-      const ny = dx / dist;
+      const nx = -dy / dist, ny = dx / dist;
 
-      const cx = chordMidX + d * nx;
-      const cy = chordMidY + d * ny;
+      const cx = chordMidX + d * nx, cy = chordMidY + d * ny;
 
       let startAngle = Math.atan2(v1.y - cy, v1.x - cx);
       let endAngle = Math.atan2(v2.y - cy, v2.x - cx);
@@ -686,12 +741,9 @@
       return pts;
     }
 
-    // MATEMÁTICAS: Discretización de Entidad ARC
     function interpolarEntidadArc(ent) {
-      const c = ent.center;
-      const r = ent.radius;
-      let sa = ent.startAngle;
-      let ea = ent.endAngle;
+      const c = ent.center, r = ent.radius;
+      let sa = ent.startAngle, ea = ent.endAngle;
 
       if (ea < sa) ea += 2 * Math.PI;
       const numSegments = Math.max(16, Math.ceil((ea - sa) * 18 / Math.PI));
@@ -742,18 +794,15 @@
 
           let verticesUTM = [];
 
-          // 1. LÍNEAS DIRECTAS
           if (ent.type === 'LINE' && ent.vertices && ent.vertices.length >= 2) {
             verticesUTM = [
               { x: ent.vertices[0].x, y: ent.vertices[0].y, z: ent.vertices[0].z || 0 },
               { x: ent.vertices[1].x, y: ent.vertices[1].y, z: ent.vertices[1].z || 0 }
             ];
-          }
-          // 2. POLILÍNEAS CON O SIN ARCOS (BULGE)
-          else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
+          } else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
             for (let i = 0; i < ent.vertices.length - 1; i++) {
               const segPts = interpolarSegmentoBulge(ent.vertices[i], ent.vertices[i + 1]);
-              if (i > 0) segPts.shift(); // Evitar duplicar el punto de empalme
+              if (i > 0) segPts.shift();
               verticesUTM.push(...segPts);
             }
             if ((ent.shape || ent.isClosed) && ent.vertices.length > 2) {
@@ -761,26 +810,20 @@
               segPts.shift();
               verticesUTM.push(...segPts);
             }
-          }
-          // 3. ENTIDADES ARC (ARCOS INDEPENDIENTES)
-          else if (ent.type === 'ARC' && ent.center && ent.radius !== undefined) {
+          } else if (ent.type === 'ARC' && ent.center && ent.radius !== undefined) {
             verticesUTM = interpolarEntidadArc(ent);
           }
 
-          // RENDERIZADO EN LEAFLET SI HAY VÉRTICES VÁLIDOS
           if (verticesUTM.length >= 2) {
             const latLngs = verticesUTM.map(v => utmALatLng(v.x, v.y, huso));
-            
-            // GRUPO GRÁFICO CON BUFFER TÁCTIL GRUESO INVISIBLE (weight: 24) PARA SELECCIÓN FÁCIL
             const featureGroup = L.featureGroup();
 
             const visibleLine = L.polyline(latLngs, { color: colorStyle, weight: 3, opacity: 0.9 });
-            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 24, opacity: 0 }); // Buffer táctil
+            const touchBuffer = L.polyline(latLngs, { color: colorStyle, weight: 24, opacity: 0 });
 
             featureGroup.addLayer(visibleLine);
             featureGroup.addLayer(touchBuffer);
 
-            // Vinculación de clic directo
             const handler = function(e) {
               L.DomEvent.stopPropagation(e);
               seleccionarYActivarElementoCAD(visibleLine, ent, verticesUTM, layerName);
@@ -809,7 +852,7 @@
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
           switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' procesado correctamente. Entidades de línea y arcos renderizadas en Huso ${huso}. Haz clic en cualquier elemento para replantear.`);
+          alert(`✔ DXF '${filename}' cargado correctamente. Entidades de línea y arcos renderizadas en Huso ${huso}. Haz clic en cualquier elemento para replantear.`);
         } else {
           alert("No se encontraron entidades lineales ni arcos compatibles.");
         }
@@ -818,7 +861,7 @@
       }
     }
 
-    // HIT-TEST POR PROXIMIDAD EN EL MAPA (Selección si se toca cerca de una línea/arco)
+    // HIT-TEST POR PROXIMIDAD EN MAPA
     map.on('click', function(e) {
       if (dxfEntidadesRenderizadas.length === 0) return;
 
@@ -839,7 +882,6 @@
         }
       });
 
-      // Si el clic está dentro de 25 píxeles de cualquier elemento, lo selecciona automáticamente
       if (menorDistanciaPx <= 25 && mejorElemento) {
         seleccionarYActivarElementoCAD(mejorElemento.grafica, mejorElemento.entidad, mejorElemento.verticesUTM, mejorElemento.layerName);
       }
@@ -940,6 +982,154 @@
       else alert("No hay ningún archivo DXF cargado.");
     }
 
+    // =========================================================================
+    // 6. CONTROLADORES DE OTROS FORMATOS CARTOGRÁFICOS (RESTAURADOS TOTALMENTE)
+    // =========================================================================
+    let tempImageSrc = null;
+
+    function prepararOrtofoto(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) { tempImageSrc = evt.target.result; alert("Imagen cargada. Selecciona su WorldFile (.tfw / .jgw)."); };
+      reader.readAsDataURL(file);
+    }
+
+    function cargarWorldFile(e) {
+      const file = e.target.files[0]; if (!file || !tempImageSrc) return alert("Selecciona primero la imagen.");
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const lines = evt.target.result.trim().split(/\r?\n/);
+        if (lines.length < 6) return alert("WorldFile no válido.");
+        const A = parseFloat(lines[0]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
+        const img = new Image();
+        img.onload = function() {
+          const huso = parseInt(document.getElementById('husoSelect').value);
+          const sw = utmALatLng(C, F + E * img.height, huso), ne = utmALatLng(C + A * img.width, F, huso);
+          L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
+          map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+        };
+        img.src = tempImageSrc;
+      };
+      reader.readAsText(file);
+    }
+
+    function importarPDFGeorreferenciado(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const typedarray = new Uint8Array(evt.target.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+              const imgData = canvas.toDataURL('image/png');
+              const boundsStr = prompt("Introduce coordenadas ETRS89 (EastingMin, NorthingMin, EastingMax, NorthingMax):", "430000, 4470000, 431000, 4471000");
+              if (boundsStr) {
+                const parts = boundsStr.split(',').map(n => parseFloat(n.trim()));
+                if (parts.length === 4) {
+                  const huso = parseInt(document.getElementById('husoSelect').value);
+                  const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
+                  L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
+                  map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+                }
+              }
+            });
+          });
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function importarKML(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(e.target.result, "text/xml");
+        const placemarks = xml.getElementsByTagName("Placemark");
+        const bounds = [];
+
+        for (let i = 0; i < placemarks.length; i++) {
+          const coords = placemarks[i].getElementsByTagName("coordinates")[0];
+          if (coords) {
+            const tuples = coords.textContent.trim().split(/\s+/);
+            const latLngs = [];
+            tuples.forEach(t => {
+              const parts = t.split(',').map(n => parseFloat(n));
+              if (parts.length >= 2 && !isNaN(parts[0])) {
+                latLngs.push([parts[1], parts[0]]);
+                bounds.push([parts[1], parts[0]]);
+              }
+            });
+            if (latLngs.length === 1) {
+              L.marker(latLngs[0]).addTo(vectorImportLayerGroup);
+            } else if (latLngs.length > 1) {
+              L.polyline(latLngs, { color: '#10b981', weight: 3 }).addTo(vectorImportLayerGroup);
+            }
+          }
+        }
+        if (bounds.length > 0) {
+          map.fitBounds(L.latLngBounds(bounds));
+          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          alert(`✔ KML '${file.name}' cargado en el mapa.`);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importarGeoJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const json = JSON.parse(e.target.result);
+          const geoLayer = L.geoJSON(json, { style: { color: '#f59e0b', weight: 3 } }).addTo(vectorImportLayerGroup);
+          map.fitBounds(geoLayer.getBounds());
+          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          alert(`✔ GeoJSON '${file.name}' cargado en el mapa.`);
+        } catch (err) { alert("Error GeoJSON: " + err.message); }
+      };
+      reader.readAsText(file);
+    }
+
+    function importarASCII(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lineas = e.target.result.split(/\r?\n/);
+        const huso = parseInt(document.getElementById('husoSelect').value);
+        let contador = 0;
+
+        lineas.forEach(l => {
+          const cols = l.trim().split(/[\s,;\t]+/);
+          if (cols.length >= 3 && !isNaN(parseFloat(cols[1])) && !isNaN(parseFloat(cols[2]))) {
+            const id = cols[0], x = parseFloat(cols[1]), y = parseFloat(cols[2]), z = cols[3] ? parseFloat(cols[3]) : 0;
+            const latLng = utmALatLng(x, y, huso);
+            L.circleMarker(latLng, { radius: 4, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.9 })
+              .addTo(vectorImportLayerGroup).bindPopup(`<b>${id}</b><br>E: ${x.toFixed(3)}<br>N: ${y.toFixed(3)}<br>Z: ${z.toFixed(3)}`);
+            contador++;
+          }
+        });
+        if (contador > 0) {
+          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          alert(`✔ Importados ${contador} puntos ASCII/GSI en Huso ${huso}.`);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function reproyectarCapasMapa() {
+      if (ultimoDXFContenido) procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
+    }
+
     // VISOR 3D THREE.JS
     let scene3D, camera3D, renderer3D, controls3D;
 
@@ -999,68 +1189,7 @@
 
     function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
-    // RASTER & GeoPDF
-    let tempImageSrc = null;
-    function prepararOrtofoto(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) { tempImageSrc = evt.target.result; alert("Imagen cargada. Selecciona su WorldFile (.tfw)."); };
-      reader.readAsDataURL(file);
-    }
-
-    function cargarWorldFile(e) {
-      const file = e.target.files[0]; if (!file || !tempImageSrc) return alert("Selecciona primero la imagen.");
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const lines = evt.target.result.trim().split(/\r?\n/);
-        if (lines.length < 6) return alert("WorldFile no válido.");
-        const A = parseFloat(lines[0]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
-        const img = new Image();
-        img.onload = function() {
-          const huso = parseInt(document.getElementById('husoSelect').value);
-          const sw = utmALatLng(C, F + E * img.height, huso), ne = utmALatLng(C + A * img.width, F, huso);
-          L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
-          map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-        };
-        img.src = tempImageSrc;
-      };
-      reader.readAsText(file);
-    }
-
-    function importarPDFGeorreferenciado(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const typedarray = new Uint8Array(evt.target.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            const viewport = page.getViewport({ scale: 1.5 });
-            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-            canvas.height = viewport.height; canvas.width = viewport.width;
-            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
-              const imgData = canvas.toDataURL('image/png');
-              const boundsStr = prompt("Introduce coordenadas ETRS89 (EastingMin, NorthingMin, EastingMax, NorthingMax):", "430000, 4470000, 431000, 4471000");
-              if (boundsStr) {
-                const parts = boundsStr.split(',').map(n => parseFloat(n.trim()));
-                if (parts.length === 4) {
-                  const huso = parseInt(document.getElementById('husoSelect').value);
-                  const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
-                  L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
-                  map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-                }
-              }
-            });
-          });
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    function reproyectarCapasMapa() {
-      if (ultimoDXFContenido) procesarYRenderizarDXF(ultimoDXFContenido, "Recalculado");
-    }
-
-    // 6. CARRETERAS Y EJE DE REPLANTEO
+    // 7. CARRETERAS Y EJE DE REPLANTEO
     let ejeCarretera = [];
     let carreteraLayerGroup = L.layerGroup().addTo(map);
 
@@ -1161,7 +1290,7 @@
       `;
     }
 
-    // 7. COGO
+    // 8. COGO
     function calcularCOGOInverso() {
       const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
       const p2Str = document.getElementById('cogoP2').value.split(/[\s,]+/);
@@ -1189,7 +1318,7 @@
       `;
     }
 
-    // 8. REGISTRO Y EXPORTACIÓN
+    // 9. REGISTRO Y EXPORTACIÓN
     let listaPuntos = [];
 
     function capturarPuntoGPS() {

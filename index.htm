@@ -1,0 +1,562 @@
+﻿Aquí tienes el archivo index.html completo y autosuficiente con la arquitectura original integrada, la interfaz estilo HUD de topografía, el motor de parseo/filtrado DXF corregido (soporte para LINE, LWPOLYLINE y POLYLINE, excluyendo HATCH, TEXT y elementos no ejecutables), el cálculo numérico de replanteo (PK, Offset, Lado, proyección), la integración de capas cartográficas (PNOA / IGN / Catastro / Modo Cartesiano local) y la exportación de puntos a CSV.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topografía Pro & Replanteo DXF</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: #0b0f19; color: #f1f5f9; }
+
+        /* Panel Lateral HUD */
+        #sidebar { 
+            width: 380px; 
+            background: #111827; 
+            padding: 16px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 14px; 
+            z-index: 1000; 
+            box-shadow: 4px 0 20px rgba(0,0,0,0.6); 
+            overflow-y: auto; 
+            border-right: 1px solid #1e293b;
+        }
+
+        #map { flex: 1; height: 100%; background: #050811; cursor: crosshair; }
+
+        h2 { font-size: 0.85rem; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #1e293b; padding-bottom: 6px; font-weight: 700; }
+
+        .btn { 
+            background: #0284c7; color: white; border: none; padding: 10px 14px; border-radius: 6px; 
+            cursor: pointer; font-weight: 600; width: 100%; text-align: center; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;
+        }
+        .btn:hover { background: #0369a1; }
+        .btn-success { background: #16a34a; }
+        .btn-success:hover { background: #15803d; }
+        input[type="file"] { display: none; }
+
+        .panel { background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #1e293b; display: flex; flex-direction: column; gap: 8px; }
+
+        .metric-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .metric-label { color: #94a3b8; }
+        .metric-value { font-weight: 700; color: #38bdf8; font-family: 'Courier New', monospace; font-size: 0.95rem; }
+        .metric-highlight { color: #4ade80; font-size: 1.1rem; }
+
+        #layer-list { max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .layer-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; background: #1e293b; padding: 6px 10px; border-radius: 4px; }
+
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+        .status-active { background: #14532d; color: #4ade80; border: 1px solid #22c55e; }
+        .status-none { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+
+        select { background: #1e293b; color: #f8fafc; border: 1px solid #334155; padding: 8px; border-radius: 6px; width: 100%; font-size: 0.85rem; outline: none; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <div>
+        <h2>1. Archivo DXF & Cartografía</h2>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="btn" onclick="document.getElementById('dxf-input').click()">📁 Cargar DXF</button>
+            <input type="file" id="dxf-input" accept=".dxf" onchange="cargarDXF(event)">
+        </div>
+        <div style="margin-top: 8px;">
+            <select id="map-mode" onchange="cambiarModoMap(this.value)">
+                <option value="simple">Modo Cartesiano Local (X/Y Planas)</option>
+                <option value="pnoa">IGN España - Ortofoto PNOA</option>
+                <option value="catastro">Catastro España (WMS)</option>
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <h2>2. Capas DXF Detectadas</h2>
+        <div id="layer-list" class="panel">
+            <span style="color: #64748b; font-size: 0.85rem;">Cargue un archivo DXF para visualizar las capas.</span>
+        </div>
+    </div>
+
+    <div>
+        <h2>3. Alineación Activa de Replanteo</h2>
+        <div class="panel">
+            <div class="metric-row">
+                <span class="metric-label">Estado:</span>
+                <span id="st-estado" class="status-badge status-none">NINGUNA</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Capa:</span>
+                <span id="st-capa" class="metric-value">-</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Longitud Total:</span>
+                <span id="st-longitud" class="metric-value">0.000 m</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2>4. Telemetría de Replanteo</h2>
+        <div class="panel">
+            <div class="metric-row">
+                <span class="metric-label">Avance (PK):</span>
+                <span id="rep-pk" class="metric-value metric-highlight">0 + 000.000</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Offset (Desplazamiento):</span>
+                <span id="rep-offset" class="metric-value metric-highlight">0.000 m</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Lado de Alineación:</span>
+                <span id="rep-lado" class="metric-value">-</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">X Proyectada:</span>
+                <span id="rep-px" class="metric-value">0.000</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Y Proyectada:</span>
+                <span id="rep-py" class="metric-value">0.000</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2>5. Registro y Exportación</h2>
+        <div style="display:flex; gap:8px;">
+            <button class="btn btn-success" onclick="guardarPuntoReplanteo()">📌 Guardar Punto</button>
+            <button class="btn" style="background:#475569;" onclick="exportarCSV()">📥 Exportar CSV</button>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<!-- Librerías JavaScript desde CDN -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
+
+<script>
+    // Inicialización del visor con plano cartesiano local de alta precisión
+    let map = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -10,
+        maxZoom: 18,
+        attributionControl: false
+    }).setView([0, 0], 0);
+
+    // Capas WMS de respaldo
+    let wmsPNOA = L.tileLayer.wms('https://www.ign.es/wms-inspire/pnoa-ma', {
+        layers: 'OI.OrthoimageCoverage',
+        format: 'image/png',
+        transparent: false,
+        version: '1.3.0'
+    });
+
+    let wmsCatastro = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
+        layers: 'Catastro',
+        format: 'image/png',
+        transparent: true,
+        version: '1.1.1'
+    });
+
+    let dxfEntidades = [];
+    let capasActivas = new Set();
+    let capasInfo = {};
+    let capasGraphics = {};
+    let alineacionSeleccionada = null;
+    let puntosRegistrados = [];
+
+    // Indicadores gráficos de replanteo
+    let marcaPosicion = null;
+    let marcaProyeccion = null;
+    let lineaPuntero = null;
+
+    // Inicializador seguro para DxfParser
+    function instanciarDxfParser() {
+        if (typeof DxfParser === 'function') return new DxfParser();
+        if (window.DxfParser && typeof window.DxfParser === 'function') return new window.DxfParser();
+        if (window.DxfParser && window.DxfParser.default) return new window.DxfParser.default();
+        throw new Error("No se pudo instanciar DxfParser.");
+    }
+
+    // Cambios de cartografía base
+    function cambiarModoMap(modo) {
+        map.removeLayer(wmsPNOA);
+        map.removeLayer(wmsCatastro);
+        
+        if (modo === 'pnoa') wmsPNOA.addTo(map);
+        if (modo === 'catastro') wmsCatastro.addTo(map);
+    }
+
+    // Cargar archivo DXF
+    function cargarDXF(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parser = instanciarDxfParser();
+                const dxf = parser.parseSync(e.target.result);
+                procesarDXF(dxf);
+            } catch (err) {
+                alert("Error al procesar el archivo DXF: " + err.message);
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Procesar entidades y filtrar solo líneas ejecutables para replanteo
+    function procesarDXF(dxf) {
+        Object.values(capasGraphics).forEach(g => map.removeLayer(g));
+        capasGraphics = {};
+        capasActivas.clear();
+        capasInfo = {};
+        desseleccionarAlineacion();
+
+        if (!dxf || !dxf.entities) {
+            alert("El archivo DXF no contiene entidades geométricas.");
+            return;
+        }
+
+        // FILTRADO ESTRICTO: Solo LINE, LWPOLYLINE y POLYLINE útiles
+        dxfEntidades = dxf.entities.filter(ent => {
+            const esGeometriaLineal = ent.type === 'LINE' || ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE';
+            return esGeometriaLineal && ent.vertices && ent.vertices.length >= 2;
+        });
+
+        dxfEntidades.forEach(ent => {
+            const layer = ent.layer || '0';
+            capasActivas.add(layer);
+            if (!capasInfo[layer]) {
+                capasInfo[layer] = {
+                    color: generarColorCapa(layer),
+                    entidades: []
+                };
+            }
+            capasInfo[layer].entidades.push(ent);
+        });
+
+        const bounds = L.latLngBounds();
+
+        Object.keys(capasInfo).forEach(layerName => {
+            const group = L.layerGroup();
+
+            capasInfo[layerName].entidades.forEach(ent => {
+                // Conversión de ejes: DXF (X, Y) -> Leaflet ([Y, X])
+                const latlngs = ent.vertices.map(v => [v.y, v.x]);
+
+                if ((ent.shape || ent.isClosed) && latlngs.length > 2) {
+                    latlngs.push([ent.vertices[0].y, ent.vertices[0].x]);
+                }
+
+                const polyline = L.polyline(latlngs, {
+                    color: capasInfo[layerName].color,
+                    weight: 2,
+                    opacity: 0.85
+                });
+
+                polyline.dxfEntidad = ent;
+
+                // Evento de selección directa en el canvas/mapa
+                polyline.on('click', function(e) {
+                    L.DomEvent.stopPropagation(e);
+                    seleccionarLinea(ent, polyline);
+                });
+
+                group.addLayer(polyline);
+                latlngs.forEach(pt => bounds.extend(pt));
+            });
+
+            group.addTo(map);
+            capasGraphics[layerName] = group;
+        });
+
+        if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [30, 30] });
+        }
+
+        renderizarListaCapas();
+    }
+
+    function generarColorCapa(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        let color = '#';
+        for (let i = 0; i < 3; i++) {
+            let value = (hash >> (i * 8)) & 0xFF;
+            color += ('00' + value.toString(16)).substr(-2);
+        }
+        return color === '#000000' ? '#38bdf8' : color;
+    }
+
+    function renderizarListaCapas() {
+        const container = document.getElementById('layer-list');
+        container.innerHTML = '';
+
+        Object.keys(capasInfo).forEach(layer => {
+            const div = document.createElement('div');
+            div.className = 'layer-item';
+            div.innerHTML = `
+                <input type="checkbox" id="chk-${layer}" checked onchange="toggleCapa('${layer}')">
+                <span style="display:inline-block; width:12px; height:12px; background:${capasInfo[layer].color}; border-radius:2px;"></span>
+                <label for="chk-${layer}" style="color:#e2e8f0; cursor:pointer; flex:1;">${layer} (${capasInfo[layer].entidades.length})</label>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function toggleCapa(layerName) {
+        if (capasGraphics[layerName]) {
+            if (map.hasLayer(capasGraphics[layerName])) {
+                map.removeLayer(capasGraphics[layerName]);
+                capasActivas.delete(layerName);
+            } else {
+                capasGraphics[layerName].addTo(map);
+                capasActivas.add(layerName);
+            }
+        }
+    }
+
+    function seleccionarLinea(entidad, polylineGrafica) {
+        if (alineacionSeleccionada) {
+            alineacionSeleccionada.grafica.setStyle({ 
+                color: alineacionSeleccionada.colorOriginal, 
+                weight: 2 
+            });
+        }
+
+        const colorOriginal = capasInfo[entidad.layer] ? capasInfo[entidad.layer].color : '#38bdf8';
+        polylineGrafica.setStyle({ color: '#ff0055', weight: 5 });
+
+        const segmentos = extraerSegmentos(entidad);
+        let longitudTotal = 0;
+        segmentos.forEach(s => longitudTotal += s.longitud);
+
+        alineacionSeleccionada = {
+            entidad: entidad,
+            grafica: polylineGrafica,
+            colorOriginal: colorOriginal,
+            segmentos: segmentos
+        };
+
+        document.getElementById('st-estado').className = 'status-badge status-active';
+        document.getElementById('st-estado').innerText = 'ACTIVA';
+        document.getElementById('st-capa').innerText = entidad.layer;
+        document.getElementById('st-longitud').innerText = longitudTotal.toFixed(3) + ' m';
+    }
+
+    function desseleccionarAlineacion() {
+        if (alineacionSeleccionada) {
+            alineacionSeleccionada.grafica.setStyle({ color: alineacionSeleccionada.colorOriginal, weight: 2 });
+        }
+        alineacionSeleccionada = null;
+        document.getElementById('st-estado').className = 'status-badge status-none';
+        document.getElementById('st-estado').innerText = 'NINGUNA';
+        document.getElementById('st-capa').innerText = '-';
+        document.getElementById('st-longitud').innerText = '0.000 m';
+
+        if (marcaPosicion) map.removeLayer(marcaPosicion);
+        if (marcaProyeccion) map.removeLayer(marcaProyeccion);
+        if (lineaPuntero) map.removeLayer(lineaPuntero);
+    }
+
+    function extraerSegmentos(entidad) {
+        const v = entidad.vertices;
+        const segmentos = [];
+        let pkAcumulado = 0;
+
+        for (let i = 0; i < v.length - 1; i++) {
+            const p1 = v[i];
+            const p2 = v[i + 1];
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            segmentos.push({
+                p1: p1,
+                p2: p2,
+                longitud: dist,
+                pkInicio: pkAcumulado,
+                pkFin: pkAcumulado + dist
+            });
+
+            pkAcumulado += dist;
+        }
+
+        if ((entidad.shape || entidad.isClosed) && v.length > 2) {
+            const p1 = v[v.length - 1];
+            const p2 = v[0];
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            segmentos.push({
+                p1: p1,
+                p2: p2,
+                longitud: dist,
+                pkInicio: pkAcumulado,
+                pkFin: pkAcumulado + dist
+            });
+        }
+
+        return segmentos;
+    }
+
+    // Evento de toque o clic en el mapa para replanteo
+    map.on('click', function(e) {
+        if (!alineacionSeleccionada) return;
+
+        const puntoGPS = { x: e.latlng.lng, y: e.latlng.lat };
+        const replanteo = calcularReplanteo(puntoGPS, alineacionSeleccionada.segmentos);
+
+        if (replanteo) {
+            actualizarInterfazReplanteo(puntoGPS, replanteo);
+        }
+    });
+
+    // Cálculo numérico de replanteo ortogonal
+    function calcularReplanteo(p, segmentos) {
+        let mejorSolucion = null;
+        let menorDistancia = Infinity;
+
+        for (const seg of segmentos) {
+            const res = proyectarPuntoEnSegmento(p, seg.p1, seg.p2);
+
+            if (res.distancia < menorDistancia) {
+                menorDistancia = res.distancia;
+
+                const vx = seg.p2.x - seg.p1.x;
+                const vy = seg.p2.y - seg.p1.y;
+                const wx = p.x - seg.p1.x;
+                const wy = p.y - seg.p1.y;
+                const prodVectorial = vx * wy - vy * wx;
+
+                let lado = 'EJE';
+                if (prodVectorial > 0.0001) lado = 'IZQUIERDA';
+                if (prodVectorial < -0.0001) lado = 'DERECHA';
+
+                mejorSolucion = {
+                    pk: seg.pkInicio + (res.factor * seg.longitud),
+                    offset: res.distancia,
+                    lado: lado,
+                    proyeccion: res.proyeccion
+                };
+            }
+        }
+        return mejorSolucion;
+    }
+
+    function proyectarPuntoEnSegmento(p, p1, p2) {
+        const A = p.x - p1.x;
+        const B = p.y - p1.y;
+        const C = p2.x - p1.x;
+        const D = p2.y - p1.y;
+
+        const dot = A * C + B * D;
+        const lenSq = C * C + D * D;
+        let param = -1;
+
+        if (lenSq !== 0) param = dot / lenSq;
+
+        let projX, projY;
+        if (param < 0) {
+            projX = p1.x;
+            projY = p1.y;
+            param = 0;
+        } else if (param > 1) {
+            projX = p2.x;
+            projY = p2.y;
+            param = 1;
+        } else {
+            projX = p1.x + param * C;
+            projY = p1.y + param * D;
+        }
+
+        const dx = p.x - projX;
+        const dy = p.y - projY;
+
+        return {
+            proyeccion: { x: projX, y: projY },
+            distancia: Math.sqrt(dx * dx + dy * dy),
+            factor: param
+        };
+    }
+
+    function actualizarInterfazReplanteo(puntoGPS, r) {
+        const km = Math.floor(r.pk / 1000);
+        const m = (r.pk % 1000).toFixed(3).padStart(7, '0');
+        document.getElementById('rep-pk').innerText = `${km} + ${m}`;
+
+        document.getElementById('rep-offset').innerText = `${r.offset.toFixed(3)} m`;
+        document.getElementById('rep-lado').innerText = r.lado;
+        document.getElementById('rep-px').innerText = r.proyeccion.x.toFixed(3);
+        document.getElementById('rep-py').innerText = r.proyeccion.y.toFixed(3);
+
+        if (marcaPosicion) map.removeLayer(marcaPosicion);
+        if (marcaProyeccion) map.removeLayer(marcaProyeccion);
+        if (lineaPuntero) map.removeLayer(lineaPuntero);
+
+        marcaPosicion = L.circleMarker([puntoGPS.y, puntoGPS.x], {
+            radius: 6, color: '#38bdf8', fillColor: '#38bdf8', fillOpacity: 1
+        }).addTo(map);
+
+        marcaProyeccion = L.circleMarker([r.proyeccion.y, r.proyeccion.x], {
+            radius: 5, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1
+        }).addTo(map);
+
+        lineaPuntero = L.polyline([
+            [puntoGPS.y, puntoGPS.x],
+            [r.proyeccion.y, r.proyeccion.x]
+        ], { color: '#fbbf24', weight: 2, dashArray: '4, 4' }).addTo(map);
+
+        window.ultimoReplanteoCalculado = { puntoGPS, r };
+    }
+
+    function guardarPuntoReplanteo() {
+        if (!window.ultimoReplanteoCalculado) {
+            alert("No hay ningún cálculo de replanteo activo para guardar.");
+            return;
+        }
+        const { puntoGPS, r } = window.ultimoReplanteoCalculado;
+        puntosRegistrados.push({
+            id: puntosRegistrados.length + 1,
+            x: puntoGPS.x.toFixed(3),
+            y: puntoGPS.y.toFixed(3),
+            pk: r.pk.toFixed(3),
+            offset: r.offset.toFixed(3),
+            lado: r.lado,
+            projX: r.proyeccion.x.toFixed(3),
+            projY: r.proyeccion.y.toFixed(3)
+        });
+        alert(`Punto #${puntosRegistrados.length} registrado correctamente.`);
+    }
+
+    function exportarCSV() {
+        if (puntosRegistrados.length === 0) {
+            alert("No hay puntos guardados para exportar.");
+            return;
+        }
+        let csvContent = "data:text/csv;charset=utf-8,ID,X_PUNTO,Y_PUNTO,PK,OFFSET,LADO,X_PROY,Y_PROY\n";
+        puntosRegistrados.forEach(p => {
+            csvContent += `${p.id},${p.x},${p.y},${p.pk},${p.offset},${p.lado},${p.projX},${p.projY}\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "replanteo_topografia.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+</body>
+</html>
+
+

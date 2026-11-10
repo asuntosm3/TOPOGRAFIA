@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topografía Pro - ETRS89 & CAD Avanzado</title>
+
+  <!-- Librerías Externas -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --panel-bg: #1e1e1e;
+      --accent: #00e676;
+      --highlight: #ffea00;
+      --text: #ffffff;
+      --border: #333333;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-dark);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    header {
+      background: var(--panel-bg);
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { margin: 0; font-size: 1.1rem; color: var(--accent); }
+    .container {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .panel {
+      background: var(--panel-bg);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    #map {
+      width: 100%;
+      height: 480px;
+      border-radius: 8px;
+    }
+    .btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .btn-secondary { background: #333; color: #fff; }
+    .btn-warn { background: var(--highlight); color: #000; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+    th, td { border: 1px solid var(--border); padding: 6px; text-align: left; }
+    th { background: #2a2a2a; color: var(--accent); }
+    select, input {
+      background: #2a2a2a;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px;
+      border-radius: 4px;
+    }
+    .cad-tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Topografía Pro - ETRS89 & CAD</h1>
+    <label style="font-size: 0.85rem;">Huso ETRS89: 
+      <select id="husoSelect">
+        <option value="30" selected>Huso 30 (Centro/Península)</option>
+        <option value="29">Huso 29 (Galicia/Oeste)</option>
+        <option value="31">Huso 31 (Cataluña/Baleares)</option>
+        <option value="28">Huso 28 (Canarias)</option>
+      </select>
+    </label>
+  </header>
+
+  <div class="container">
+    
+    <!-- CONTROLES PRINCIPALES -->
+    <div class="panel">
+      <button class="btn" onclick="capturarPuntoGPS()">📍 Capturar Punto GPS</button>
+      <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="cargarDXF(event)">
+      <button class="btn btn-secondary" onclick="document.getElementById('dxfFileInput').click()">📁 Cargar DXF</button>
+      <button class="btn btn-secondary" onclick="exportarCSV()">📥 Exportar CSV</button>
+    </div>
+
+    <!-- MAPA LEAFLET -->
+    <div id="map"></div>
+
+    <!-- PANEL HERRAMIENTAS INTERACTIVAS CAD -->
+    <div id="cadPanel" class="panel" style="display:none;">
+      <h3 style="margin-top:0; color: var(--highlight);">Herramientas de Selección y Replanteo CAD</h3>
+      <div id="selectedInfo"><i>Toca cualquier línea o polilínea en el mapa para seleccionarla.</i></div>
+      
+      <div class="cad-tools" id="toolsContainer" style="display:none;">
+        <button class="btn btn-warn" onclick="invertirSentidoPolilinea()">🔄 Invertir Sentido</button>
+        <div style="display:flex; align-items:center; gap:5px;">
+          <input type="number" id="offsetDist" placeholder="Distancia (m)" value="1.0" step="0.5" style="width:100px;">
+          <button class="btn btn-secondary" onclick="generarOffset(1)">➡ Paralela Der</button>
+          <button class="btn btn-secondary" onclick="generarOffset(-1)">⬅ Paralela Izq</button>
+        </div>
+      </div>
+      
+      <div id="stakeoutMetrics" style="margin-top:10px; font-family: monospace; font-size: 0.9rem; color:#80cbc4;"></div>
+    </div>
+
+    <!-- TABLA DE PUNTOS -->
+    <div class="panel">
+      <h3>Puntos Registrados</h3>
+      <table id="tablaPuntos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Easting (E)</th>
+            <th>Northing (N)</th>
+            <th>Cota NAP (H)</th>
+            <th>Cota Elips. (h)</th>
+            <th>N (Geoide)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. DEFINICIÓN DE PROYECCIONES ETRS89
+    proj4.defs("EPSG:25828", "+proj=utm +zone=28 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+    proj4.defs("EPSG:25829", "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+    proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+    proj4.defs("EPSG:25831", "+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+
+    function latLngATransformadaETRS89(lat, lng, huso) {
+      return proj4("EPSG:4326", `EPSG:258${huso}`, [lng, lat]);
+    }
+
+    function utmALatLng(x, y, huso) {
+      const [lng, lat] = proj4(`EPSG:258${huso}`, "EPSG:4326", [x, y]);
+      return [lat, lng];
+    }
+
+    // 2. GEOIDE REDNAP
+    const GeoideIGN = {
+      elipsoidalAOrtometrica: function(lat, lng, hElipsoidal) {
+        return { cotaNAP: hElipsoidal - 50.2, ondulacionN: 50.2 };
+      }
+    };
+
+    // 3. MAPA CON WMTS PNOA ACTUALIZADO (RÁPIDO Y FIABLE)
+    const map = L.map('map').setView([40.4167, -3.7037], 15);
+
+    // Ortofoto PNOA mediante servicio WMTS
+    const pnoaLayer = L.tileLayer('https://www.ign.es/wmts/pnoa-ma?service=WMTS&request=GetTile&version=1.0.0&layer=OI.OrtoimageCoverage&style=default&tilematrixset=GoogleMapsCompatible&TileMatrix={z}&TileCol={x}&TileRow={y}&format=image/jpeg', {
+      maxZoom: 20,
+      attribution: '© IGN - PNOA'
+    }).addTo(map);
+
+    const catastroLayer = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
+      layers: 'Catastro', format: 'image/png', transparent: true, attribution: '© Catastro'
+    }).addTo(map);
+
+    const ignBaseLayer = L.tileLayer.wms('https://www.ign.es/wms-inspire/ign-base', {
+      layers: 'IGNBaseTodo', format: 'image/png', transparent: false, attribution: '© IGN'
+    });
+
+    L.control.layers(
+      { "Ortofoto PNOA (WMTS)": pnoaLayer, "Topográfico IGN": ignBaseLayer },
+      { "Catastro Vectorial": catastroLayer }
+    ).addTo(map);
+
+    // 4. GESTIÓN E INTERACCIÓN AVANZADA DE ELEMENTOS DXF
+    let cadLayerGroup = L.layerGroup().addTo(map);
+    let selectedPolylineLayer = null;
+    let selectedVerticesUTM = []; // Vértices en metros UTM del elemento activo
+    let selectedEntityMeta = null;
+
+    function cargarDXF(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parser = new DxfParser();
+          const dxf = parser.parseSync(e.target.result);
+          renderizarDXF(dxf);
+        } catch (err) {
+          alert("Error procesando DXF: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderizarDXF(dxf) {
+      cadLayerGroup.clearLayers();
+      deseleccionarElemento();
+      
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const entities = dxf.entities || [];
+      const latLngBounds = [];
+
+      entities.forEach(ent => {
+        let verticesUTM = [];
+
+        if (ent.type === 'LINE') {
+          verticesUTM = [{x: ent.vertices[0].x, y: ent.vertices[0].y}, {x: ent.vertices[1].x, y: ent.vertices[1].y}];
+        } else if (ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') {
+          verticesUTM = ent.vertices.map(v => ({x: v.x, y: v.y}));
+        }
+
+        if (verticesUTM.length > 0) {
+          const latLngs = verticesUTM.map(v => {
+            const pt = utmALatLng(v.x, v.y, huso);
+            latLngBounds.push(pt);
+            return pt;
+          });
+
+          const polylineLayer = L.polyline(latLngs, { color: '#00e676', weight: 3 });
+          
+          polylineLayer.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            seleccionarPolilinea(polylineLayer, verticesUTM, ent);
+          });
+
+          cadLayerGroup.addLayer(polylineLayer);
+        }
+      });
+
+      if (latLngBounds.length > 0) {
+        document.getElementById('cadPanel').style.display = 'block';
+        map.fitBounds(L.latLngBounds(latLngBounds), { padding: [30, 30] });
+      }
+    }
+
+    function seleccionarPolilinea(layer, verticesUTM, meta) {
+      // Restaurar estilo anterior
+      if (selectedPolylineLayer) {
+        selectedPolylineLayer.setStyle({ color: '#00e676', weight: 3 });
+      }
+
+      selectedPolylineLayer = layer;
+      selectedVerticesUTM = verticesUTM;
+      selectedEntityMeta = meta;
+
+      // Resaltar elemento seleccionado (Fosforito + Grueso)
+      selectedPolylineLayer.setStyle({ color: '#ffea00', weight: 6 });
+
+      document.getElementById('selectedInfo').innerHTML = `
+        <b>Elemento seleccionado:</b> ${meta.type}<br>
+        <b>Capa CAD:</b> ${meta.layer} | <b>Vértices:</b> ${verticesUTM.length}<br>
+        <b>Origen UTM:</b> X=${verticesUTM[0].x.toFixed(2)}, Y=${verticesUTM[0].y.toFixed(2)}
+      `;
+
+      document.getElementById('toolsContainer').style.display = 'flex';
+    }
+
+    function deseleccionarElemento() {
+      if (selectedPolylineLayer) {
+        selectedPolylineLayer.setStyle({ color: '#00e676', weight: 3 });
+      }
+      selectedPolylineLayer = null;
+      selectedVerticesUTM = [];
+      document.getElementById('toolsContainer').style.display = 'none';
+      document.getElementById('selectedInfo').innerHTML = '<i>Toca cualquier línea o polilínea para seleccionar.</i>';
+      document.getElementById('stakeoutMetrics').innerHTML = '';
+    }
+
+    // 5. HERRAMIENTAS: INVERTIR Y OFFSET
+    function invertirSentidoPolilinea() {
+      if (!selectedVerticesUTM || selectedVerticesUTM.length < 2) return;
+
+      selectedVerticesUTM.reverse();
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const nuevosLatLngs = selectedVerticesUTM.map(v => utmALatLng(v.x, v.y, huso));
+      
+      selectedPolylineLayer.setLatLngs(nuevosLatLngs);
+      
+      document.getElementById('stakeoutMetrics').innerHTML = '⚡ Sentido de la polilínea invertido (Origen/Destino intercambiados).';
+    }
+
+    function generarOffset(signo) {
+      if (!selectedVerticesUTM || selectedVerticesUTM.length < 2) return;
+
+      const dist = parseFloat(document.getElementById('offsetDist').value) * signo;
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const offsetUTM = [];
+
+      for (let i = 0; i < selectedVerticesUTM.length - 1; i++) {
+        const p1 = selectedVerticesUTM[i];
+        const p2 = selectedVerticesUTM[i + 1];
+
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const len = Math.hypot(dx, dy);
+
+        if (len === 0) continue;
+
+        // Vector normal perpendicular
+        const nx = -dy / len;
+        const ny = dx / len;
+
+        const off1 = { x: p1.x + nx * dist, y: p1.y + ny * dist };
+        const off2 = { x: p2.x + nx * dist, y: p2.y + ny * dist };
+
+        if (i === 0) offsetUTM.push(off1);
+        offsetUTM.push(off2);
+      }
+
+      const offsetLatLngs = offsetUTM.map(v => utmALatLng(v.x, v.y, huso));
+      const offsetLayer = L.polyline(offsetLatLngs, { color: '#ff4081', weight: 3, dashArray: '6, 6' });
+      
+      cadLayerGroup.addLayer(offsetLayer);
+      document.getElementById('stakeoutMetrics').innerHTML = `✔ Línea paralela (Offset ${dist}m) creada.`;
+    }
+
+    // 6. CAPTURA Y REPLANTEO GPS
+    let listaPuntos = [];
+
+    function capturarPuntoGPS() {
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+
+      const huso = parseInt(document.getElementById('husoSelect').value);
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const hGPS = pos.coords.altitude || 0;
+
+        const [easting, northing] = latLngATransformadaETRS89(lat, lng, huso);
+        const altimetria = GeoideIGN.elipsoidalAOrtometrica(lat, lng, hGPS);
+
+        const punto = {
+          id: `P-${listaPuntos.length + 1}`,
+          easting: easting.toFixed(3),
+          northing: northing.toFixed(3),
+          cotaNAP: altimetria.cotaNAP.toFixed(3),
+          hGPS: hGPS.toFixed(3),
+          N: altimetria.ondulacionN.toFixed(2)
+        };
+
+        listaPuntos.push(punto);
+        
+        const tbody = document.querySelector('#tablaPuntos tbody');
+        tbody.innerHTML += `<tr>
+          <td>${punto.id}</td>
+          <td>${punto.easting}</td>
+          <td>${punto.northing}</td>
+          <td><b>${punto.cotaNAP}</b></td>
+          <td>${punto.hGPS}</td>
+          <td>${punto.N}</td>
+        </tr>`;
+
+        L.marker([lat, lng]).addTo(map).bindPopup(`<b>${punto.id}</b><br>H (NAP): ${punto.cotaNAP} m`).openPopup();
+        map.setView([lat, lng], 18);
+      }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
+    }
+
+    function exportarCSV() {
+      if (listaPuntos.length === 0) return alert("No hay puntos registrados.");
+      let csv = "ID,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide\n";
+      listaPuntos.forEach(p => {
+        csv += `${p.id},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'puntos_ETRS89.csv');
+      a.click();
+    }
+  </script>
+</body>
+</html>

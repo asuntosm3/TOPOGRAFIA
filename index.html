@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Selector GPS & ETRS89</title>
+  <title>Topografía Pro 2026 - Módulos & ETRS89</title>
 
   <!-- Tipografías de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,21 +43,22 @@
       color: var(--text-main);
       font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
+    /* HEADER FIX */
     header {
-      background: rgba(10, 14, 23, 0.85);
+      background: rgba(10, 14, 23, 0.95);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
       z-index: 1000;
-      flex-wrap: wrap;
-      gap: 10px;
     }
 
     .brand {
@@ -76,7 +77,7 @@
 
     h1 {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
@@ -84,161 +85,137 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .header-controls {
+    /* BARRA DE PESTAÑAS / NAVEGACIÓN MODULAR */
+    .tab-bar {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      background: rgba(14, 20, 31, 0.9);
+      border-bottom: 1px solid var(--border);
+      padding: 4px 8px;
+      gap: 4px;
+      overflow-x: auto;
     }
 
-    .huso-badge {
+    .tab-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    select {
       background: transparent;
       border: none;
-      color: var(--accent-primary);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: 600;
-      font-family: var(--font-sans);
-      outline: none;
       cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
     }
 
-    select option {
-      background: var(--bg-surface-solid);
+    .tab-btn:hover {
       color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
     }
 
-    .app-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 16px;
+    .tab-btn.active {
+      color: #000;
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      box-shadow: 0 2px 10px rgba(0, 242, 254, 0.3);
+    }
+
+    /* CONTENEDOR DE PANTALLAS */
+    .view-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-content {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 12px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .toolbar {
+    /* ESTILOS DE COMPONENTES HUD */
+    .glass-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: 12px;
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .btn {
-      display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--bg-surface);
-      backdrop-filter: blur(12px);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    .btn:hover {
-      border-color: var(--border-accent);
-      transform: translateY(-1px);
-      background: rgba(30, 41, 59, 0.8);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-      color: #000000;
-      border: none;
-      box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
-    }
-
-    .btn-warning {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.4);
-      color: var(--accent-warning);
-    }
-
-    .rtk-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.4);
-    }
-
-    .status-fix { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
-    .status-float { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
-    .status-single { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
-    .status-internal { color: #3b82f6; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.1); }
-
-    .map-wrapper {
+    /* MAPA A PANTALLA COMPLETA EN PESTAÑA 1 */
+    #mapWrapper {
       position: relative;
-      border-radius: 16px;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     #map {
       width: 100%;
-      height: 540px;
+      height: 100%;
       background: #080b11;
     }
 
     .map-gps-btn {
       position: absolute;
-      bottom: 24px;
-      right: 24px;
+      bottom: 20px;
+      right: 20px;
       z-index: 999;
       background: rgba(10, 14, 23, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border-accent);
       color: var(--accent-primary);
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-      transition: all 0.2s ease;
     }
 
     .user-gps-pulse {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       background: #00f2fe;
       border: 2px solid #ffffff;
       border-radius: 50%;
-      box-shadow: 0 0 15px #00f2fe;
+      box-shadow: 0 0 12px #00f2fe;
       position: relative;
     }
 
     .user-gps-pulse::after {
       content: '';
       position: absolute;
-      top: -12px;
-      left: -12px;
-      width: 36px;
-      height: 36px;
+      top: -11px;
+      left: -11px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: rgba(0, 242, 254, 0.35);
       animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
@@ -249,237 +226,259 @@
       80%, 100% { transform: scale(1.5); opacity: 0; }
     }
 
-    .leaflet-control-layers {
-      background: rgba(18, 26, 41, 0.9) !important;
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border) !important;
-      border-radius: 12px !important;
-      color: var(--text-main) !important;
-      padding: 8px 12px !important;
-    }
-
-    .leaflet-control-layers-toggle { filter: invert(1); }
-
-    .leaflet-bar a {
-      background: rgba(18, 26, 41, 0.9) !important;
-      color: var(--text-main) !important;
-      border-bottom: 1px solid var(--border) !important;
-    }
-
-    .glass-panel {
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       background: var(--bg-surface);
-      backdrop-filter: blur(16px);
+      color: var(--text-main);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 20px;
-    }
-
-    .panel-title {
-      font-size: 0.95rem;
+      padding: 10px 16px;
+      border-radius: 10px;
       font-weight: 600;
-      color: var(--accent-primary);
-      margin: 0 0 12px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+      cursor: pointer;
     }
 
-    .cad-tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-top: 12px;
+    .btn-primary {
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      color: #000;
+      border: none;
     }
 
-    .input-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .btn-warning {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--accent-warning);
     }
 
     .input-field {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       border: 1px solid var(--border);
       color: var(--text-main);
       padding: 8px 12px;
       border-radius: 8px;
       font-family: var(--font-mono);
-      font-size: 0.9rem;
-      outline: none;
-    }
-
-    .telemetry-box {
-      background: rgba(0, 0, 0, 0.4);
-      border-left: 3px solid var(--accent-primary);
-      padding: 12px;
-      border-radius: 8px;
-      font-family: var(--font-mono);
       font-size: 0.85rem;
-      color: #cbd5e1;
-      margin-top: 10px;
+      outline: none;
+      width: 100%;
     }
 
-    .table-container { overflow-x: auto; }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .rtk-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+
+    .status-fix { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
+    .status-float { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+    .status-single { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+    .status-internal { color: #3b82f6; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.1); }
 
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
     }
 
     th {
       background: rgba(255, 255, 255, 0.03);
       color: var(--text-muted);
-      font-weight: 600;
+      padding: 10px;
       text-align: left;
-      padding: 12px;
       border-bottom: 1px solid var(--border);
-      text-transform: uppercase;
       font-size: 0.75rem;
     }
 
     td {
-      padding: 12px;
+      padding: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       font-family: var(--font-mono);
-      color: #e2e8f0;
     }
 
-    .tag-nap { color: var(--accent-primary); font-weight: 600; }
+    .leaflet-control-layers {
+      background: rgba(18, 26, 41, 0.95) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text-main) !important;
+      border-radius: 10px !important;
+    }
+    .leaflet-control-layers-toggle { filter: invert(1); }
   </style>
 </head>
 <body>
 
-  <!-- HEADER CON SELECTORES -->
+  <!-- HEADER GLOBAL -->
   <header>
     <div class="brand">
       <div class="brand-logo"></div>
       <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
     </div>
 
-    <div class="header-controls">
-      <!-- SELECTOR DE FUENTE GPS -->
-      <div class="huso-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/></svg>
-        <span>Fuente:</span>
-        <select id="gpsSourceSelect" onchange="cambiarFuenteGPS()">
-          <option value="SETTOP" selected>GNSS RTK / Settop (BT + IGN)</option>
-          <option value="INTERNAL">GPS Interno Tablet</option>
-        </select>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <div id="rtkBadge" class="rtk-status-badge status-single">
+        <span>GNSS: ESPERANDO</span>
       </div>
-
-      <!-- SELECTOR DE HUSO -->
-      <div class="huso-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 29M2 12h20"/></svg>
-        <span>ETRS89:</span>
-        <select id="husoSelect">
-          <option value="30" selected>Huso 30 (Centro)</option>
-          <option value="29">Huso 29 (Galicia/Oeste)</option>
-          <option value="31">Huso 31 (Cataluña/Baleares)</option>
-          <option value="28">Huso 28 (Canarias)</option>
+      
+      <div style="background: rgba(255,255,255,0.04); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.78rem;">
+        <select id="husoSelect" style="background:transparent; border:none; color:var(--accent-primary); font-weight:600; outline:none;">
+          <option value="30" selected>ETRS89 H30</option>
+          <option value="29">ETRS89 H29</option>
+          <option value="31">ETRS89 H31</option>
+          <option value="28">RECAN95 H28</option>
         </select>
       </div>
     </div>
   </header>
 
-  <div class="app-container">
-    
-    <!-- ACCIONES RÁPIDAS & TELEMETRÍA -->
-    <div class="toolbar">
-      <button class="btn btn-primary" onclick="capturarPuntoGPS()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3"/></svg>
-        Capturar GPS
-      </button>
+  <!-- NAVEGACIÓN POR PESTAÑAS -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tabMap')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      🗺️ Visor CAD & Cartografía
+    </button>
+    <button class="tab-btn" onclick="switchTab('tabTopo')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      📐 Topografía & Replanteo
+    </button>
+    <button class="tab-btn" onclick="switchTab('tabGNSS')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/></svg>
+      📡 Conexión GNSS / RTK
+    </button>
+    <button class="tab-btn" onclick="switchTab('tabData')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      📊 Datos & Exportación
+    </button>
+  </nav>
 
-      <button class="btn" onclick="centrarEnPosicionGPS()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 8 8 12 12 16 16 12 12 8"/></svg>
-        Centrar Posición
-      </button>
+  <!-- CONTENEDOR DE VISTAS -->
+  <div class="view-container">
 
-      <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="cargarDXF(event)">
-      <button class="btn" onclick="document.getElementById('dxfFileInput').click()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Cargar DXF
-      </button>
-
-      <button class="btn" onclick="exportarCSV()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exportar CSV
-      </button>
-
-      <!-- BADGE DE ESTADO GPS -->
-      <div id="rtkBadge" class="rtk-status-badge status-single">
-        <span>GNSS: ESPERANDO DATO</span>
-      </div>
-    </div>
-
-    <!-- MAPA VISOR HUD -->
-    <div class="map-wrapper">
-      <div id="map"></div>
-      <button class="map-gps-btn" onclick="centrarEnPosicionGPS()" title="Centrar Mapa">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
-      </button>
-    </div>
-
-    <!-- HERRAMIENTAS CAD -->
-    <div id="cadPanel" class="glass-panel" style="display:none;">
-      <div class="panel-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        Herramientas de Selección & Replanteo CAD
-      </div>
-
-      <div id="selectedInfo" style="color: var(--text-muted); font-size: 0.9rem;">
-        <i>Toca cualquier línea o polilínea en el mapa para iniciar el replanteo.</i>
-      </div>
-      
-      <div class="cad-tools-grid" id="toolsContainer" style="display:none;">
-        <button class="btn btn-warning" onclick="invertirSentidoPolilinea()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-          Invertir Sentido
+    <!-- PESTAÑA 1: VISOR CAD Y MAPA -->
+    <div id="tabMap" class="tab-content active" style="padding: 8px;">
+      <div id="mapWrapper">
+        <div id="map"></div>
+        <button class="map-gps-btn" onclick="centrarEnPosicionGPS()" title="Centrar Posición">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
         </button>
+      </div>
+    </div>
 
-        <div class="input-group">
-          <input type="number" id="offsetDist" class="input-field" placeholder="Dist. (m)" value="1.0" step="0.5" style="width: 110px;">
-          <button class="btn" onclick="generarOffset(1)">➡ Par. Der</button>
-          <button class="btn" onclick="generarOffset(-1)">⬅ Par. Izq</button>
+    <!-- PESTAÑA 2: HERRAMIENTAS TOPOGRÁFICAS & REPLANTEO -->
+    <div id="tabTopo" class="tab-content">
+      <div class="glass-card">
+        <div class="card-title">Acciones Principales de Campo</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="capturarPuntoGPS()">📍 Capturar Punto GPS</button>
+          <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="cargarDXF(event)">
+          <button class="btn" onclick="document.getElementById('dxfFileInput').click()">📁 Importar DXF</button>
         </div>
       </div>
-      
-      <div id="stakeoutMetrics" class="telemetry-box" style="display:none;"></div>
+
+      <div id="cadPanel" class="glass-card" style="display:none;">
+        <div class="card-title">Herramientas CAD de Replanteo de Línea</div>
+        <div id="selectedInfo" style="color: var(--text-muted); font-size: 0.88rem;">
+          <i>Toca cualquier línea en el mapa de la Pestaña 1 para seleccionarla.</i>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;" id="toolsContainer">
+          <button class="btn btn-warning" onclick="invertirSentidoPolilinea()">🔄 Invertir Sentido</button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <input type="number" id="offsetDist" class="input-field" value="1.0" step="0.5" style="width: 100px;">
+            <button class="btn" onclick="generarOffset(1)">➡ Par. Der</button>
+            <button class="btn" onclick="generarOffset(-1)">⬅ Par. Izq</button>
+          </div>
+        </div>
+        <div id="stakeoutMetrics" style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--accent-primary); padding: 10px; margin-top:10px; font-family: var(--font-mono); font-size:0.85rem; display:none;"></div>
+      </div>
     </div>
 
-    <!-- REGISTRO DE PUNTOS -->
-    <div class="glass-panel">
-      <div class="panel-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Registro de Coordenadas de Campo (ETRS89 / REDNAP)
+    <!-- PESTAÑA 3: CONFIGURACIÓN GNSS / RTK / IGN -->
+    <div id="tabGNSS" class="tab-content">
+      <div class="grid-2col">
+        <div class="glass-card">
+          <div class="card-title">Selección de Receptor GNSS</div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size:0.82rem; color:var(--text-muted);">Fuente de datos de ubicación:</label>
+            <select id="gpsSourceSelect" class="input-field" style="margin-top:6px;" onchange="cambiarFuenteGPS()">
+              <option value="SETTOP" selected>Antena Settop / RTK Externo (Bluetooth + NTRIP IGN)</option>
+              <option value="INTERNAL">GPS Interno de la Tablet (Autónomo)</option>
+            </select>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4;">
+            <b>Modo Settop:</b> Requiere activar "Ubicaciones Simuladas" en las opciones de desarrollador de Android y conectar la app cliente NTRIP (Lefebure / SW Maps).
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">Parámetros Caster NTRIP (IGN España)</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <input type="text" class="input-field" value="ergnss-caster.ign.es" readonly placeholder="Servidor Caster">
+            <input type="text" class="input-field" value="Puerto: 2101" readonly>
+            <input type="text" class="input-field" value="Mountpoint: NEAREST3 (RTCM 3.2)" readonly>
+            <p style="font-size:0.78rem; color:var(--accent-primary);">✔ Configuración optimizada para la red ERGNSS del IGN.</p>
+          </div>
+        </div>
       </div>
-      <div class="table-container">
-        <table id="tablaPuntos">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Easting (E)</th>
-              <th>Northing (N)</th>
-              <th>Cota NAP (H)</th>
-              <th>Cota Elips. (h)</th>
-              <th>N (Geoide)</th>
-              <th>Precisión</th>
-              <th>Fuente</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    </div>
+
+    <!-- PESTAÑA 4: GESTIÓN DE DATOS & CSV -->
+    <div id="tabData" class="tab-content">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div class="card-title" style="margin:0;">Listado de Puntos Registrados (ETRS89 / REDNAP)</div>
+          <button class="btn btn-primary" onclick="exportarCSV()">📥 Exportar a CSV</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="tablaPuntos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Easting (E)</th>
+                <th>Northing (N)</th>
+                <th>Cota NAP (H)</th>
+                <th>Cota Elips. (h)</th>
+                <th>N (Geoide)</th>
+                <th>Precisión</th>
+                <th>Fuente</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // 1. CONFIGURACIÓN ETRS89
+    // 1. NAVEGACIÓN ENTRE PESTAÑAS / VENTANAS
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+
+      // Si volvemos a la pestaña del mapa, recalcular dimensiones de Leaflet
+      if (tabId === 'tabMap') {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    // 2. CONFIGURACIÓN ETRS89
     proj4.defs("EPSG:25828", "+proj=utm +zone=28 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
     proj4.defs("EPSG:25829", "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
     proj4.defs("EPSG:25830", "+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
@@ -494,14 +493,14 @@
       return [lat, lng];
     }
 
-    // 2. MODELO GEOIDE REDNAP
+    // 3. GEOIDE REDNAP
     const GeoideIGN = {
       elipsoidalAOrtometrica: function(lat, lng, hElipsoidal) {
         return { cotaNAP: hElipsoidal - 50.2, ondulacionN: 50.2 };
       }
     };
 
-    // 3. MAPA Y CAPAS
+    // 4. MAPA Y CAPAS
     const map = L.map('map', { zoomControl: false }).setView([40.4167, -3.7037], 15);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -530,7 +529,7 @@
       { position: 'topright' }
     ).addTo(map);
 
-    // 4. CONTROL DE POSICIÓN Y GESTIÓN DE FUENTES GPS
+    // 5. CONTROL GPS & DIAGNÓSTICO
     let userMarker = null;
     let userAccuracyCircle = null;
 
@@ -539,10 +538,10 @@
       const badge = document.getElementById('rtkBadge');
       if (fuente === 'INTERNAL') {
         badge.className = 'rtk-status-badge status-internal';
-        badge.innerHTML = `📱 GPS INTERNO TABLET`;
+        badge.innerHTML = `📱 TABLET AUTÓNOMA`;
       } else {
         badge.className = 'rtk-status-badge status-single';
-        badge.innerHTML = `📡 SETTOP RTK (ESPERANDO DATO)`;
+        badge.innerHTML = `📡 SETTOP RTK (ESPERANDO)`;
       }
     }
 
@@ -552,7 +551,7 @@
 
       if (fuente === 'INTERNAL') {
         badge.className = 'rtk-status-badge status-internal';
-        badge.innerHTML = `📱 TABLET AUTÓNOMA (${acc.toFixed(1)} m)`;
+        badge.innerHTML = `📱 TABLET (${acc.toFixed(1)} m)`;
       } else {
         if (acc <= 0.05) {
           badge.className = 'rtk-status-badge status-fix';
@@ -585,8 +584,8 @@
           const userIcon = L.divIcon({
             className: 'user-gps-marker',
             html: '<div class="user-gps-pulse"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
           });
 
           userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
@@ -603,7 +602,7 @@
       }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
     }
 
-    // 5. INTERACCIÓN CAD Y REPLANTEO
+    // 6. CAD & DXF
     let cadLayerGroup = L.layerGroup().addTo(map);
     let selectedPolylineLayer = null;
     let selectedVerticesUTM = [];
@@ -628,7 +627,6 @@
 
     function renderizarDXF(dxf) {
       cadLayerGroup.clearLayers();
-      deseleccionarElemento();
       
       const huso = parseInt(document.getElementById('husoSelect').value);
       const entities = dxf.entities || [];
@@ -645,7 +643,6 @@
           const pt = utmALatLng(ent.position.x, ent.position.y, huso);
           latLngBounds.push(pt);
           const circle = L.circleMarker(pt, { radius: 6, color: '#ec4899', fillColor: '#ec4899', fillOpacity: 0.8 });
-          circle.on('click', () => mostrarInfoPunto(ent));
           cadLayerGroup.addLayer(circle);
           return;
         }
@@ -670,7 +667,7 @@
 
       if (latLngBounds.length > 0) {
         document.getElementById('cadPanel').style.display = 'block';
-        map.fitBounds(L.latLngBounds(latLngBounds), { padding: [40, 40] });
+        map.fitBounds(L.latLngBounds(latLngBounds), { padding: [30, 30] });
       }
     }
 
@@ -686,47 +683,19 @@
       selectedPolylineLayer.setStyle({ color: '#f59e0b', weight: 6 });
 
       document.getElementById('selectedInfo').innerHTML = `
-        <span style="color: var(--accent-primary); font-weight:600;">Elemento Seleccionado:</span> ${meta.type} | 
-        <span style="color: var(--accent-primary); font-weight:600;">Capa:</span> ${meta.layer} | 
-        <span style="color: var(--accent-primary); font-weight:600;">Vértices:</span> ${verticesUTM.length}
+        <b style="color:var(--accent-primary)">Elemento Seleccionado:</b> ${meta.type} | 
+        <b>Capa:</b> ${meta.layer} | <b>Vértices:</b> ${verticesUTM.length}
       `;
-
-      document.getElementById('toolsContainer').style.display = 'flex';
     }
 
-    function mostrarInfoPunto(meta) {
-      document.getElementById('cadPanel').style.display = 'block';
-      document.getElementById('selectedInfo').innerHTML = `
-        <span style="color: var(--accent-pink); font-weight:600;">Punto Vértice:</span> Capa ${meta.layer} | 
-        X: ${meta.position.x.toFixed(3)} | Y: ${meta.position.y.toFixed(3)}
-      `;
-      document.getElementById('toolsContainer').style.display = 'none';
-    }
-
-    function deseleccionarElemento() {
-      if (selectedPolylineLayer) {
-        selectedPolylineLayer.setStyle({ color: '#00f2fe', weight: 3 });
-      }
-      selectedPolylineLayer = null;
-      selectedVerticesUTM = [];
-      document.getElementById('toolsContainer').style.display = 'none';
-      document.getElementById('selectedInfo').innerHTML = '<i>Toca cualquier línea o polilínea en el mapa para iniciar el replanteo.</i>';
-      document.getElementById('stakeoutMetrics').style.display = 'none';
-    }
-
-    // 6. INVERTIR Y OFFSET
     function invertirSentidoPolilinea() {
       if (!selectedVerticesUTM || selectedVerticesUTM.length < 2) return;
-
       selectedVerticesUTM.reverse();
       const huso = parseInt(document.getElementById('husoSelect').value);
       const nuevosLatLngs = selectedVerticesUTM.map(v => utmALatLng(v.x, v.y, huso));
-      
       selectedPolylineLayer.setLatLngs(nuevosLatLngs);
-      
-      const metricsBox = document.getElementById('stakeoutMetrics');
-      metricsBox.style.display = 'block';
-      metricsBox.innerHTML = '⚡ <b>Sentido invertido:</b> Origen y destino intercambiados.';
+      document.getElementById('stakeoutMetrics').style.display = 'block';
+      document.getElementById('stakeoutMetrics').innerHTML = '⚡ Sentido de polilínea invertido.';
     }
 
     function generarOffset(signo) {
@@ -763,10 +732,10 @@
 
       const metricsBox = document.getElementById('stakeoutMetrics');
       metricsBox.style.display = 'block';
-      metricsBox.innerHTML = `✔ <b>Línea paralela generada:</b> Offset de ${dist} metros.`;
+      metricsBox.innerHTML = `✔ Línea paralela (Offset ${dist}m) creada.`;
     }
 
-    // 7. CAPTURA GPS Y EXPORTACIÓN
+    // 7. CAPTURA Y EXPORTACIÓN
     let listaPuntos = [];
 
     function capturarPuntoGPS() {
@@ -804,7 +773,7 @@
           <td><b>${punto.id}</b></td>
           <td>${punto.easting}</td>
           <td>${punto.northing}</td>
-          <td class="tag-nap">${punto.cotaNAP}</td>
+          <td style="color:var(--accent-primary); font-weight:600;">${punto.cotaNAP}</td>
           <td>${punto.hGPS}</td>
           <td>${punto.N}</td>
           <td>${punto.acc}</td>

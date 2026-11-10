@@ -1,17 +1,3 @@
-﻿He actualizado la aplicación incorporando las mejoras interactivas para el visor DXF, corrigiendo la gestión de capas y añadiendo un entorno interactivo en 2D y 3D.
-Novedades en el Visor DXF e Interacción:
- * Gestión Real de Capas CAD:
-   * Se ha corregido la lógica de ocultación (toggleCapaDXF). Ahora los elementos asociados a cada capa se añaden o eliminan dinámicamente de la escena (dxfLayerGroup.removeLayer / addLayer).
-   * Se incluye un control rápido para activar/desactivar todas las capas.
- * Selección Interactiva y Conversión a Ejes de Replanteo:
-   * Al pulsar sobre cualquier línea o polilínea del DXF en el mapa, se desplegará una ventana de información con la longitud total, capa y número de vértices.
-   * Cuenta con la opción ⚡ Replantear (Convertir a Eje): transforma automáticamente los vértices UTM (X, Y, Z) de la entidad seleccionada en un eje de carretera con sus PKs acumulados y salta de inmediato al módulo de replanteo de carreteras con telemetría en tiempo real.
- * Navegación y Zoom Ventana (Box Zoom):
-   * Se ha añadido un botón de Zoom Ventana en la barra de herramientas del mapa: permite realizar encuadres de zoom mediante arrastre de cursor o gesto táctil.
-   * Botón de Ajuste de Extensión (Zoom Extents) para volver a encuadrar todo el modelo DXF importado.
- * Visor de Rotación y Órbita 3D (Three.js):
-   * Se incorporó una vista 3D completa mediante Three.js y OrbitControls.
-   * Al pulsar el botón de Vista 3D, se abre un entorno interactivo donde puedes rotar en órbita libre (clic izquierdo + arrastrar), desplazarte (clic derecho) y hacer zoom (rueda) sobre las geometrías tridimensionales del archivo DXF.
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1629,5 +1615,3 @@ Novedades en el Visor DXF e Interacción:
   </script>
 </body>
 </html>
-
-

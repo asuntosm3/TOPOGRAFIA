@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v5.4 (Complete MDT Road & LandXML 3D TIN Engine)</title>
+  <title>Topografía Pro 2026 - Field Station HUD v5.5 (Uniform Import Manager & TCP-MDT .tra Engine)</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -266,8 +266,9 @@
 
     .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
     .grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .grid-4col { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 
-    /* ESTILOS HUD REPLANTEO EN VIVO CON CANVAS DE FLECHA 3D */
+    /* ESTILOS HUD REPLANTEO EN VIVO */
     .stakeout-hero-card {
       background: linear-gradient(135deg, rgba(13, 19, 31, 0.95) 0%, rgba(8, 12, 20, 0.98) 100%);
       border: 2px solid var(--accent-road); border-radius: 16px; padding: 20px;
@@ -295,16 +296,18 @@
     th { background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-family: var(--font-mono); text-transform: uppercase; }
     td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); font-family: var(--font-mono); }
 
-    .format-card {
-      background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 10px; transition: all 0.2s ease;
+    /* UNIFORMES CARDS DE IMPORTACIÓN V5.5 */
+    .format-card-uniform {
+      background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all 0.25 ease;
+      position: relative; overflow: hidden;
     }
-    .format-card:hover { border-color: var(--border-accent); background: rgba(15, 23, 42, 0.9); transform: translateY(-2px); }
-    .format-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.9rem; }
+    .format-card-uniform:hover { border-color: var(--border-accent); background: rgba(15, 23, 42, 0.95); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    .format-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; font-size: 0.9rem; }
     .format-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
-    .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+    .format-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; min-height: 38px; }
 
-    /* MODAL 3D Y HUD FLOTANTE 3D */
+    /* MODAL 3D Y GESTOR DE IMPORTACIÓN */
     .modal-3d-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 7, 13, 0.92); backdrop-filter: blur(20px);
@@ -334,6 +337,17 @@
       background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-muted);
     }
     .status-pill.active { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981; }
+
+    /* ESTILOS AREA DRAG & DROP MODAL IMPORTADOR */
+    .import-dropzone {
+      border: 2px dashed var(--border-accent); border-radius: 14px; padding: 30px 20px;
+      background: rgba(0, 242, 254, 0.03); text-align: center; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      transition: all 0.2s ease;
+    }
+    .import-dropzone:hover, .import-dropzone.dragover {
+      background: rgba(0, 242, 254, 0.08); border-color: var(--accent-primary); transform: scale(1.01);
+    }
   </style>
 </head>
 <body>
@@ -346,7 +360,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v5.4 (MDT ROAD & LANDXML 3D TIN ENGINE)</span>
+        <span class="brand-sub">FIELD STATION HUD v5.5 (UNIFORM IMPORT MANAGER & MDT .TRA ENGINE)</span>
       </div>
     </div>
 
@@ -669,185 +683,107 @@
       </div>
     </div>
 
-    <!-- PESTAÑA: IMPORTAR / EXPORTAR (AMPLIADA V5.4 CON MDT ROAD & LANDXML TIN) -->
+    <!-- PESTAÑA: IMPORTAR / EXPORTAR (REDISAÑADA V5.5 CON UNIFORMIDAD Y GESTOR INTERACTIVO EN MODAL) -->
     <div id="tabData" class="tab-content">
       
-      <!-- CARD MDT: CARRETERA VIRTUAL TCP-MDT -->
-      <div class="glass-card" style="border-color: rgba(255, 0, 85, 0.4);">
-        <div class="card-title" style="color: var(--accent-road);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-          🚘 Carretera Virtual MDT (Eje + Rasante + Perfiles Transversales)
-        </div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Importa componentes del programa TCP-MDT para ensamblar una alineación tridimensional completa replanteable en directo en el HUD.
-        </p>
-
-        <div class="grid-3col" style="margin-top:10px;">
-          <!-- A. Eje -->
-          <div class="format-card" style="border-color: rgba(255, 0, 85, 0.3);">
-            <div class="format-header">
-              1. Eje Horizontal
-              <span class="format-badge" style="color:#ff0055; border-color:#ff0055;">.eje / .eja</span>
-            </div>
-            <div class="format-desc">Alineación horizontal en planta (PK, X, Y).</div>
-            <span id="mdtEjeStatus" class="status-pill">Eje: No Cargado</span>
-            <input type="file" id="mdtEjeFileInput" accept=".eje,.eja,.txt,.csv" style="display:none;" onchange="cargarMDTComponenteEje(event)">
-            <button class="btn btn-road" onclick="document.getElementById('mdtEjeFileInput').click()">Cargar Eje MDT</button>
-          </div>
-
-          <!-- B. Rasante -->
-          <div class="format-card" style="border-color: rgba(255, 0, 85, 0.3);">
-            <div class="format-header">
-              2. Rasante Vertical
-              <span class="format-badge" style="color:#ff0055; border-color:#ff0055;">.ras / .pra</span>
-            </div>
-            <div class="format-desc">Alineación altimétrica de proyecto (PK, Z).</div>
-            <span id="mdtRasanteStatus" class="status-pill">Rasante: No Cargada</span>
-            <input type="file" id="mdtRasFileInput" accept=".ras,.pra,.txt,.csv" style="display:none;" onchange="cargarMDTComponenteRasante(event)">
-            <button class="btn btn-road" onclick="document.getElementById('mdtRasFileInput').click()">Cargar Rasante MDT</button>
-          </div>
-
-          <!-- C. Perfiles Transversales -->
-          <div class="format-card" style="border-color: rgba(255, 0, 85, 0.3);">
-            <div class="format-header">
-              3. Perfiles Transversales
-              <span class="format-badge" style="color:#ff0055; border-color:#ff0055;">.per / .pro</span>
-            </div>
-            <div class="format-desc">Transversales de obra (PK, Offset, Cota).</div>
-            <span id="mdtPerfilStatus" class="status-pill">Perfiles: No Cargados</span>
-            <input type="file" id="mdtPerFileInput" accept=".per,.pro,.txt,.csv" style="display:none;" onchange="cargarMDTComponentePerfiles(event)">
-            <button class="btn btn-road" onclick="document.getElementById('mdtPerFileInput').click()">Cargar Perfiles MDT</button>
-          </div>
-        </div>
-
-        <div style="margin-top:14px; display:flex; gap:10px; justify-content:flex-end;">
-          <button class="btn btn-road" style="padding:10px 24px;" onclick="activarCarreteraVirtualMDTHUD()">
-            ⚡ Activar Carretera Virtual Completa en el HUD
-          </button>
-        </div>
-      </div>
-
-      <!-- CARD LANDXML: SUPERFICIES 3D TIN -->
-      <div class="glass-card" style="border-color: rgba(16, 185, 129, 0.4);">
-        <div class="card-title" style="color: var(--accent-tin);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          🏔️ LandXML Malla 3D / Superficies TIN (Terrenos y Modificados)
-        </div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
-          Importación de archivos LandXML con carados 3D (`<Surface>` / `<Faces>`). Permite obtener la cota Z interpolada de proyecto por coordenadas baricéntricas en tiempo real.
-        </p>
-
-        <div class="grid-2col" style="margin-top:10px;">
-          <div class="format-card" style="border-color: rgba(16, 185, 129, 0.3);">
-            <div class="format-header">
-              Archivos LandXML TIN
-              <span class="format-badge" style="color:#10b981; border-color:#10b981;">.xml / .landxml</span>
-            </div>
-            <div class="format-desc">Modelo digital del terreno triangulado 3D con vértices ($X,Y,Z$) y caras triangulares ($F$).</div>
-            <span id="landxmlTinStatus" class="status-pill">Superficie TIN: Ninguna</span>
-            <input type="file" id="landxmlTinFileInput" accept=".xml,.landxml" style="display:none;" onchange="importarSuperficieLandXMLTIN(event)">
-            <button class="btn btn-tin" onclick="document.getElementById('landxmlTinFileInput').click()">Cargar Superficie LandXML TIN</button>
-          </div>
-
-          <div style="display:flex; flex-direction:column; justify-content:center; gap:10px; background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; border:1px solid var(--border);">
-            <b style="font-size:0.82rem; color:#10b981;">Acciones Directas de Superficie:</b>
-            <button class="btn btn-tin" id="btnReplantearTIN" style="display:none;" onclick="activarReplanteoTINDirectoHUD()">
-              ⚡ Replantear Cota de Superficie TIN en el HUD
-            </button>
-            <button class="btn btn-primary" id="btnVerTIN3D" style="display:none;" onclick="abrirVisor3D()">
-              🧊 Visualizar Malla TIN 3D en Three.js
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- CARD RESTO DE FORMATOS DE IMPORTACIÓN -->
       <div class="glass-card">
-        <div class="card-title" style="color: var(--accent-primary);">Centro Multiformato Cartográfico & CAD</div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">Soporte completo con conversión automática ETRS89 (Husos 28, 29, 30 y 31).</p>
+        <div class="card-title" style="color: var(--accent-primary);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Centro Interactivo de Importación y Gestión Espacial (ETRS89 / REDNAP)
+        </div>
+        <p style="font-size:0.83rem; color:var(--text-muted); margin-top:0;">
+          Mismo peso visual y ventanas emergentes de gestión interactiva con barra de estado de carga y diagnóstico de archivo para todos los formatos.
+        </p>
 
-        <div class="grid-3col" style="margin-top:14px;">
+        <!-- GRID UNIFORME DE CARDS CON EL MISMO PESO VISUAL (GRID-4COL) -->
+        <div class="grid-4col" style="margin-top:16px;">
           
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-cad)" stroke-width="2" width="20" height="20"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                AutoCAD DXF
-                <span class="format-badge">.dxf</span>
-              </div>
-              <div class="format-desc">Geometría CAD 2D/3D (Líneas, Polilíneas con Bulge, Arcos, Círculos y Puntos).</div>
+          <!-- 1. CAD DXF -->
+          <div class="format-card-uniform" style="border-color: rgba(168, 85, 247, 0.4);">
+            <div class="format-header">
+              <span style="color:var(--accent-cad);">AutoCAD DXF</span>
+              <span class="format-badge" style="color:var(--accent-cad); border-color:var(--accent-cad);">.dxf</span>
             </div>
-            <input type="file" id="dxfFileInput" accept=".dxf" style="display:none;" onchange="importarDXF(event)">
-            <button class="btn btn-cad" onclick="document.getElementById('dxfFileInput').click()">Cargar DXF CAD</button>
+            <div class="format-desc">Geometría CAD 2D/3D (Líneas, Polilíneas con Bulge, Arcos y Puntos).</div>
+            <span id="statusBadgeDXF" class="status-pill">Sin Cargar</span>
+            <button class="btn btn-cad" onclick="abrirModalImportadorFormato('DXF')">⚙️ Gestionar DXF</button>
           </div>
 
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-raster)" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Ortofoto + World File
-                <span class="format-badge">.tfw / .tif</span>
-              </div>
-              <div class="format-desc">Imágenes raster (TIF, JPG, PNG) georreferenciadas mediante archivo World File.</div>
+          <!-- 2. TCP-MDT CARRETERA VIRTUAL -->
+          <div class="format-card-uniform" style="border-color: rgba(255, 0, 85, 0.4);">
+            <div class="format-header">
+              <span style="color:var(--accent-road);">TCP-MDT Carretera</span>
+              <span class="format-badge" style="color:var(--accent-road); border-color:var(--accent-road);">.eje .ras .tra</span>
             </div>
-            <div style="display:flex; gap:6px;">
-              <input type="file" id="rasterImgInput" accept=".tif,.tiff,.jpg,.jpeg,.png" style="display:none;" onchange="prepararOrtofoto(event)">
-              <input type="file" id="worldFileInput" accept=".tfw,.jgw,.pgw,.txt" style="display:none;" onchange="cargarWorldFile(event)">
-              <button class="btn btn-raster" style="flex:1;" onclick="document.getElementById('rasterImgInput').click()">1. Imagen</button>
-              <button class="btn btn-raster" style="flex:1;" onclick="document.getElementById('worldFileInput').click()">2. WorldFile</button>
-            </div>
+            <div class="format-desc">Eje planta (.eje), Rasante (.ras) y Transversales de obra (.tra).</div>
+            <span id="statusBadgeMDT" class="status-pill">Sin Cargar</span>
+            <button class="btn btn-road" onclick="abrirModalImportadorFormato('MDT')">⚙️ Gestionar MDT</button>
           </div>
 
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6"/><path d="M12 12v6"/></svg>
-                PDF Georreferenciado
-                <span class="format-badge">.pdf</span>
-              </div>
-              <div class="format-desc">Planos y mapas PDF con enmarque de coordenadas ETRS89.</div>
+          <!-- 3. LANDXML TIN 3D -->
+          <div class="format-card-uniform" style="border-color: rgba(16, 185, 129, 0.4);">
+            <div class="format-header">
+              <span style="color:var(--accent-tin);">LandXML Malla TIN</span>
+              <span class="format-badge" style="color:var(--accent-tin); border-color:var(--accent-tin);">.xml .landxml</span>
             </div>
-            <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="importarPDFGeorreferenciado(event)">
-            <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="document.getElementById('pdfFileInput').click()">Cargar GeoPDF</button>
+            <div class="format-desc">Superficies trianguladas 3D de terreno y proyecto (TIN Surfaces).</div>
+            <span id="statusBadgeTIN" class="status-pill">Sin Cargar</span>
+            <button class="btn btn-tin" onclick="abrirModalImportadorFormato('TIN')">⚙️ Gestionar TIN</button>
           </div>
 
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" width="20" height="20"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                Google Earth KML
-                <span class="format-badge">.kml / .kmz</span>
-              </div>
-              <div class="format-desc">Vectores, trazados de campo y puntos exportados desde Google Earth.</div>
+          <!-- 4. ORTOFOTO RASTER -->
+          <div class="format-card-uniform" style="border-color: rgba(56, 189, 248, 0.4);">
+            <div class="format-header">
+              <span style="color:var(--accent-raster);">Ortofoto + WorldFile</span>
+              <span class="format-badge" style="color:var(--accent-raster); border-color:var(--accent-raster);">.tfw .tif .jpg</span>
             </div>
-            <input type="file" id="kmlFileInput" accept=".kml,.xml" style="display:none;" onchange="importarKML(event)">
-            <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="document.getElementById('kmlFileInput').click()">Cargar KML</button>
+            <div class="format-desc">Imágenes georreferenciadas mediante archivo plano de calibración WorldFile.</div>
+            <span id="statusBadgeRASTER" class="status-pill">Sin Cargar</span>
+            <button class="btn btn-raster" onclick="abrirModalImportadorFormato('RASTER')">⚙️ Gestionar Ortofoto</button>
           </div>
 
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" width="20" height="20"><path d="M16 16l5-5-5-5M8 8l-5 5 5 5"/></svg>
-                GIS GeoJSON
-                <span class="format-badge">.json / .geojson</span>
-              </div>
-              <div class="format-desc">Capa de datos SIG estandarizada con geometrías y atributos asociados.</div>
+          <!-- 5. GEOPDF -->
+          <div class="format-card-uniform" style="border-color: rgba(239, 68, 68, 0.4);">
+            <div class="format-header">
+              <span style="color:#ef4444;">PDF Georreferenciado</span>
+              <span class="format-badge" style="color:#ef4444; border-color:#ef4444;">.pdf</span>
             </div>
-            <input type="file" id="geojsonFileInput" accept=".geojson,.json" style="display:none;" onchange="importarGeoJSON(event)">
-            <button class="btn" style="border-color:#f59e0b; color:#f59e0b;" onclick="document.getElementById('geojsonFileInput').click()">Cargar GeoJSON</button>
+            <div class="format-desc">Planos y mapas vectoriales/raster PDF ajustados en coordenadas ETRS89.</div>
+            <span id="statusBadgePDF" class="status-pill">Sin Cargar</span>
+            <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="abrirModalImportadorFormato('PDF')">⚙️ Gestionar GeoPDF</button>
           </div>
 
-          <div class="format-card">
-            <div>
-              <div class="format-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#00f2fe" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                Puntos ASCII / GSI
-                <span class="format-badge">.csv / .txt / .gsi</span>
-              </div>
-              <div class="format-desc">Listados de taquimetría de Estación Total o GNSS (ID, X, Y, Z, Código).</div>
+          <!-- 6. GOOGLE EARTH KML -->
+          <div class="format-card-uniform" style="border-color: rgba(16, 185, 129, 0.4);">
+            <div class="format-header">
+              <span style="color:#10b981;">Google Earth KML</span>
+              <span class="format-badge" style="color:#10b981; border-color:#10b981;">.kml .kmz</span>
             </div>
-            <input type="file" id="asciiFileInput" accept=".csv,.txt,.gsi,.sdr" style="display:none;" onchange="importarASCII(event)">
-            <button class="btn btn-primary" onclick="document.getElementById('asciiFileInput').click()">Importar Puntos</button>
+            <div class="format-desc">Trazados vectoriales y marcas de posición exportadas desde Google Earth.</div>
+            <span id="statusBadgeKML" class="status-pill">Sin Cargar</span>
+            <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="abrirModalImportadorFormato('KML')">⚙️ Gestionar KML</button>
+          </div>
+
+          <!-- 7. GIS GEOJSON -->
+          <div class="format-card-uniform" style="border-color: rgba(245, 158, 11, 0.4);">
+            <div class="format-header">
+              <span style="color:#f59e0b;">GIS GeoJSON</span>
+              <span class="format-badge" style="color:#f59e0b; border-color:#f59e0b;">.geojson .json</span>
+            </div>
+            <div class="format-desc">Capa de datos SIG estandarizada con geometrías y atributos asociados.</div>
+            <span id="statusBadgeGEOJSON" class="status-pill">Sin Cargar</span>
+            <button class="btn" style="border-color:#f59e0b; color:#f59e0b;" onclick="abrirModalImportadorFormato('GEOJSON')">⚙️ Gestionar GeoJSON</button>
+          </div>
+
+          <!-- 8. ASCII / GSI -->
+          <div class="format-card-uniform" style="border-color: rgba(0, 242, 254, 0.4);">
+            <div class="format-header">
+              <span style="color:var(--accent-primary);">Puntos ASCII / GSI</span>
+              <span class="format-badge" style="color:var(--accent-primary); border-color:var(--accent-primary);">.csv .txt .gsi</span>
+            </div>
+            <div class="format-desc">Listados de taquimetría de Estación Total o GNSS (ID, X, Y, Z, Código).</div>
+            <span id="statusBadgeASCII" class="status-pill">Sin Cargar</span>
+            <button class="btn btn-primary" onclick="abrirModalImportadorFormato('ASCII')">⚙️ Gestionar ASCII</button>
           </div>
 
         </div>
@@ -877,6 +813,58 @@
 
   </div>
 
+  <!-- NUEVO: MODAL DE GESTIÓN INTERACTIVA DE IMPORTACIÓN MULTIFORMATO -->
+  <div id="modalImportManager" class="modal-3d-backdrop" style="align-items: center; justify-content: center;">
+    <div class="modal-3d-box" style="width: 680px; max-width: 95vw; height: auto; max-height: 90vh; padding: 0;">
+      <div class="modal-3d-header" style="background: rgba(13, 19, 31, 0.98);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="importModalBadge" class="format-badge">FORMATO</span>
+          <h3 id="importModalTitle" style="margin: 0; font-size: 1.05rem; color: #fff;">Gestor de Importación</h3>
+        </div>
+        <button class="btn btn-primary" onclick="cerrarModalImportacion()" style="padding: 4px 12px; font-size: 0.75rem;">✖ Cerrar</button>
+      </div>
+      
+      <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto;">
+        <p id="importModalDesc" style="margin: 0; font-size: 0.83rem; color: var(--text-muted); line-height: 1.4;"></p>
+        
+        <!-- DROPZONE AREA DE CARGA -->
+        <div id="importDropZone" class="import-dropzone" onclick="triggerImportFileInput()">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-weight: 600; font-size: 0.9rem; color: #fff;">Arrastra aquí el archivo o haz clic para seleccionar</div>
+          <div id="importModalFormatHint" style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Formatos soportados: .dxf</div>
+          <input type="file" id="importModalFileInput" style="display: none;" onchange="ejecutarCargaFormatoActual(event)">
+        </div>
+
+        <!-- BARRA DE ESTADO DE CARGA Y PROGRESO ANIMADA -->
+        <div id="importProgressContainer" style="display: none; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-family: var(--font-mono);">
+            <span id="importProgressText" style="color: var(--accent-primary);">Cargando...</span>
+            <span id="importProgressPercent" style="color: #fff;">0%</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; border: 1px solid var(--border);">
+            <div id="importProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #00f2fe, #10b981); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- TARJETA DE RESULTADO Y TELEMETRÍA DEL ARCHIVO CARGADO -->
+        <div id="importResultCard" style="display: none; background: rgba(0,0,0,0.5); border: 1px solid var(--border-accent); border-radius: 12px; padding: 14px; font-family: var(--font-mono); font-size: 0.82rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+            <b style="color: var(--accent-primary);" id="importResultFileName">Archivo procesado</b>
+            <span id="importResultStatusBadge" class="status-pill active">🟢 ÉXITO</span>
+          </div>
+          <div id="importResultDetails" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #cbd5e1;"></div>
+        </div>
+
+        <!-- BOTONES INTERACTIVOS DE ACCIÓN -->
+        <div id="importModalActions" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+          <button id="btnActionVer2D" class="btn btn-primary" style="display: none;" onclick="accionVerEnMapa2D()">👁️ Ver en Mapa 2D</button>
+          <button id="btnActionReplantear" class="btn btn-road" style="display: none;" onclick="accionReplantearEnHUD()">⚡ Replantear en HUD</button>
+          <button id="btnActionVer3D" class="btn btn-cad" style="display: none;" onclick="accionVerEnVisor3D()">🧊 Ver en 3D</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL VISOR 3D Y PANEL DE PROPIEDADES 3D -->
   <div id="modal3D" class="modal-3d-backdrop">
     <div class="modal-3d-box">
@@ -888,8 +876,8 @@
       <div id="canvas3DContainer">
         <!-- HUD FLOTANTE DE PROPIEDADES EN 3D -->
         <div id="panelProps3D" class="panel-props-3d">
-          <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
-          <div id="prop3DBody">Toca una línea para ver sus propiedades...</div>
+          <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento 3D</div>
+          <div id="prop3DBody">Toca un objeto para ver sus propiedades...</div>
           <div style="display:flex; gap:6px; margin-top:6px;">
             <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('EJE')">⚡ Replantear Elemento</button>
             <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 Replantear P1</button>
@@ -1280,7 +1268,7 @@
           <div>Acción en Obra: <b>${dZ >= 0 ? 'DESMONTE' : 'RELLENO'}</b></div>
         `;
       }
-      // D. NUEVO: MODO CARRETERA VIRTUAL TCP-MDT (EJE + RASANTE + PERFILES)
+      // D. MODO CARRETERA VIRTUAL TCP-MDT (EJE + RASANTE + TRANSVERSALES .TRA)
       else if (target.tipo === 'CARRETERA_VIRTUAL') {
         document.getElementById('stakeoutModeBadge').innerText = "MODO: CARRETERA VIRTUAL TCP-MDT";
         const road = target.datos;
@@ -1299,12 +1287,12 @@
           <div>Estación PK Actual: <b>PK ${resRoad.pk.toFixed(3)} m</b></div>
           <div>Lado Eje Carretera: <b>${resRoad.lado}</b></div>
           <div>Cota Rasante Eje: <b>${resRoad.zRasante.toFixed(3)} m</b></div>
-          <div>Cota Proyecto en Offset: <b>${resRoad.zProyecto.toFixed(3)} m</b></div>
+          <div>Cota Proyecto en Offset (.tra): <b>${resRoad.zProyecto.toFixed(3)} m</b></div>
         `;
 
         renderizarFlechaStakeout3D(resRoad.azEje, resRoad.offsetTotal);
       }
-      // E. NUEVO: MODO SUPERFICIE 3D LANDXML TIN
+      // E. MODO SUPERFICIE 3D LANDXML TIN
       else if (target.tipo === 'SUPERFICIE_TIN') {
         document.getElementById('stakeoutModeBadge').innerText = "MODO: SUPERFICIE 3D LANDXML TIN";
         const tin = target.datos;
@@ -1374,19 +1362,206 @@
     }
 
     // =========================================================================
-    // 7. MOTOR DE CARRETERA VIRTUAL TCP-MDT (EJE + RASANTE + PERFILES)
+    // 7. GESTOR DE MODAL Y SISTEMA DE IMPORTACIÓN MULTIFORMATO V5.5
+    // =========================================================================
+    let formatoImportacionActual = null;
+
+    const ESPECIFICACIONES_FORMATOS = {
+      DXF: { badge: "AutoCAD CAD", title: "Gestor de Importación CAD DXF", desc: "Soporta geometrías CAD 2D/3D incluyendo líneas, polilíneas con bulge en arcos, círculos y puntos.", hint: ".dxf", accept: ".dxf" },
+      MDT: { badge: "TCP-MDT Carretera", title: "Gestor Carretera Virtual TCP-MDT", desc: "Selecciona y ensambla alineación horizontal (.eje/.eja), rasante vertical (.ras/.pra) y perfiles transversales (.tra/.per).", hint: ".eje, .eja, .ras, .pra, .tra, .per, .pro", accept: ".eje,.eja,.ras,.pra,.tra,.per,.pro,.txt,.csv" },
+      TIN: { badge: "LandXML Malla 3D", title: "Gestor de Malla LandXML TIN 3D", desc: "Modelos digitales del terreno triangulados. Permite interpolación baricéntrica 3D en tiempo real.", hint: ".xml, .landxml", accept: ".xml,.landxml" },
+      RASTER: { badge: "Ortofoto Raster", title: "Gestor de Ortofoto con WorldFile", desc: "Carga imagen raster (.tif, .jpg, .png) y su archivo plano de georreferenciación (.tfw, .jgw).", hint: ".tfw, .jgw, .tif, .jpg, .png", accept: ".tfw,.jgw,.pgw,.txt,.tif,.tiff,.jpg,.jpeg,.png" },
+      PDF: { badge: "PDF Georreferenciado", title: "Gestor de Planos PDF ETRS89", desc: "Transformación raster/vector de planos PDF georreferenciados en coordenadas ETRS89.", hint: ".pdf", accept: ".pdf" },
+      KML: { badge: "Google Earth KML", title: "Gestor de Capas Vectoriales KML", desc: "Visualización e importación de polilíneas, polígonos y waypoints exportados de Google Earth.", hint: ".kml, .kmz", accept: ".kml,.kmz,.xml" },
+      GEOJSON: { badge: "GIS GeoJSON", title: "Gestor SIG Vectorial GeoJSON", desc: "Estructura normalizada GIS de geometrías vectoriales con tabla de atributos asociada.", hint: ".geojson, .json", accept: ".geojson,.json" },
+      ASCII: { badge: "Puntos ASCII / GSI", title: "Gestor de Puntos ASCII / GSI", desc: "Importación masiva de listados de taquimetría GNSS / Estación Total (ID, X, Y, Z, Código).", hint: ".csv, .txt, .gsi, .sdr", accept: ".csv,.txt,.gsi,.sdr" }
+    };
+
+    function abrirModalImportadorFormato(fmtKey) {
+      formatoImportacionActual = fmtKey;
+      const spec = ESPECIFICACIONES_FORMATOS[fmtKey];
+      if (!spec) return;
+
+      document.getElementById('importModalBadge').innerText = spec.badge;
+      document.getElementById('importModalTitle').innerText = spec.title;
+      document.getElementById('importModalDesc').innerText = spec.desc;
+      document.getElementById('importModalFormatHint').innerText = `Formatos soportados: ${spec.hint}`;
+      document.getElementById('importModalFileInput').accept = spec.accept;
+
+      // Reset Modal Views
+      document.getElementById('importProgressContainer').style.display = 'none';
+      document.getElementById('importProgressBar').style.width = '0%';
+      document.getElementById('importResultCard').style.display = 'none';
+      document.getElementById('btnActionVer2D').style.display = 'none';
+      document.getElementById('btnActionReplantear').style.display = 'none';
+      document.getElementById('btnActionVer3D').style.display = 'none';
+
+      document.getElementById('modalImportManager').style.display = 'flex';
+    }
+
+    function cerrarModalImportacion() {
+      document.getElementById('modalImportManager').style.display = 'none';
+    }
+
+    function triggerImportFileInput() {
+      document.getElementById('importModalFileInput').click();
+    }
+
+    function animarProgresoImportacion(pct, texto) {
+      const container = document.getElementById('importProgressContainer');
+      const bar = document.getElementById('importProgressBar');
+      const txt = document.getElementById('importProgressText');
+      const percentTxt = document.getElementById('importProgressPercent');
+
+      container.style.display = 'flex';
+      bar.style.width = `${pct}%`;
+      txt.innerText = texto || "Procesando...";
+      percentTxt.innerText = `${pct}%`;
+    }
+
+    function mostrarResultadoImportacion(titulo, nombreArchivo, detallesObj, esExito) {
+      const card = document.getElementById('importResultCard');
+      const badge = document.getElementById('importResultStatusBadge');
+      const nameTxt = document.getElementById('importResultFileName');
+      const detailsContainer = document.getElementById('importResultDetails');
+
+      nameTxt.innerText = `${titulo}: ${nombreArchivo}`;
+      if (esExito) {
+        badge.className = 'status-pill active';
+        badge.innerText = '🟢 ÉXITO';
+      } else {
+        badge.className = 'status-pill';
+        badge.style.borderColor = '#ef4444'; badge.style.color = '#ef4444';
+        badge.innerText = '🔴 ERROR';
+      }
+
+      let detailsHtml = '';
+      Object.keys(detallesObj).forEach(k => {
+        detailsHtml += `<div>${k}: <b style="color:#fff;">${detallesObj[k]}</b></div>`;
+      });
+
+      detailsContainer.innerHTML = detailsHtml;
+      card.style.display = 'block';
+
+      // Configurar Botones de Acción según el formato
+      document.getElementById('btnActionVer2D').style.display = 'inline-flex';
+      
+      if (formatoImportacionActual === 'DXF' || formatoImportacionActual === 'TIN') {
+        document.getElementById('btnActionVer3D').style.display = 'inline-flex';
+      }
+      if (formatoImportacionActual === 'MDT' || formatoImportacionActual === 'TIN' || formatoImportacionActual === 'DXF') {
+        document.getElementById('btnActionReplantear').style.display = 'inline-flex';
+      }
+
+      // Actualizar Status Badge en la Card del Grid
+      const statusBadgeGrid = document.getElementById(`statusBadge${formatoImportacionActual}`);
+      if (statusBadgeGrid && esExito) {
+        statusBadgeGrid.innerText = 'Cargado OK';
+        statusBadgeGrid.classList.add('active');
+      }
+    }
+
+    function ejecutarCargaFormatoActual(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      animarProgresoImportacion(20, `Leyendo ${file.name}...`);
+
+      setTimeout(() => {
+        switch (formatoImportacionActual) {
+          case 'DXF':
+            importarDXF(event);
+            break;
+          case 'MDT':
+            procesarArchivoMDTSeleccionado(file);
+            break;
+          case 'TIN':
+            importarSuperficieLandXMLTIN(event);
+            break;
+          case 'RASTER':
+            prepararOrtofoto(event);
+            break;
+          case 'PDF':
+            importarPDFGeorreferenciado(event);
+            break;
+          case 'KML':
+            importarKML(event);
+            break;
+          case 'GEOJSON':
+            importarGeoJSON(event);
+            break;
+          case 'ASCII':
+            importarASCII(event);
+            break;
+        }
+      }, 100);
+    }
+
+    function accionVerEnMapa2D() {
+      cerrarModalImportacion();
+      switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+    }
+
+    function accionReplantearEnHUD() {
+      cerrarModalImportacion();
+      if (formatoImportacionActual === 'MDT') {
+        activarCarreteraVirtualMDTHUD();
+      } else if (formatoImportacionActual === 'TIN') {
+        activarReplanteoTINDirectoHUD();
+      } else {
+        const btnTab = document.getElementById('btnTabReplanteo');
+        switchTab('tabReplanteo', btnTab);
+      }
+    }
+
+    function accionVerEnVisor3D() {
+      cerrarModalImportacion();
+      abrirVisor3D();
+    }
+
+    // Dropzone Drag and Drop
+    const dropZone = document.getElementById('importDropZone');
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault(); dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+          document.getElementById('importModalFileInput').files = e.dataTransfer.files;
+          ejecutarCargaFormatoActual({ target: { files: e.dataTransfer.files } });
+        }
+      });
+    }
+
+    // =========================================================================
+    // 8. MOTOR DE CARRETERA VIRTUAL TCP-MDT CON SOPORTE DE COMPONENTE .TRA
     // =========================================================================
     let mdtCarreteraVirtual = { eje: null, rasante: null, perfiles: null };
 
-    function cargarMDTComponenteEje(event) {
-      const file = event.target.files[0]; if (!file) return;
+    function procesarArchivoMDTSeleccionado(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'eje' || ext === 'eja') {
+        cargarMDTComponenteEje(file);
+      } else if (ext === 'ras' || ext === 'pra') {
+        cargarMDTComponenteRasante(file);
+      } else if (ext === 'tra' || ext === 'per' || ext === 'pro') {
+        cargarMDTComponentePerfiles(file);
+      } else {
+        // Auto-detect contenido por extension general
+        cargarMDTComponentePerfiles(file);
+      }
+    }
+
+    function cargarMDTComponenteEje(file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        const lineas = e.target.result.split(/\r?\n/);
+        animarProgresoImportacion(60, "Parseando alineación horizontal de eje MDT...");
+        const lineas = e.target.result.split(/?
+/);
         const ptsEje = []; let pkAcum = 0;
 
         lineas.forEach(l => {
-          const c = l.trim().split(/[\s,;\t]+/);
+          const c = l.trim().split(/[\s,;	]+/);
           if (c.length >= 2 && !isNaN(parseFloat(c[0])) && !isNaN(parseFloat(c[1]))) {
             if (c.length >= 3 && !isNaN(parseFloat(c[2])) && parseFloat(c[0]) < 100000) {
               ptsEje.push({ pk: parseFloat(c[0]), x: parseFloat(c[1]), y: parseFloat(c[2]) });
@@ -1401,53 +1576,67 @@
           }
         });
 
+        animarProgresoImportacion(100, "Completado");
+
         if (ptsEje.length >= 2) {
           mdtCarreteraVirtual.eje = ptsEje;
-          const status = document.getElementById('mdtEjeStatus');
-          status.innerText = `Eje: OK (${(ptsEje[ptsEje.length-1].pk/1000).toFixed(3)} km)`;
-          status.classList.add('active');
-          alert(`✔ Eje MDT '${file.name}' cargado correctamente.`);
-        } else alert("Formato de eje MDT no válido.");
+          mostrarResultadoImportacion("TCP-MDT Eje Planta", file.name, {
+            "Puntos de Eje": ptsEje.length,
+            "Longitud Eje": `${(ptsEje[ptsEje.length-1].pk/1000).toFixed(3)} km`,
+            "Estado": "Alineación Horizontal Lista"
+          }, true);
+        } else {
+          mostrarResultadoImportacion("TCP-MDT Eje Planta", file.name, { "Error": "Formato de eje MDT no válido." }, false);
+        }
       };
       reader.readAsText(file);
     }
 
-    function cargarMDTComponenteRasante(event) {
-      const file = event.target.files[0]; if (!file) return;
+    function cargarMDTComponenteRasante(file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        const lineas = e.target.result.split(/\r?\n/);
+        animarProgresoImportacion(60, "Parseando rasante altimétrica MDT...");
+        const lineas = e.target.result.split(/?
+/);
         const ptsRas = [];
 
         lineas.forEach(l => {
-          const c = l.trim().split(/[\s,;\t]+/);
+          const c = l.trim().split(/[\s,;	]+/);
           if (c.length >= 2 && !isNaN(parseFloat(c[0])) && !isNaN(parseFloat(c[1]))) {
             ptsRas.push({ pk: parseFloat(c[0]), z: parseFloat(c[1]) });
           }
         });
 
+        animarProgresoImportacion(100, "Completado");
+
         if (ptsRas.length >= 2) {
           ptsRas.sort((a, b) => a.pk - b.pk);
           mdtCarreteraVirtual.rasante = ptsRas;
-          const status = document.getElementById('mdtRasanteStatus');
-          status.innerText = `Rasante: OK (${ptsRas.length} PVIs)`;
-          status.classList.add('active');
-          alert(`✔ Rasante MDT '${file.name}' cargada correctamente.`);
-        } else alert("Formato de rasante MDT no válido.");
+          mostrarResultadoImportacion("TCP-MDT Rasante Vertical", file.name, {
+            "Puntos PVI": ptsRas.length,
+            "Rango Cotas": `Z ${ptsRas[0].z.toFixed(2)}m a ${ptsRas[ptsRas.length-1].z.toFixed(2)}m`,
+            "Estado": "Alineación Vertical Lista"
+          }, true);
+        } else {
+          mostrarResultadoImportacion("TCP-MDT Rasante Vertical", file.name, { "Error": "Formato de rasante no válido." }, false);
+        }
       };
       reader.readAsText(file);
     }
 
-    function cargarMDTComponentePerfiles(event) {
-      const file = event.target.files[0]; if (!file) return;
+    function cargarMDTComponentePerfiles(file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        const lineas = e.target.result.split(/\r?\n/);
+        animarProgresoImportacion(50, "Parseando archivo de transversales TCP-MDT (.tra)...");
+        const lineas = e.target.result.split(/?
+/);
         const perfilesMap = []; let pkActual = null; let puntosTrans = [];
 
         lineas.forEach(l => {
           const trim = l.trim();
-          if (trim.toUpperCase().startsWith("PK") || trim.toUpperCase().startsWith("PERFIL")) {
+          if (!trim) return;
+
+          if (trim.toUpperCase().startsWith("PK") || trim.toUpperCase().startsWith("PERFIL") || trim.toUpperCase().startsWith("P.K.")) {
             if (pkActual !== null && puntosTrans.length > 0) {
               perfilesMap.push({ pk: pkActual, puntos: puntosTrans });
             }
@@ -1455,8 +1644,11 @@
             pkActual = match ? parseFloat(match[0]) : null;
             puntosTrans = [];
           } else {
-            const c = trim.split(/[\s,;\t]+/);
-            if (c.length >= 2 && !isNaN(parseFloat(c[0])) && !isNaN(parseFloat(c[1]))) {
+            const c = trim.split(/[\s,;	]+/);
+            if (c.length === 1 && !isNaN(parseFloat(c[0])) && pkActual === null) {
+              pkActual = parseFloat(c[0]);
+              puntosTrans = [];
+            } else if (c.length >= 2 && !isNaN(parseFloat(c[0])) && !isNaN(parseFloat(c[1]))) {
               puntosTrans.push({ offset: parseFloat(c[0]), dz: parseFloat(c[1]) });
             }
           }
@@ -1466,21 +1658,26 @@
           perfilesMap.push({ pk: pkActual, puntos: puntosTrans });
         }
 
+        animarProgresoImportacion(100, "Completado");
+
         if (perfilesMap.length > 0) {
           perfilesMap.sort((a, b) => a.pk - b.pk);
           mdtCarreteraVirtual.perfiles = perfilesMap;
-          const status = document.getElementById('mdtPerfilStatus');
-          status.innerText = `Perfiles: OK (${perfilesMap.length} cortes)`;
-          status.classList.add('active');
-          alert(`✔ Perfiles transversales MDT '${file.name}' cargados con éxito.`);
-        } else alert("Formato de perfiles MDT no reconocido.");
+          mostrarResultadoImportacion("TCP-MDT Transversales (.tra)", file.name, {
+            "Perfiles Leídos": perfilesMap.length,
+            "Rango PK": `PK ${(perfilesMap[0].pk/1000).toFixed(3)} k a ${(perfilesMap[perfilesMap.length-1].pk/1000).toFixed(3)} k`,
+            "Estado": "Perfiles Transversales Listos para Carretera Virtual"
+          }, true);
+        } else {
+          mostrarResultadoImportacion("TCP-MDT Transversales (.tra)", file.name, { "Error": "Formato .tra no reconocido o sin datos." }, false);
+        }
       };
       reader.readAsText(file);
     }
 
     function activarCarreteraVirtualMDTHUD() {
-      if (!mdtCarreteraVirtual.eje) return alert("Debes cargar al menos el Eje MDT.");
-      iniciarReplanteoElemento('CARRETERA_VIRTUAL', mdtCarreteraVirtual, "Carretera Virtual TCP-MDT");
+      if (!mdtCarreteraVirtual.eje) return alert("Debes cargar al menos el Eje MDT (.eje).");
+      iniciarReplanteoElemento('CARRETERA_VIRTUAL', mdtCarreteraVirtual, "Carretera Virtual TCP-MDT (.eje+.ras+.tra)");
     }
 
     function calcularTelemetriaCarreteraMDT(xGPS, yGPS, zGPS, carretera, offsetManual) {
@@ -1562,7 +1759,7 @@
     }
 
     // =========================================================================
-    // 8. MOTOR LANDXML 3D TIN SURFACE ENGINE
+    // 9. MOTOR LANDXML 3D TIN SURFACE ENGINE
     // =========================================================================
     let landxmlTinSurface = null;
 
@@ -1571,6 +1768,7 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
+          animarProgresoImportacion(50, "Parseando triángulos y vértices LandXML...");
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
           const surfaceNode = xmlDoc.getElementsByTagName("Surface")[0];
@@ -1616,17 +1814,16 @@
           }
 
           landxmlTinSurface = { nombre: nombreSurface, tri: triangles, bounds: bounds, nodes: nodesMap };
-
-          const status = document.getElementById('landxmlTinStatus');
-          status.innerText = `TIN: ${nombreSurface} (${triangles.length} triángulos)`;
-          status.classList.add('active');
-          document.getElementById('btnReplantearTIN').style.display = 'inline-flex';
-          document.getElementById('btnVerTIN3D').style.display = 'inline-flex';
+          animarProgresoImportacion(100, "Completado");
 
           renderizarTINEnMapa2D(landxmlTinSurface);
-          alert(`✔ Superficie LandXML '${nombreSurface}' procesada (${triangles.length} caras 3D).`);
+          mostrarResultadoImportacion("LandXML 3D TIN", nombreSurface, {
+            "Caras 3D": triangles.length,
+            "Vértices": Object.keys(nodesMap).length,
+            "Extensión": `E:${bounds.minX.toFixed(0)} - N:${bounds.minY.toFixed(0)}`
+          }, true);
         } catch (err) {
-          alert("Error leyendo LandXML: " + err.message);
+          mostrarResultadoImportacion("LandXML 3D TIN", file.name, { "Error": err.message }, false);
         }
       };
       reader.readAsText(file);
@@ -1677,7 +1874,7 @@
     }
 
     // =========================================================================
-    // 9. VISOR 2D LEAFLET CON CAD & DXF
+    // 10. VISOR 2D LEAFLET CON CAD & DXF
     // =========================================================================
     let ultimoDXFContenido = null;
     let dxfCapasMap = {};
@@ -1748,6 +1945,7 @@
 
     function procesarYRenderizarDXF(dxfText, filename) {
       try {
+        animarProgresoImportacion(50, "Parseando entidades CAD DXF...");
         const parser = new DxfParser();
         dxfParsedData = parser.parseSync(dxfText);
 
@@ -1828,17 +2026,21 @@
         });
 
         renderizarPanelCapasCAD();
+        animarProgresoImportacion(100, "Completado");
 
         if (boundsList.length > 0) {
           dxfBoundsGlobal = L.latLngBounds(boundsList);
           map.fitBounds(dxfBoundsGlobal, { padding: [30, 30] });
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ DXF '${filename}' cargado con éxito.`);
+          mostrarResultadoImportacion("AutoCAD DXF", filename, {
+            "Entidades CAD": dxfEntidadesRenderizadas.length,
+            "Capas": Object.keys(dxfCapasMap).length,
+            "Estado": "Geometría Lista 2D/3D"
+          }, true);
         } else {
-          alert("No se encontraron entidades lineales ni arcos compatibles.");
+          mostrarResultadoImportacion("AutoCAD DXF", filename, { "Error": "Sin entidades compatibles." }, false);
         }
       } catch (err) {
-        alert("Error al parsear archivo DXF: " + err.message);
+        mostrarResultadoImportacion("AutoCAD DXF", filename, { "Error": err.message }, false);
       }
     }
 
@@ -1954,7 +2156,7 @@
     }
 
     // =========================================================================
-    // 10. VISOR 3D THREE.JS (DXF CAD & LANDXML TIN SURFACE)
+    // 11. VISOR 3D THREE.JS (DXF CAD & LANDXML TIN SURFACE)
     // =========================================================================
     let scene3D, camera3D, renderer3D, controls3D, raycaster3D, mouse3D;
     let elemento3DSeleccionado = null;
@@ -2128,7 +2330,7 @@
     function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
 
     // =========================================================================
-    // 11. TOMA DE DATOS Y COGO
+    // 12. TOMA DE DATOS Y COGO
     // =========================================================================
     let ejeCarretera = [];
 
@@ -2152,7 +2354,8 @@
             }
           }
         } else {
-          const lineas = contenido.split(/\r?\n/);
+          const lineas = contenido.split(/?
+/);
           lineas.forEach(linea => {
             const cols = linea.trim().split(/[\s,;]+/);
             if (cols.length >= 3 && !isNaN(parseFloat(cols[1]))) {
@@ -2240,7 +2443,7 @@
     }
 
     // =========================================================================
-    // 12. CÁLCULOS COGO & FORMATOS DE EXPORTACIÓN CON ENVIOS A REPLANTEO
+    // 13. CÁLCULOS COGO & FORMATOS DE EXPORTACIÓN CON ENVIOS A REPLANTEO
     // =========================================================================
     let pResultanteCOGO = null, pResultanteRad = null, pResultanteInt = null;
 
@@ -2335,7 +2538,8 @@
       const file = e.target.files[0]; if (!file || !tempImageSrc) return alert("Selecciona primero la imagen.");
       const reader = new FileReader();
       reader.onload = function(evt) {
-        const lines = evt.target.result.trim().split(/\r?\n/);
+        const lines = evt.target.result.trim().split(/?
+/);
         if (lines.length < 6) return alert("WorldFile no válido.");
         const A = parseFloat(lines[0]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
         const img = new Image();
@@ -2344,6 +2548,7 @@
           const sw = utmALatLng(C, F + E * img.height, huso), ne = utmALatLng(C + A * img.width, F, huso);
           L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
           map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          mostrarResultadoImportacion("Ortofoto Raster", file.name, { "WorldFile": "OK", "Extensión": "Ajustada" }, true);
         };
         img.src = tempImageSrc;
       };
@@ -2370,6 +2575,7 @@
                   const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
                   L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
                   map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+                  mostrarResultadoImportacion("PDF Georreferenciado", file.name, { "Página": 1, "Enmarque": "ETRS89 OK" }, true);
                 }
               }
             });
@@ -2409,8 +2615,7 @@
         }
         if (bounds.length > 0) {
           map.fitBounds(L.latLngBounds(bounds));
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ KML '${file.name}' cargado en el mapa.`);
+          mostrarResultadoImportacion("Google Earth KML", file.name, { "Placemarks": placemarks.length, "Estado": "Cargado en Mapa" }, true);
         }
       };
       reader.readAsText(file);
@@ -2424,9 +2629,8 @@
           const json = JSON.parse(e.target.result);
           const geoLayer = L.geoJSON(json, { style: { color: '#f59e0b', weight: 3 } }).addTo(vectorImportLayerGroup);
           map.fitBounds(geoLayer.getBounds());
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ GeoJSON '${file.name}' cargado en el mapa.`);
-        } catch (err) { alert("Error GeoJSON: " + err.message); }
+          mostrarResultadoImportacion("GIS GeoJSON", file.name, { "Tipo": json.type, "Estado": "Cargado OK" }, true);
+        } catch (err) { mostrarResultadoImportacion("GIS GeoJSON", file.name, { "Error": err.message }, false); }
       };
       reader.readAsText(file);
     }
@@ -2435,12 +2639,13 @@
       const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
-        const lineas = e.target.result.split(/\r?\n/);
+        const lineas = e.target.result.split(/?
+/);
         const huso = parseInt(document.getElementById('husoSelect').value);
         let contador = 0;
 
         lineas.forEach(l => {
-          const cols = l.trim().split(/[\s,;\t]+/);
+          const cols = l.trim().split(/[\s,;	]+/);
           if (cols.length >= 3 && !isNaN(parseFloat(cols[1])) && !isNaN(parseFloat(cols[2]))) {
             const id = cols[0], x = parseFloat(cols[1]), y = parseFloat(cols[2]), z = cols[3] ? parseFloat(cols[3]) : 0;
             const latLng = utmALatLng(x, y, huso);
@@ -2450,8 +2655,7 @@
           }
         });
         if (contador > 0) {
-          switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
-          alert(`✔ Importados ${contador} puntos ASCII/GSI en Huso ${huso}.`);
+          mostrarResultadoImportacion("Puntos ASCII / GSI", file.name, { "Puntos Importados": contador, "Huso": huso }, true);
         }
       };
       reader.readAsText(file);
@@ -2465,8 +2669,10 @@
 
     function exportarCSV() {
       if (listaPuntos.length === 0) return alert("No hay puntos.");
-      let csv = "ID,Codigo,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente_GPS\n";
-      listaPuntos.forEach(p => { csv += `${p.id},${p.codigo || 'TERRENO'},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`; });
+      let csv = "ID,Codigo,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente_GPS
+";
+      listaPuntos.forEach(p => { csv += `${p.id},${p.codigo || 'TERRENO'},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}
+`; });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `Puntos_ETRS89_H${document.getElementById('husoSelect').value}.csv`; a.click();
@@ -2474,12 +2680,50 @@
 
     function exportarDXF() {
       if (listaPuntos.length === 0) return alert("No hay puntos.");
-      let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
+      let dxf = "0
+SECTION
+2
+HEADER
+0
+ENDSEC
+0
+SECTION
+2
+ENTITIES
+";
       listaPuntos.forEach(p => {
-        dxf += `0\nPOINT\n8\nPUNTOS_TOPOGRAFIA\n10\n${p.easting}\n20\n${p.northing}\n30\n${p.cotaNAP}\n`;
-        dxf += `0\nTEXT\n8\nETIQUETAS_PUNTOS\n10\n${parseFloat(p.easting) + 0.5}\n20\n${p.northing}\n30\n${p.cotaNAP}\n40\n0.5\n1\n${p.id} [${p.codigo || ''}]\n`;
+        dxf += `0
+POINT
+8
+PUNTOS_TOPOGRAFIA
+10
+${p.easting}
+20
+${p.northing}
+30
+${p.cotaNAP}
+`;
+        dxf += `0
+TEXT
+8
+ETIQUETAS_PUNTOS
+10
+${parseFloat(p.easting) + 0.5}
+20
+${p.northing}
+30
+${p.cotaNAP}
+40
+0.5
+1
+${p.id} [${p.codigo || ''}]
+`;
       });
-      dxf += "0\nENDSEC\n0\nEOF\n";
+      dxf += "0
+ENDSEC
+0
+EOF
+";
       const blob = new Blob([dxf], { type: 'application/dxf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = `Topografia_Puntos_ETRS89_H${document.getElementById('husoSelect').value}.dxf`; a.click();

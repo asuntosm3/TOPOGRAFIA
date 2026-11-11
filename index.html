@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Topografía Pro 2026 - Field Station HUD v5.4 (Modal Stakeout, TCP-MDT & LandXML TIN Surface)</title>
+  <title>Topografía Pro 2026 - Field Station HUD v5.4 (Complete Base + Floating Stakeout, TCP-MDT & LandXML TIN 3D)</title>
 
-  <!-- Tipografías Técnicas -->
+  <!-- Tipografías Técnicas de Alta Legibilidad -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
 
-    /* HEADER HUD GLOBAL */
+    /* HEADER TÉCNICO HUD */
     header {
       background: rgba(8, 12, 20, 0.96); backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border); padding: 8px 16px;
@@ -87,6 +87,7 @@
       display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px;
       font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border);
       background: rgba(13, 19, 31, 0.9); backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); transition: all 0.3s ease;
     }
     .status-led { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; }
     .status-fix { color: #10b981; border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.12); }
@@ -101,7 +102,7 @@
     .huso-badge { background: rgba(255, 255, 255, 0.04); padding: 4px 10px; border-radius: 10px; border: 1px solid var(--border); }
     .huso-select { background: transparent; border: none; color: var(--accent-primary); font-weight: 600; outline: none; font-family: var(--font-mono); cursor: pointer; }
 
-    /* BARRA NAVEGACIÓN MODULAR (3 PESTAÑAS PRINCIPALES) */
+    /* BARRA NAVEGACIÓN MODULAR */
     .tab-bar {
       display: flex; background: rgba(10, 15, 25, 0.95);
       border-bottom: 1px solid var(--border); padding: 4px 8px; gap: 6px; overflow-x: auto; flex-shrink: 0;
@@ -112,7 +113,7 @@
       font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;
     }
     .tab-btn svg { width: 16px; height: 16px; stroke-width: 2; }
-    .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.04); }
+    .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
     .tab-btn.active {
       color: #000; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
       border-color: var(--accent-primary); box-shadow: 0 2px 12px rgba(0, 242, 254, 0.35);
@@ -144,40 +145,54 @@
     #mapWrapper { position: relative; width: 100%; height: 100%; min-height: 380px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
     #map { width: 100%; height: 100%; background: #06090e; }
 
+    /* HERRAMIENTAS Y PANELES FLOTANTES MAPA */
     .map-tools-bar { position: absolute; top: 12px; right: 12px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
     .tool-btn {
-      width: 40px; height: 40px; border-radius: 10px; background: rgba(8, 12, 20, 0.9);
+      width: 40px; height: 40px; border-radius: 10px; background: rgba(8, 12, 20, 0.9); backdrop-filter: blur(16px);
       border: 1px solid var(--border-accent); color: var(--accent-primary);
       display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     }
-    .tool-btn.active { background: var(--accent-primary); color: #000; }
+    .tool-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
+    .tool-btn.active { background: var(--accent-primary); color: #000; box-shadow: 0 0 12px rgba(0,242,254,0.6); }
 
     .map-cad-panel {
       position: absolute; top: 12px; left: 12px; z-index: 999;
-      background: rgba(8, 12, 20, 0.94); border: 1px solid var(--border-accent); border-radius: 12px;
-      padding: 12px; width: 280px; max-height: 320px; overflow-y: auto; display: none;
+      background: rgba(8, 12, 20, 0.94); backdrop-filter: blur(16px);
+      border: 1px solid var(--border-accent); border-radius: 12px;
+      padding: 12px; width: 280px; max-height: 320px; overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: none;
     }
 
     .leaflet-touch .map-gps-btn, .map-gps-btn {
-      background: rgba(8, 12, 20, 0.9) !important; border: 2px solid var(--accent-primary) !important;
-      color: var(--accent-primary) !important; width: 48px !important; height: 48px !important;
-      border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important;
+      background: rgba(8, 12, 20, 0.9) !important; backdrop-filter: blur(16px);
+      border: 2px solid var(--accent-primary) !important; color: var(--accent-primary) !important;
+      width: 48px !important; height: 48px !important; border-radius: 50% !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
+      cursor: pointer !important; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4) !important;
       margin-bottom: 16px !important; margin-right: 16px !important;
     }
+    .map-gps-btn:hover { transform: scale(1.08); background: var(--accent-primary) !important; color: #000 !important; }
 
-    .user-gps-pulse { width: 16px; height: 16px; background: #00f2fe; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 16px #00f2fe; }
+    .user-gps-pulse { width: 16px; height: 16px; background: #00f2fe; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 16px #00f2fe; position: relative; }
+    .user-gps-pulse::after {
+      content: ''; position: absolute; top: -12px; left: -12px; width: 36px; height: 36px;
+      border-radius: 50%; background: rgba(0, 242, 254, 0.35);
+      animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulse-ring { 0% { transform: scale(0.3); opacity: 1; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
 
-    /* BOTONES Y INPUTS */
+    /* BOTONES Y FORMULARIOS */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);
       padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
       cursor: pointer; transition: all 0.2s ease; outline: none;
     }
-    .btn:hover { border-color: var(--border-accent); background: rgba(255, 255, 255, 0.05); }
-    .btn-primary { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #000; border: none; font-weight: 700; }
-    .btn-cad { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: #fff; border: none; font-weight: 700; }
-    .btn-road { background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%); color: #fff; border: none; font-weight: 700; }
+    .btn:hover { border-color: var(--border-accent); background: rgba(255, 255, 255, 0.05); transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #000; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 242, 254, 0.3); }
+    .btn-cad { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3); }
+    .btn-road { background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%); color: #fff; border: none; font-weight: 700; box-shadow: 0 4px 14px rgba(255, 0, 85, 0.3); }
 
     .input-field {
       background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); color: var(--text-main);
@@ -187,7 +202,7 @@
     .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
     .grid-3col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 
-    /* REDISEÑO DE TARJETAS DE IMPORTACIÓN CON BOTÓN ÚNICO */
+    /* TARJETAS DE IMPORTACIÓN CON BOTÓN ÚNICO */
     .import-hub-card {
       background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
       display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all 0.2s ease;
@@ -195,7 +210,7 @@
     .import-hub-card:hover { border-color: var(--border-accent); background: rgba(15, 23, 42, 0.95); transform: translateY(-2px); }
     .import-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 242, 254, 0.3); }
 
-    /* MODAL FLOTANTE DE REPLANTEO EN VIVO (CON SCROLL INTERNO) */
+    /* VENTANA FLOTANTE DE REPLANTEO MODAL (DESPLIEGUE UNIVERSAL AUTOMÁTICO) */
     .modal-stakeout-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 7, 13, 0.93); backdrop-filter: blur(20px);
@@ -221,10 +236,10 @@
     }
     #stakeoutArrowCanvasModal { width: 100%; height: 100%; }
 
-    .stakeout-big-val { font-family: var(--font-mono); font-size: 2.3rem; font-weight: 800; color: #ffffff; margin: 4px 0; }
+    .stakeout-big-val { font-family: var(--font-mono); font-size: 2.3rem; font-weight: 800; color: #ffffff; text-shadow: 0 0 16px rgba(0, 242, 254, 0.6); margin: 4px 0; }
     .stakeout-vector-box { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-accent); border-radius: 12px; padding: 12px; font-family: var(--font-mono); }
 
-    /* MODAL DE IMPORTACIÓN ESPECÍFICA CON BARRA DE PROGRESO */
+    /* MODAL DE IMPORTACIÓN ESPECÍFICA CON BARRA DE PROGRESO Y LOG */
     .modal-import-backdrop {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 7, 13, 0.9); backdrop-filter: blur(16px);
@@ -238,11 +253,10 @@
     .modal-import-header { padding: 14px 18px; background: rgba(13, 19, 31, 0.98); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .modal-import-body { padding: 18px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; display: flex; flex-direction: column; gap: 14px; }
 
-    /* BARRA DE PROGRESO DE IMPORTACIÓN */
     .progress-bar-container { width: 100%; height: 12px; background: rgba(0,0,0,0.6); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
     .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2fe, #3b82f6); transition: width 0.3s ease; }
 
-    /* TABLA */
+    /* TABLA DE PUNTOS */
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
     th { background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 10px; text-align: left; border-bottom: 1px solid var(--border); font-family: var(--font-mono); text-transform: uppercase; font-size: 0.75rem; }
     td { padding: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); font-family: var(--font-mono); }
@@ -264,7 +278,7 @@
       </div>
       <div class="brand-title">
         <h1>TOPOGRAFÍA <span style="color: var(--accent-primary); font-weight: 400;">PRO 2026</span></h1>
-        <span class="brand-sub">FIELD STATION HUD v5.4 (AUTO-STAKEOUT & TCP-MDT ROAD/TIN)</span>
+        <span class="brand-sub">FIELD STATION HUD v5.4 (AUTO-STAKEOUT & TCP-MDT / TIN 3D)</span>
       </div>
     </div>
 
@@ -285,7 +299,7 @@
     </div>
   </header>
 
-  <!-- NAVEGACIÓN PRINCIPAL (3 MODULOS) -->
+  <!-- NAVEGACIÓN MODULAR NATIVA -->
   <nav class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('tabMap', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
@@ -333,16 +347,16 @@
         <div id="mapCartoPanel" class="map-cad-panel" style="right: 60px; left: auto;">
           <h4><span>🌍 Mapas Base</span></h4>
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <label><input type="checkbox" id="chkPnoa" checked onchange="toggleCapaCarto('pnoa', this.checked)"> PNOA Ortofoto (IGN)</label>
-            <label><input type="checkbox" id="chkIgnBase" onchange="toggleCapaCarto('ignBase', this.checked)"> IGN Base Topográfico</label>
-            <label><input type="checkbox" id="chkEsri" onchange="toggleCapaCarto('esri', this.checked)"> ESRI Satélite HD</label>
-            <label><input type="checkbox" id="chkCatastro" checked onchange="toggleCapaCarto('catastro', this.checked)"> Catastro Vectorial</label>
+            <label style="font-size:0.78rem; color:#cbd5e1; cursor:pointer;"><input type="checkbox" id="chkPnoa" checked onchange="toggleCapaCarto('pnoa', this.checked)"> PNOA Ortofoto (IGN)</label>
+            <label style="font-size:0.78rem; color:#cbd5e1; cursor:pointer;"><input type="checkbox" id="chkIgnBase" onchange="toggleCapaCarto('ignBase', this.checked)"> IGN Base Topográfico</label>
+            <label style="font-size:0.78rem; color:#cbd5e1; cursor:pointer;"><input type="checkbox" id="chkEsri" onchange="toggleCapaCarto('esri', this.checked)"> ESRI Satélite HD</label>
+            <label style="font-size:0.78rem; color:#cbd5e1; cursor:pointer;"><input type="checkbox" id="chkCatastro" checked onchange="toggleCapaCarto('catastro', this.checked)"> Catastro Vectorial WMS</label>
           </div>
         </div>
 
         <div id="mapCadPanel" class="map-cad-panel">
-          <h4><span>Capas DXF</span></h4>
-          <div id="mapCadLayersList"><i>Sin archivo DXF cargado</i></div>
+          <h4><span>Capas DXF / MDT</span></h4>
+          <div id="mapCadLayersList"><i>Sin archivo cargado</i></div>
         </div>
       </div>
     </div>
@@ -354,8 +368,8 @@
         <div class="card-title" style="color: var(--accent-road);">1. Selección Manual de Elementos para Replanteo Directo</div>
         <div class="grid-2col">
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <b style="font-size:0.83rem; color:var(--accent-primary);">⚡ Replanteo de Ejes & Carreteras Virtuales</b>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Usa los ejes cargados desde LandXML / TCP-MDT o toca en el visor 2D/3D.</p>
+            <b style="font-size:0.83rem; color:var(--accent-primary);">⚡ Replanteo de Ejes & Carreteras Virtuales MDT</b>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Usa los ejes cargados desde TCP-MDT / LandXML o toca en el visor 2D/3D.</p>
             <button class="btn btn-road" onclick="lanzarReplanteoEjeActivo()">⚡ Replantear Eje / Carretera Activa</button>
           </div>
 
@@ -365,9 +379,9 @@
               <option value="">-- Seleccionar de Puntos Registrados --</option>
             </select>
             <div style="display:flex; gap:6px;">
-              <input type="number" id="replantearX" class="input-field" placeholder="Easting (X)">
-              <input type="number" id="replantearY" class="input-field" placeholder="Northing (Y)">
-              <input type="number" id="replantearZ" class="input-field" placeholder="Cota (Z)">
+              <input type="number" id="replantearX" class="input-field" placeholder="Easting Target (X)">
+              <input type="number" id="replantearY" class="input-field" placeholder="Northing Target (Y)">
+              <input type="number" id="replantearZ" class="input-field" placeholder="Cota Target (Z)">
             </div>
             <button class="btn btn-road" onclick="iniciarReplanteoDesdeTopoTab()">⚡ Abrir Ventana de Replanteo</button>
           </div>
@@ -386,7 +400,7 @@
         <div class="card-title" style="color: var(--accent-success);">2. Adquisición Espacial & Levantamiento de Puntos</div>
         <div class="grid-2col">
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <b style="font-size:0.83rem; color:#4ade80;">📡 Captura de Puntos con Código</b>
+            <b style="font-size:0.83rem; color:#4ade80;">📡 Captura de Puntos con Código de Campo</b>
             <div style="display:flex; gap:6px;">
               <input type="text" id="puntoCodigoInput" class="input-field" placeholder="Código" value="TERRENO">
               <select id="codigoPreset" class="input-field" style="max-width:140px;" onchange="document.getElementById('puntoCodigoInput').value=this.value;">
@@ -394,6 +408,7 @@
                 <option value="BORDILLO">BORDILLO</option>
                 <option value="EJE">EJE</option>
                 <option value="ARQUETA">ARQUETA</option>
+                <option value="TUBERIA">TUBERIA</option>
               </select>
             </div>
             <button class="btn btn-primary" onclick="capturarPuntoGPSConCodigo()">Grabar Punto GNSS (Auto NAP)</button>
@@ -410,7 +425,7 @@
       </div>
 
       <div class="glass-card">
-        <div class="card-title" style="color: var(--accent-secondary);">3. Cálculos COGO con Envíos a Replanteo Directo</div>
+        <div class="card-title" style="color: var(--accent-secondary);">3. Cálculos COGO & Geometría Avanzada con Envíos a Replanteo</div>
         <div class="grid-3col">
           <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; border:1px solid var(--border);">
             <b style="font-size:0.8rem; color:var(--accent-secondary);">COGO Inverso (P1 ➔ P2)</b>
@@ -424,7 +439,7 @@
           <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; border:1px solid var(--border);">
             <b style="font-size:0.8rem; color:var(--accent-secondary);">Radiación Directa</b>
             <input type="text" id="radP1" class="input-field" placeholder="Base (X, Y)">
-            <input type="number" id="radAzimut" class="input-field" placeholder="Azimut (°)">
+            <input type="number" id="radAzimut" class="input-field" placeholder="Azimut (° sexagesimal)">
             <input type="number" id="radDist" class="input-field" placeholder="Distancia (m)">
             <button class="btn btn-primary" onclick="calcularRadiacionDirecta()">Calcular Punto Nuevo</button>
             <div id="resRadiacion" style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-primary);"></div>
@@ -450,25 +465,24 @@
           <div class="card-title">Receptor GNSS</div>
           <select id="gpsSourceSelect" class="input-field" onchange="cambiarFuenteGPS()">
             <option value="SETTOP" selected>Antena Settop / RTK Externo (NTRIP IGN)</option>
-            <option value="INTERNAL">GPS Interno de la Tablet</option>
+            <option value="INTERNAL">GPS Interno de la Tablet (Autónomo)</option>
           </select>
         </div>
         <div class="glass-card">
-          <div class="card-title">Caster NTRIP IGN</div>
-          <input type="text" class="input-field" value="ergnss-caster.ign.es:2101 (NEAREST3)" readonly>
+          <div class="card-title">Caster NTRIP IGN España</div>
+          <input type="text" class="input-field" value="ergnss-caster.ign.es:2101 (NEAREST3 RTCM 3.2)" readonly>
         </div>
       </div>
     </div>
 
-    <!-- PESTAÑA 4: IMPORTAR / EXPORTAR REDISEÑADA (BOTÓN ÚNICO POR TIPO) -->
+    <!-- PESTAÑA 4: IMPORTAR / EXPORTAR CON BOTÓN ÚNICO POR TIPO -->
     <div id="tabData" class="tab-content">
       <div class="glass-card">
         <div class="card-title" style="color: var(--accent-primary);">Centro de Importación Cartográfica y Topográfica (Hub v5.4)</div>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Selecciona el tipo de archivo para abrir su pantalla de importación dedicada.</p>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Selecciona un tipo de archivo para abrir su pantalla de importación dedicada con barra de estado.</p>
 
         <div class="grid-3col" style="margin-top:14px;">
           
-          <!-- DXF -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -479,7 +493,6 @@
             <button class="btn btn-cad" onclick="abrirModalImportacion('dxf')">Importar DXF CAD</button>
           </div>
 
-          <!-- TCP-MDT -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -490,7 +503,6 @@
             <button class="btn btn-road" onclick="abrirModalImportacion('mdt')">Importar Carretera MDT</button>
           </div>
 
-          <!-- LANDXML TIN SURFACE -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -501,7 +513,6 @@
             <button class="btn btn-primary" onclick="abrirModalImportacion('tin')">Importar Malla 3D TIN</button>
           </div>
 
-          <!-- RASTER -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -512,7 +523,6 @@
             <button class="btn" style="border-color:var(--accent-raster); color:var(--accent-raster);" onclick="abrirModalImportacion('raster')">Importar Ortofoto</button>
           </div>
 
-          <!-- GEOPDF -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -523,7 +533,6 @@
             <button class="btn" style="border-color:#ef4444; color:#ef4444;" onclick="abrirModalImportacion('pdf')">Importar GeoPDF</button>
           </div>
 
-          <!-- KML -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -534,7 +543,6 @@
             <button class="btn" style="border-color:#10b981; color:#10b981;" onclick="abrirModalImportacion('kml')">Importar KML / KMZ</button>
           </div>
 
-          <!-- GEOJSON -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -545,7 +553,6 @@
             <button class="btn" style="border-color:#f59e0b; color:#f59e0b;" onclick="abrirModalImportacion('geojson')">Importar GeoJSON</button>
           </div>
 
-          <!-- ASCII PUNTOS -->
           <div class="import-hub-card">
             <div>
               <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -561,7 +568,7 @@
 
       <div class="glass-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-          <div class="card-title" style="margin:0;">Listado de Puntos Registrados & Exportación</div>
+          <div class="card-title" style="margin:0;">Listado de Puntos Registrados (ETRS89 / REDNAP)</div>
           <div style="display:flex; gap:8px;">
             <button class="btn btn-primary" onclick="exportarCSV()">Exportar CSV</button>
             <button class="btn btn-cad" onclick="exportarDXF()">Exportar DXF</button>
@@ -580,7 +587,7 @@
 
   </div>
 
-  <!-- VENTANA FLOTANTE DE REPLANTEO MODAL (SE DESPLIEGA SIEMPRE AL REPLANTEAR) -->
+  <!-- VENTANA FLOTANTE DE REPLANTEO MODAL (SE DESPLIEGA SIEMPRE AL ACTIVAR UN COMANDO) -->
   <div id="modalStakeout" class="modal-stakeout-backdrop">
     <div class="modal-stakeout-box">
       <div class="modal-stakeout-header">
@@ -594,12 +601,10 @@
       </div>
 
       <div class="modal-stakeout-body">
-        <!-- BRÚJULA 3D DE REPLANTEO -->
         <div id="stakeoutCanvasContainerModal">
           <canvas id="stakeoutArrowCanvasModal"></canvas>
         </div>
 
-        <!-- TELEMETRÍA DE REPLANTEO -->
         <div class="grid-2col">
           <div class="stakeout-vector-box">
             <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Distancia Al Objetivo / Offset</span>
@@ -614,18 +619,16 @@
           </div>
         </div>
 
-        <!-- VECTORES PLANIMÉTRICOS Y DETALLES -->
         <div class="stakeout-vector-box" style="background:rgba(13,19,31,0.9);">
           <b style="color:var(--accent-primary); font-size:0.8rem;">📐 Vectores de Guiado en Campo</b>
           <div id="stakeoutVectorsBodyModal" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; font-size:0.78rem;">
             <div>Norte/Sur: <b>--</b></div>
             <div>Este/Oeste: <b>--</b></div>
             <div>Azimut Avance: <b>--</b></div>
-            <div>Cota Terreno (NAP): <b>--</b></div>
+            <div>Cota Terreno: <b>--</b></div>
           </div>
         </div>
 
-        <!-- CONTROLES ADICIONALES -->
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:4px;">
           <div style="display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.5); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
             <label style="font-size:0.75rem; color:var(--text-muted);">Offset Paralelo (m):</label>
@@ -645,8 +648,6 @@
         <button class="btn btn-primary" onclick="cerrarModalImportacion()" style="padding:4px 10px; font-size:0.75rem;">✖ Cerrar</button>
       </div>
       <div class="modal-import-body">
-        
-        <!-- ESTADO Y BARRA DE PROGRESO -->
         <div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <span style="font-size:0.78rem; color:var(--text-muted);">Estado del Proceso:</span>
@@ -657,10 +658,8 @@
           </div>
         </div>
 
-        <!-- CONTENIDO DINÁMICO SEGÚN TIPO -->
         <div id="importModalForm"></div>
 
-        <!-- BITÁCORA Y REGISTRO DE CARGA -->
         <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:8px; padding:10px; font-family:var(--font-mono); font-size:0.75rem; max-height:140px; overflow-y:auto;" id="importLogConsole">
           <i>Esperando selección de archivos...</i>
         </div>
@@ -678,10 +677,10 @@
       <div id="canvas3DContainer">
         <div id="panelProps3D" class="panel-props-3d">
           <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
-          <div id="prop3DBody">Toca un elemento...</div>
+          <div id="prop3DBody">Toca una línea o triángulo...</div>
           <div style="display:flex; gap:6px; margin-top:6px;">
             <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('EJE')">⚡ Replantear</button>
-            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 P1</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 Replantear P1</button>
           </div>
         </div>
       </div>
@@ -689,7 +688,7 @@
   </div>
 
   <script>
-    // 1. NAVEGACIÓN ENTRE PESTAÑAS
+    // 1. NAVEGACIÓN Y PESTAÑAS
     function switchTab(tabId, element) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -708,7 +707,7 @@
     function utmALatLng(x, y, huso) { const [lng, lat] = proj4(`EPSG:258${huso}`, "EPSG:4326", [x, y]); return [lat, lng]; }
     const GeoideIGN = { elipsoidalAOrtometrica: (lat, lng, h) => ({ cotaNAP: h - 50.2, ondulacionN: 50.2 }) };
 
-    // 3. MAPA LEAFLET
+    // 3. MAPA LEAFLET Y CAPAS
     const map = L.map('map', { zoomControl: false, boxZoom: true, maxZoom: 28, minZoom: 2 }).setView([40.4167, -3.7037], 15);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -725,11 +724,34 @@
 
     const dxfLayerGroup = L.layerGroup().addTo(map);
     const vectorImportLayerGroup = L.layerGroup().addTo(map);
+    const puntosLayerGroup = L.layerGroup().addTo(map);
 
-    // 4. TELEMETRÍA Y SEGUIMIENTO GPS CONTINUO AUTOMÁTICO
+    // CONTROL FLOTANTE DE CENTRADO EN POSICIÓN GPS
+    const GpsCenterControl = L.Control.extend({
+      options: { position: 'bottomright' },
+      onAdd: function() {
+        const btn = L.DomUtil.create('button', 'map-gps-btn');
+        btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`;
+        btn.title = "Centrar en mi Posición";
+        btn.onclick = function(e) { L.DomEvent.stopPropagation(e); centrarEnPosicionGPS(); };
+        return btn;
+      }
+    });
+    map.addControl(new GpsCenterControl());
+
+    let modoBoxZoom = false;
+    function activarZoomVentana() {
+      modoBoxZoom = !modoBoxZoom;
+      const btn = document.getElementById('btnZoomBox');
+      if (modoBoxZoom) { btn.classList.add('active'); map.dragging.disable(); map.boxZoom.addHooks(); }
+      else { btn.classList.remove('active'); map.dragging.enable(); }
+    }
+    map.on('boxzoomend', () => { modoBoxZoom = false; document.getElementById('btnZoomBox').classList.remove('active'); map.dragging.enable(); });
+
+    // 4. TELEMETRÍA Y SEGUIMIENTO GPS AUTOMÁTICO EN TIEMPO REAL
     let userMarker = null, userAccuracyCircle = null, ultimaPosicionGPS = null;
 
-    function formatearPrecision(acc) { return acc < 1.0 ? `±${(acc * 100).toFixed(1)} cm` : `±${acc.toFixed(2)} m`; }
+    function formatearPrecision(acc) { if (!acc || isNaN(acc)) return "±--"; return acc < 1.0 ? `±${(acc * 100).toFixed(1)} cm` : `±${acc.toFixed(2)} m`; }
     function cambiarFuenteGPS() { if (ultimaPosicionGPS) actualizarBadgeRTK(ultimaPosicionGPS.coords.accuracy); }
 
     function actualizarBadgeRTK(acc) {
@@ -752,22 +774,27 @@
         if (userMarker) {
           userMarker.setLatLng([lat, lng]); userAccuracyCircle.setLatLng([lat, lng]).setRadius(pos.coords.accuracy);
         } else {
-          userMarker = L.marker([lat, lng], { icon: L.divIcon({ className: 'user-gps-pulse', iconSize: [16, 16] }) }).addTo(map);
-          userAccuracyCircle = L.circle([lat, lng], { radius: pos.coords.accuracy, color: '#00f2fe' }).addTo(map);
+          userMarker = L.marker([lat, lng], { icon: L.divIcon({ className: 'user-gps-pulse', iconSize: [16, 16], iconAnchor: [8, 8] }) }).addTo(map);
+          userAccuracyCircle = L.circle([lat, lng], { radius: pos.coords.accuracy, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.15 }).addTo(map);
         }
-        // AUTO-REFRESCO CONTINUO DE GUIADO SI LA VENTANA FLOTANTE ESTÁ ABIERTA
         if (document.getElementById('modalStakeout').style.display === 'flex') {
           actualizarHUDReplanteoVivo(pos);
         }
-      }, (err) => console.log(err), { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
+      }, (err) => console.log("Error GPS:", err.message), { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
     }
 
     function centrarEnPosicionGPS() {
-      if (ultimaPosicionGPS) map.flyTo([ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude], 18);
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+      navigator.geolocation.getCurrentPosition((pos) => {
+        ultimaPosicionGPS = pos;
+        actualizarBadgeRTK(pos.coords.accuracy);
+        map.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+        if (document.getElementById('modalStakeout').style.display === 'flex') actualizarHUDReplanteoVivo(pos);
+      }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
     }
 
     // =========================================================================
-    // 5. MOTOR DE REPLANTEO FLOTANTE MODAL CON BRÚJULA 3D AUTOMÁTICA
+    // 5. MOTOR DE REPLANTEO MODAL CON BRÚJULA 3D AUTOMÁTICA
     // =========================================================================
     window.targetReplanteoActivo = null;
 
@@ -908,7 +935,7 @@
         `;
         renderizarFlechaStakeout3DModal(0, 0);
       }
-      // ALTIMETRÍA / RASANTE SIMPLE
+      // CONTROL ALTIMÉTRICO / RASANTE
       else if (target.tipo === 'ALTIMETRIA') {
         document.getElementById('stakeoutModalModeBadge').innerText = "MODO: CONTROL DE RASANTE";
         const zTarget = target.datos.z, dZ = zCurrent - zTarget;
@@ -926,82 +953,91 @@
       const hGPS = ultimaPosicionGPS.coords.altitude || 0;
       const zCurrent = GeoideIGN.elipsoidalAOrtometrica(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, hGPS).cotaNAP;
 
-      const p = { id: `REP-${String(listaPuntos.length + 1).padStart(3, '0')}`, codigo: `REPLANTEO_${window.targetReplanteoActivo.tipo}`, easting: easting.toFixed(3), northing: northing.toFixed(3), cotaNAP: zCurrent.toFixed(3), hGPS: hGPS.toFixed(3), N: "50.20", acc: formatearPrecision(ultimaPosicionGPS.coords.accuracy), fuente: 'RTK As-Built' };
-      listaPuntos.push(p); actualizarTablaYPuntosSelect(); alert(`💾 Punto As-Built ${p.id} guardado.`);
+      const p = {
+        id: `REP-${String(listaPuntos.length + 1).padStart(3, '0')}`,
+        codigo: `REPLANTEO_${window.targetReplanteoActivo.tipo}`,
+        easting: easting.toFixed(3), northing: northing.toFixed(3),
+        cotaNAP: zCurrent.toFixed(3), hGPS: hGPS.toFixed(3), N: "50.20",
+        acc: formatearPrecision(ultimaPosicionGPS.coords.accuracy), fuente: 'RTK As-Built'
+      };
+      listaPuntos.push(p);
+      actualizarTablaYPuntosSelect();
+
+      const latLng = utmALatLng(parseFloat(p.easting), parseFloat(p.northing), huso);
+      L.circleMarker(latLng, { radius: 6, color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.9 })
+        .addTo(puntosLayerGroup).bindPopup(`<b>${p.id} [${p.codigo}]</b><br>E: ${p.easting}<br>N: ${p.northing}<br>Z (NAP): ${p.cotaNAP}m`).openPopup();
+
+      alert(`💾 Punto As-Built ${p.id} registrado y desplegado en el mapa.`);
     }
 
     // =========================================================================
-    // 6. CENTRO DE IMPORTACIÓN REDISEÑADO & NUEVOS MOTORES MDT Y LANDXML TIN
+    // 6. CENTRO DE IMPORTACIÓN REDISEÑADO & MOTORES MDT Y LANDXML TIN 3D
     // =========================================================================
     function abrirModalImportacion(tipo) {
       document.getElementById('modalImportDetail').style.display = 'flex';
       actualizarBarraProgreso(0, "Listo para Cargar", "background:rgba(255,255,255,0.1); color:#fff;");
       const formContainer = document.getElementById('importModalForm');
       const titleEl = document.getElementById('importModalTitle');
+      document.getElementById('importLogConsole').innerHTML = '<i>Esperando selección de archivo...</i>';
 
       if (tipo === 'dxf') {
         titleEl.innerText = "Importar AutoCAD DXF";
         formContainer.innerHTML = `
           <p style="font-size:0.8rem; color:var(--text-muted);">Selecciona un archivo .DXF de geometrías vectoriales.</p>
-          <input type="file" id="inputArchivoDXF" accept=".dxf" class="input-field">
-          <button class="btn btn-cad" style="width:100%;" onclick="ejecutarImportacionDXF()">Cargar Geometría CAD</button>
+          <input type="file" id="inputArchivoDXF" accept=".dxf" class="input-field" onchange="ejecutarImportacionDXF(event)">
         `;
       }
       else if (tipo === 'mdt') {
         titleEl.innerText = "Importar Carretera TCP-MDT";
         formContainer.innerHTML = `
-          <p style="font-size:0.8rem; color:var(--text-muted);">Carga el Eje (.eje), Rasante (.ras) y Perfiles Transversales (.per/.sec) de MDT.</p>
-          <label style="font-size:0.75rem; color:var(--accent-primary);">1. Archivo Eje Planta (.eje):</label>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Carga los archivos de Eje (.eje), Rasante (.ras) o Perfiles Transversales (.per/.sec).</p>
+          <label style="font-size:0.75rem; color:var(--accent-primary);">1. Eje en Planta (.eje / LandXML):</label>
           <input type="file" id="mdtEjeInput" accept=".eje,.xml,.csv,.txt" class="input-field">
-          <label style="font-size:0.75rem; color:var(--accent-primary); margin-top:6px;">2. Archivo Rasante (.ras):</label>
+          <label style="font-size:0.75rem; color:var(--accent-primary); margin-top:6px;">2. Rasante Altimétrica (.ras):</label>
           <input type="file" id="mdtRasInput" accept=".ras,.txt,.csv" class="input-field">
           <label style="font-size:0.75rem; color:var(--accent-primary); margin-top:6px;">3. Perfiles Transversales (.per / .sec):</label>
           <input type="file" id="mdtPerInput" accept=".per,.sec,.csv" class="input-field">
-          <button class="btn btn-road" style="width:100%; margin-top:8px;" onclick="ejecutarImportacionTCPMDT()">Procesar Carretera MDT</button>
+          <button class="btn btn-road" style="width:100%; margin-top:10px;" onclick="ejecutarImportacionTCPMDT()">Procesar Carretera MDT</button>
         `;
       }
       else if (tipo === 'tin') {
-        titleEl.innerText = "Importar Superficie LandXML TIN (MDT 3D)";
+        titleEl.innerText = "Importar Superficie LandXML TIN 3D";
         formContainer.innerHTML = `
           <p style="font-size:0.8rem; color:var(--text-muted);">Carga una superficie de terreno LandXML con malla de triángulos 3D.</p>
-          <input type="file" id="tinLandXMLInput" accept=".xml" class="input-field">
-          <button class="btn btn-primary" style="width:100%;" onclick="ejecutarImportacionLandXMLTIN()">Generar Malla 3D TIN</button>
+          <input type="file" id="tinLandXMLInput" accept=".xml" class="input-field" onchange="ejecutarImportacionLandXMLTIN(event)">
         `;
       }
       else if (tipo === 'raster') {
         titleEl.innerText = "Importar Ortofoto Raster";
         formContainer.innerHTML = `
-          <input type="file" id="rasterImgInput" accept=".tif,.tiff,.jpg,.jpeg,.png" class="input-field">
-          <input type="file" id="worldFileInput" accept=".tfw,.jgw,.pgw,.txt" class="input-field" style="margin-top:6px;">
-          <button class="btn btn-primary" style="width:100%; margin-top:8px;" onclick="ejecutarImportacionRaster()">Cargar Ortofoto Calibrada</button>
+          <label style="font-size:0.75rem; color:var(--accent-primary);">1. Imagen Raster (TIF/JPG/PNG):</label>
+          <input type="file" id="rasterImgInput" accept=".tif,.tiff,.jpg,.jpeg,.png" class="input-field" onchange="prepararOrtofoto(event)">
+          <label style="font-size:0.75rem; color:var(--accent-primary); margin-top:6px;">2. Archivo de Calibración WorldFile (.tfw / .jgw):</label>
+          <input type="file" id="worldFileInput" accept=".tfw,.jgw,.pgw,.txt" class="input-field" onchange="cargarWorldFile(event)">
         `;
       }
       else if (tipo === 'pdf') {
         titleEl.innerText = "Importar GeoPDF";
         formContainer.innerHTML = `
-          <input type="file" id="pdfFileInput" accept=".pdf" class="input-field">
-          <button class="btn btn-primary" style="width:100%;" onclick="ejecutarImportacionGeoPDF()">Calibrar Plano GeoPDF</button>
+          <input type="file" id="pdfFileInput" accept=".pdf" class="input-field" onchange="importarPDFGeorreferenciado(event)">
         `;
       }
       else if (tipo === 'kml') {
         titleEl.innerText = "Importar Google Earth KML";
         formContainer.innerHTML = `
-          <input type="file" id="kmlFileInput" accept=".kml,.xml" class="input-field">
-          <button class="btn btn-primary" style="width:100%;" onclick="ejecutarImportacionKML()">Procesar KML</button>
+          <input type="file" id="kmlFileInput" accept=".kml,.xml" class="input-field" onchange="importarKML(event)">
         `;
       }
       else if (tipo === 'geojson') {
         titleEl.innerText = "Importar GIS GeoJSON";
         formContainer.innerHTML = `
-          <input type="file" id="geojsonFileInput" accept=".geojson,.json" class="input-field">
-          <button class="btn btn-primary" style="width:100%;" onclick="ejecutarImportacionGeoJSON()">Cargar SIG GeoJSON</button>
+          <input type="file" id="geojsonFileInput" accept=".geojson,.json" class="input-field" onchange="importarGeoJSON(event)">
         `;
       }
       else if (tipo === 'ascii') {
         titleEl.innerText = "Importar Puntos ASCII / GSI";
         formContainer.innerHTML = `
-          <input type="file" id="asciiFileInput" accept=".csv,.txt,.gsi,.sdr" class="input-field">
-          <button class="btn btn-primary" style="width:100%;" onclick="ejecutarImportacionASCII()">Cargar Listado Puntos</button>
+          <input type="file" id="asciiFileInput" accept=".csv,.txt,.gsi,.sdr" class="input-field" onchange="importarASCII(event)">
         `;
       }
     }
@@ -1024,9 +1060,10 @@
 
     function ejecutarImportacionTCPMDT() {
       const fileEje = document.getElementById('mdtEjeInput').files[0];
-      if (!fileEje) return alert("Selecciona al menos el archivo Eje (.eje).");
-      actualizarBarraProgreso(20, "Procesando MDT...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
-      logConsolaImportacion(`Leyendo archivo de eje: ${fileEje.name}`);
+      const fileRas = document.getElementById('mdtRasInput').files[0];
+      if (!fileEje) return alert("Selecciona al menos el archivo de Eje en Planta (.eje).");
+      actualizarBarraProgreso(30, "Procesando MDT...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
+      logConsolaImportacion(`Cargando Eje MDT: ${fileEje.name}`);
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -1039,7 +1076,7 @@
           }
         });
         actualizarBarraProgreso(100, "Éxito MDT", "background:rgba(16,185,129,0.2); color:#10b981;");
-        logConsolaImportacion(`✔ Eje MDT importado: ${carreteraMDT.eje.length} vértices.`);
+        logConsolaImportacion(`✔ Eje MDT procesado: ${carreteraMDT.eje.length} vértices.`);
         iniciarReplanteoElemento('CARRETERA_MDT', carreteraMDT.eje, `Carretera MDT (${fileEje.name})`);
       };
       reader.readAsText(fileEje);
@@ -1048,24 +1085,24 @@
     // B. MOTOR LANDXML 3D SURFACE TIN MESH
     window.superficieTIN = null;
 
-    function ejecutarImportacionLandXMLTIN() {
-      const file = document.getElementById('tinLandXMLInput').files[0]; if (!file) return alert("Selecciona un archivo LandXML.");
-      actualizarBarraProgreso(30, "Parseando Triángulos TIN...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
-      logConsolaImportacion(`Cargando malla LandXML: ${file.name}`);
+    function ejecutarImportacionLandXMLTIN(event) {
+      const file = event.target.files[0]; if (!file) return;
+      actualizarBarraProgreso(40, "Parseando Triángulos 3D...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
+      logConsolaImportacion(`Leyendo estructura LandXML: ${file.name}`);
 
       const reader = new FileReader();
       reader.onload = function(e) {
         const parser = new DOMParser(); const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
         const pntsNode = xmlDoc.getElementsByTagName("Pnts")[0];
         const facesNode = xmlDoc.getElementsByTagName("Faces")[0];
-        if (!pntsNode || !facesNode) return alert("El XML no contiene elementos TIN (<Pnts> / <Faces>).");
+        if (!pntsNode || !facesNode) return alert("El archivo XML no contiene elementos TIN válidos (<Pnts> y <Faces>).");
 
         const pntsMap = new Map();
         const pNodes = pntsNode.getElementsByTagName("P");
         for (let i = 0; i < pNodes.length; i++) {
           const id = pNodes[i].getAttribute("id");
-          const coords = pNodes[i].textContent.trim().split(/\s+/).map(Number);
-          pntsMap.set(id, { x: coords[1] || coords[0], y: coords[0] || coords[1], z: coords[2] || 0 });
+          const c = pNodes[i].textContent.trim().split(/\s+/).map(Number);
+          pntsMap.set(id, { x: c[1] || c[0], y: c[0] || c[1], z: c[2] || 0 });
         }
 
         const triangulos = [];
@@ -1078,7 +1115,7 @@
         }
         window.superficieTIN = { triangulos: triangulos };
         actualizarBarraProgreso(100, "Éxito TIN 3D", "background:rgba(16,185,129,0.2); color:#10b981;");
-        logConsolaImportacion(`✔ Malla TIN importada: ${triangulos.length} triángulos 3D.`);
+        logConsolaImportacion(`✔ Malla TIN importada: ${triangulos.length} triángulos 3D generados.`);
         iniciarReplanteoElemento('SUPERFICIE_TIN', { zBase: 0 }, `Superficie TIN 3D (${file.name})`);
       };
       reader.readAsText(file);
@@ -1100,52 +1137,218 @@
       return null;
     }
 
-    // C. IMPORTADORES ESTÁNDAR
-    function ejecutarImportacionDXF() {
-      const file = document.getElementById('inputArchivoDXF').files[0]; if (!file) return;
-      actualizarBarraProgreso(50, "Parseando CAD...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
+    // C. OTROS IMPORTADORES ESTÁNDAR
+    function ejecutarImportacionDXF(event) {
+      const file = event.target.files[0]; if (!file) return;
+      actualizarBarraProgreso(50, "Parseando CAD DXF...", "background:rgba(245,158,11,0.2); color:#f59e0b;");
+      logConsolaImportacion(`Lectura DXF: ${file.name}`);
       const reader = new FileReader();
       reader.onload = (e) => {
         procesarYRenderizarDXF(e.target.result, file.name);
         actualizarBarraProgreso(100, "Cargado", "background:rgba(16,185,129,0.2); color:#10b981;");
-        cerrarModalImportacion();
       };
       reader.readAsText(file);
     }
-    function ejecutarImportacionRaster() { alert("Cargando Raster..."); cerrarModalImportacion(); }
-    function ejecutarImportacionGeoPDF() { alert("Cargando PDF..."); cerrarModalImportacion(); }
-    function ejecutarImportacionKML() { alert("Cargando KML..."); cerrarModalImportacion(); }
-    function ejecutarImportacionGeoJSON() { alert("Cargando GeoJSON..."); cerrarModalImportacion(); }
-    function ejecutarImportacionASCII() { alert("Cargando ASCII..."); cerrarModalImportacion(); }
+
+    let tempImageSrc = null;
+    function prepararOrtofoto(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => { tempImageSrc = evt.target.result; logConsolaImportacion(`Imagen cargada. Selecciona su WorldFile (.tfw).`); };
+      reader.readAsDataURL(file);
+    }
+    function cargarWorldFile(e) {
+      const file = e.target.files[0]; if (!file || !tempImageSrc) return alert("Carga primero la imagen.");
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const lines = evt.target.result.trim().split(/\r?\n/);
+        if (lines.length < 6) return alert("WorldFile no válido.");
+        const A = parseFloat(lines[0]), E = parseFloat(lines[3]), C = parseFloat(lines[4]), F = parseFloat(lines[5]);
+        const img = new Image();
+        img.onload = () => {
+          const huso = parseInt(document.getElementById('husoSelect').value);
+          const sw = utmALatLng(C, F + E * img.height, huso), ne = utmALatLng(C + A * img.width, F, huso);
+          L.imageOverlay(tempImageSrc, [sw, ne], { opacity: 0.85 }).addTo(map);
+          map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          actualizarBarraProgreso(100, "Ortofoto Calibrada", "background:rgba(16,185,129,0.2); color:#10b981;");
+          cerrarModalImportacion();
+        };
+        img.src = tempImageSrc;
+      };
+      reader.readAsText(file);
+    }
+
+    function importarPDFGeorreferenciado(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const typedarray = new Uint8Array(evt.target.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+              const imgData = canvas.toDataURL('image/png');
+              const boundsStr = prompt("Introduce coordenadas ETRS89 (EastingMin, NorthingMin, EastingMax, NorthingMax):", "430000, 4470000, 431000, 4471000");
+              if (boundsStr) {
+                const parts = boundsStr.split(',').map(n => parseFloat(n.trim()));
+                if (parts.length === 4) {
+                  const huso = parseInt(document.getElementById('husoSelect').value);
+                  const sw = utmALatLng(parts[0], parts[1], huso), ne = utmALatLng(parts[2], parts[3], huso);
+                  L.imageOverlay(imgData, [sw, ne], { opacity: 0.8 }).addTo(map);
+                  map.fitBounds([sw, ne]); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+                  cerrarModalImportacion();
+                }
+              }
+            });
+          });
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function importarKML(event) {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const parser = new DOMParser(); const xml = parser.parseFromString(e.target.result, "text/xml");
+        const placemarks = xml.getElementsByTagName("Placemark"); const bounds = [];
+        for (let i = 0; i < placemarks.length; i++) {
+          const coords = placemarks[i].getElementsByTagName("coordinates")[0];
+          if (coords) {
+            const tuples = coords.textContent.trim().split(/\s+/); const latLngs = [];
+            tuples.forEach(t => {
+              const parts = t.split(',').map(Number);
+              if (parts.length >= 2 && !isNaN(parts[0])) { latLngs.push([parts[1], parts[0]]); bounds.push([parts[1], parts[0]]); }
+            });
+            if (latLngs.length === 1) L.marker(latLngs[0]).addTo(vectorImportLayerGroup);
+            else if (latLngs.length > 1) L.polyline(latLngs, { color: '#10b981', weight: 3 }).addTo(vectorImportLayerGroup);
+          }
+        }
+        if (bounds.length > 0) {
+          map.fitBounds(L.latLngBounds(bounds)); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          actualizarBarraProgreso(100, "KML Cargado", "background:rgba(16,185,129,0.2); color:#10b981;");
+          cerrarModalImportacion();
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importarGeoJSON(event) {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const json = JSON.parse(e.target.result);
+          const geoLayer = L.geoJSON(json, { style: { color: '#f59e0b', weight: 3 } }).addTo(vectorImportLayerGroup);
+          map.fitBounds(geoLayer.getBounds()); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          actualizarBarraProgreso(100, "GeoJSON Cargado", "background:rgba(16,185,129,0.2); color:#10b981;");
+          cerrarModalImportacion();
+        } catch (err) { alert("Error GeoJSON: " + err.message); }
+      };
+      reader.readAsText(file);
+    }
+
+    function importarASCII(event) {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lineas = e.target.result.split(/\r?\n/);
+        const huso = parseInt(document.getElementById('husoSelect').value);
+        let contador = 0;
+        lineas.forEach(l => {
+          const cols = l.trim().split(/[\s,;\t]+/);
+          if (cols.length >= 3 && !isNaN(parseFloat(cols[1])) && !isNaN(parseFloat(cols[2]))) {
+            const id = cols[0], x = parseFloat(cols[1]), y = parseFloat(cols[2]), z = cols[3] ? parseFloat(cols[3]) : 0;
+            const latLng = utmALatLng(x, y, huso);
+            const p = { id: id, codigo: 'ASCII', easting: x.toFixed(3), northing: y.toFixed(3), cotaNAP: z.toFixed(3), hGPS: (z+50.2).toFixed(3), N: "50.20", acc: "±0.00 cm", fuente: 'Fichero ASCII' };
+            listaPuntos.push(p);
+            L.circleMarker(latLng, { radius: 5, color: '#00f2fe', fillColor: '#00f2fe', fillOpacity: 0.9 })
+              .addTo(puntosLayerGroup).bindPopup(`<b>${id}</b><br>E: ${x.toFixed(3)}<br>N: ${y.toFixed(3)}<br>Z: ${z.toFixed(3)}`);
+            contador++;
+          }
+        });
+        if (contador > 0) {
+          actualizarTablaYPuntosSelect(); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+          actualizarBarraProgreso(100, "ASCII Cargado", "background:rgba(16,185,129,0.2); color:#10b981;");
+          cerrarModalImportacion();
+        }
+      };
+      reader.readAsText(file);
+    }
 
     // =========================================================================
-    // 7. VISOR CAD 2D/3D & UTILIDADES PREVIAS MANTENIDAS
+    // 7. VISOR CAD 2D/3D & INTERACTIVIDAD
     // =========================================================================
     let dxfParsedData = null, dxfEntidadesRenderizadas = [];
+
+    function interpolarSegmentoBulge(v1, v2) {
+      if (!v1.bulge || Math.abs(v1.bulge) < 1e-6) return [{ x: v1.x, y: v1.y, z: v1.z || 0 }, { x: v2.x, y: v2.y, z: v2.z || 0 }];
+      const b = v1.bulge, dx = v2.x - v1.x, dy = v2.y - v1.y, dist = Math.hypot(dx, dy); if (dist < 1e-6) return [{ x: v1.x, y: v1.y, z: v1.z || 0 }];
+      const theta = 4 * Math.atan(b), radius = dist / (2 * Math.sin(Math.abs(theta) / 2));
+      const chordMidX = (v1.x + v2.x) / 2, chordMidY = (v1.y + v2.y) / 2, d = dist / (2 * Math.tan(theta / 2));
+      const cx = chordMidX + d * (-dy / dist), cy = chordMidY + d * (dx / dist);
+      let startAngle = Math.atan2(v1.y - cy, v1.x - cx), endAngle = Math.atan2(v2.y - cy, v2.x - cx);
+      if (b < 0 && endAngle > startAngle) endAngle -= 2 * Math.PI;
+      if (b > 0 && endAngle < startAngle) endAngle += 2 * Math.PI;
+      const numSegments = Math.max(8, Math.ceil(Math.abs(theta) * 12 / Math.PI)), step = (endAngle - startAngle) / numSegments, pts = [];
+      for (let i = 0; i <= numSegments; i++) { const a = startAngle + step * i; pts.push({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a), z: v1.z || 0 }); }
+      return pts;
+    }
 
     function procesarYRenderizarDXF(dxfText, filename) {
       const parser = new DxfParser(); dxfParsedData = parser.parseSync(dxfText);
       dxfLayerGroup.clearLayers(); dxfEntidadesRenderizadas = [];
-      const huso = parseInt(document.getElementById('husoSelect').value); const bounds = [];
+      const huso = parseInt(document.getElementById('husoSelect').value); const boundsList = [];
+
+      if (!dxfParsedData || !dxfParsedData.entities) return;
 
       dxfParsedData.entities.forEach(ent => {
-        if (ent.type === 'LINE' && ent.vertices) {
-          const v = [{ x: ent.vertices[0].x, y: ent.vertices[0].y, z: ent.vertices[0].z || 0 }, { x: ent.vertices[1].x, y: ent.vertices[1].y, z: ent.vertices[1].z || 0 }];
-          const latLngs = v.map(p => utmALatLng(p.x, p.y, huso));
+        let verticesUTM = [];
+        if (ent.type === 'LINE' && ent.vertices && ent.vertices.length >= 2) {
+          verticesUTM = [{ x: ent.vertices[0].x, y: ent.vertices[0].y, z: ent.vertices[0].z || 0 }, { x: ent.vertices[1].x, y: ent.vertices[1].y, z: ent.vertices[1].z || 0 }];
+        } else if ((ent.type === 'LWPOLYLINE' || ent.type === 'POLYLINE') && ent.vertices) {
+          for (let i = 0; i < ent.vertices.length - 1; i++) {
+            const segPts = interpolarSegmentoBulge(ent.vertices[i], ent.vertices[i + 1]);
+            if (i > 0) segPts.shift(); verticesUTM.push(...segPts);
+          }
+        }
+
+        if (verticesUTM.length >= 2) {
+          const latLngs = verticesUTM.map(v => utmALatLng(v.x, v.y, huso));
           const line = L.polyline(latLngs, { color: '#a855f7', weight: 4 }).addTo(dxfLayerGroup);
-          line.on('click', () => iniciarReplanteoElemento('EJE_LINEA', v, `Línea CAD (${ent.layer || '0'})`));
-          latLngs.forEach(p => bounds.push(p));
-          dxfEntidadesRenderizadas.push({ entidad: ent, verticesUTM: v, layerName: ent.layer || '0', latLngs: latLngs, colorHex: '#a855f7' });
+          line.on('click', () => {
+            iniciarReplanteoElemento('EJE_LINEA', verticesUTM, `Alineación CAD (${ent.layer || '0'})`);
+          });
+          latLngs.forEach(p => boundsList.push(p));
+          dxfEntidadesRenderizadas.push({ entidad: ent, verticesUTM: verticesUTM, layerName: ent.layer || '0', latLngs: latLngs, colorHex: '#a855f7' });
         }
       });
-      if (bounds.length > 0) map.fitBounds(L.latLngBounds(bounds));
+
+      if (boundsList.length > 0) {
+        map.fitBounds(L.latLngBounds(boundsList)); switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]);
+      }
     }
 
-    let scene3D, camera3D, renderer3D, controls3D;
+    // VISOR 3D THREE.JS
+    let scene3D, camera3D, renderer3D, controls3D, item3DSeleccionado = null;
+
     function abrirVisor3D() {
-      if (!dxfParsedData) return alert("Carga un DXF primero.");
+      if (!dxfParsedData && !window.superficieTIN) return alert("Carga un DXF o una Superficie LandXML 3D primero.");
       document.getElementById('modal3D').style.display = 'flex';
       const container = document.getElementById('canvas3DContainer');
+      container.innerHTML = `
+        <div id="panelProps3D" class="panel-props-3d">
+          <div style="color:var(--accent-primary); font-weight:bold; font-size:0.85rem;" id="prop3DTitle">Elemento CAD 3D</div>
+          <div id="prop3DBody">Toca un elemento 3D...</div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="btn btn-road" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('EJE')">⚡ Replantear</button>
+            <button class="btn btn-primary" style="flex:1; padding:6px; font-size:0.72rem;" onclick="activarReplanteo3DDirecto('P1')">🎯 P1</button>
+          </div>
+        </div>
+      `;
+
       scene3D = new THREE.Scene(); scene3D.background = new THREE.Color(0x06090e);
       camera3D = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100000);
       renderer3D = new THREE.WebGLRenderer({ antialias: true }); renderer3D.setSize(container.clientWidth, container.clientHeight);
@@ -1157,21 +1360,139 @@
         const mat = new THREE.LineBasicMaterial({ color: 0x00f2fe });
         const pts = item.verticesUTM.map(v => new THREE.Vector3(v.x, v.z || 0, -v.y));
         const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat);
-        group.add(line);
+        line.userData = item; group.add(line);
       });
-      scene3D.add(group); camera3D.position.set(0, 200, 200); controls3D.update();
+      scene3D.add(group); camera3D.position.set(0, 300, 300); controls3D.update();
+
       function animate() { if (document.getElementById('modal3D').style.display === 'flex') { requestAnimationFrame(animate); controls3D.update(); renderer3D.render(scene3D, camera3D); } }
       animate();
     }
-    function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
-    function lanzarReplanteoEjeActivo() { if (carreteraMDT.eje.length > 0) iniciarReplanteoElemento('CARRETERA_MDT', carreteraMDT.eje, "Carretera Activa"); else alert("No hay ejes cargados."); }
-    function iniciarReplanteoDesdeTopoTab() { const x = parseFloat(document.getElementById('replantearX').value), y = parseFloat(document.getElementById('replantearY').value), z = parseFloat(document.getElementById('replantearZ').value) || 0; if (isNaN(x) || isNaN(y)) return alert("Ingresa coordenadas X e Y."); iniciarReplanteoElemento('PUNTO', { x: x, y: y, z: z }, `Punto Directo`); }
-    function iniciarReplanteoAltimetricoDesdeTopoTab() { const z = parseFloat(document.getElementById('cotaProyectoTarget').value); if (isNaN(z)) return alert("Ingresa cota."); iniciarReplanteoElemento('ALTIMETRIA', { z: z }, `Rasante Z = ${z.toFixed(3)}m`); }
 
+    function activarReplanteo3DDirecto(modo) {
+      if (!item3DSeleccionado) return;
+      if (modo === 'EJE') iniciarReplanteoElemento('EJE_LINEA', item3DSeleccionado.verticesUTM, `Eje CAD 3D (${item3DSeleccionado.layerName})`);
+      else if (modo === 'P1') iniciarReplanteoElemento('PUNTO', { x: item3DSeleccionado.verticesUTM[0].x, y: item3DSeleccionado.verticesUTM[0].y, z: item3DSeleccionado.verticesUTM[0].z }, `Punto P1 3D`);
+    }
+
+    function cerrarVisor3D() { document.getElementById('modal3D').style.display = 'none'; }
+    function lanzarReplanteoEjeActivo() { if (carreteraMDT.eje.length > 0) iniciarReplanteoElemento('CARRETERA_MDT', carreteraMDT.eje, "Carretera Activa MDT"); else alert("No hay ejes cargados."); }
+    function iniciarReplanteoDesdeTopoTab() { const x = parseFloat(document.getElementById('replantearX').value), y = parseFloat(document.getElementById('replantearY').value), z = parseFloat(document.getElementById('replantearZ').value) || 0; if (isNaN(x) || isNaN(y)) return alert("Ingresa coordenadas X e Y."); iniciarReplanteoElemento('PUNTO', { x: x, y: y, z: z }, `Punto Directo (${x}, ${y})`); }
+    function iniciarReplanteoAltimetricoDesdeTopoTab() { const z = parseFloat(document.getElementById('cotaProyectoTarget').value); if (isNaN(z)) return alert("Ingresa cota Z."); iniciarReplanteoElemento('ALTIMETRIA', { z: z }, `Control Rasante Z = ${z.toFixed(3)}m`); }
+
+    // =========================================================================
+    // 8. TOMA DE DATOS EN CAMPO, COGO & EXPORTACIONES
+    // =========================================================================
     let listaPuntos = [];
-    function capturarPuntoGPSConCodigo() { if (ultimaPosicionGPS) { const huso = parseInt(document.getElementById('husoSelect').value); const [e, n] = latLngATransformadaETRS89(ultimaPosicionGPS.coords.latitude, ultimaPosicionGPS.coords.longitude, huso); const p = { id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`, codigo: document.getElementById('puntoCodigoInput').value || 'TERRENO', easting: e.toFixed(3), northing: n.toFixed(3), cotaNAP: (ultimaPosicionGPS.coords.altitude - 50.2).toFixed(3), hGPS: (ultimaPosicionGPS.coords.altitude || 0).toFixed(3), N: "50.20", acc: formatearPrecision(ultimaPosicionGPS.coords.accuracy), fuente: 'RTK' }; listaPuntos.push(p); actualizarTablaYPuntosSelect(); alert(`✔ Punto ${p.id} guardado.`); } }
-    function actualizarTablaYPuntosSelect() { const tbody = document.querySelector('#tablaPuntos tbody'); const select = document.getElementById('selectPuntoReplanteo'); tbody.innerHTML = ''; select.innerHTML = '<option value="">-- Seleccionar de Puntos Registrados --</option>'; listaPuntos.forEach((p, idx) => { tbody.innerHTML += `<tr><td><b>${p.id}</b></td><td>${p.codigo}</td><td>${p.easting}</td><td>${p.northing}</td><td>${p.cotaNAP}</td><td>${p.hGPS}</td><td>${p.N}</td><td>${p.acc}</td><td>${p.fuente}</td></tr>`; select.innerHTML += `<option value="${idx}">${p.id} [${p.codigo}]</option>`; }); }
-    function exportarCSV() {} function exportarDXF() {} function reproyectarCapasMapa() {} function seleccionarPuntoParaReplanteo() {} function calcularOrientacionBases() {} function calcularCOGOInverso() {} function replantearPuntoResultanteCOGO() {} function calcularRadiacionDirecta() {} function replantearPuntoResultanteRad() {} function calcularInterseccionAzimuts() {} function replantearPuntoResultanteInt() {} function activarZoomVentana() {} function ajustarExtensionDXF() {}
+
+    function capturarPuntoGPSConCodigo() {
+      if (!navigator.geolocation) return alert("Sin soporte GPS.");
+      const huso = parseInt(document.getElementById('husoSelect').value);
+      const codigo = document.getElementById('puntoCodigoInput').value || 'TERRENO';
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const [e, n] = latLngATransformadaETRS89(pos.coords.latitude, pos.coords.longitude, huso);
+        const zNAP = GeoideIGN.elipsoidalAOrtometrica(pos.coords.latitude, pos.coords.longitude, pos.coords.altitude || 0).cotaNAP;
+        const p = { id: `P-${String(listaPuntos.length + 1).padStart(3, '0')}`, codigo: codigo, easting: e.toFixed(3), northing: n.toFixed(3), cotaNAP: zNAP.toFixed(3), hGPS: (pos.coords.altitude||0).toFixed(3), N: "50.20", acc: formatearPrecision(pos.coords.accuracy), fuente: 'RTK Captura' };
+        listaPuntos.push(p);
+        actualizarTablaYPuntosSelect();
+
+        const latLng = utmALatLng(e, n, huso);
+        L.marker(latLng).addTo(puntosLayerGroup).bindPopup(`<b>${p.id} [${p.codigo}]</b><br>Z (NAP): ${p.cotaNAP}m`).openPopup();
+        alert(`✔ Punto ${p.id} [${p.codigo}] registrado con éxito.`);
+      }, (err) => alert("Error GPS: " + err.message), { enableHighAccuracy: true });
+    }
+
+    function actualizarTablaYPuntosSelect() {
+      const tbody = document.querySelector('#tablaPuntos tbody');
+      const select = document.getElementById('selectPuntoReplanteo');
+      tbody.innerHTML = ''; select.innerHTML = '<option value="">-- Seleccionar de Puntos Registrados --</option>';
+      listaPuntos.forEach((p, idx) => {
+        tbody.innerHTML += `<tr><td><b>${p.id}</b></td><td><span style="color:var(--accent-primary); font-weight:600;">${p.codigo}</span></td><td>${p.easting}</td><td>${p.northing}</td><td style="color:var(--accent-primary); font-weight:600;">${p.cotaNAP}</td><td>${p.hGPS}</td><td>${p.N}</td><td>${p.acc}</td><td>${p.fuente}</td></tr>`;
+        select.innerHTML += `<option value="${idx}">${p.id} [${p.codigo}] - E:${p.easting} N:${p.northing}</option>`;
+      });
+    }
+
+    function seleccionarPuntoParaReplanteo() {
+      const idx = document.getElementById('selectPuntoReplanteo').value;
+      if (idx === "" || !listaPuntos[idx]) return;
+      const p = listaPuntos[idx];
+      document.getElementById('replantearX').value = p.easting;
+      document.getElementById('replantearY').value = p.northing;
+      document.getElementById('replantearZ').value = p.cotaNAP;
+    }
+
+    function calcularOrientacionBases() {
+      const p1Str = document.getElementById('estacionA').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('estacionB').value.split(/[\s,]+/);
+      if (p1Str.length < 2 || p2Str.length < 2) return alert("Ingresa coordenadas válidas X,Y para ambas bases.");
+      const dx = parseFloat(p2Str[0]) - parseFloat(p1Str[0]), dy = parseFloat(p2Str[1]) - parseFloat(p1Str[1]), dist = Math.hypot(dx, dy);
+      let azRad = Math.atan2(dx, dy); if (azRad < 0) azRad += 2 * Math.PI;
+      document.getElementById('resOrientacion').innerHTML = `Azimut: <b>${(azRad * 180 / Math.PI).toFixed(4)}°</b> | Dist: <b>${dist.toFixed(3)} m</b>`;
+    }
+
+    let pResultanteCOGO = null, pResultanteRad = null, pResultanteInt = null;
+
+    function calcularCOGOInverso() {
+      const p1Str = document.getElementById('cogoP1').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('cogoP2').value.split(/[\s,]+/);
+      if (p1Str.length < 2 || p2Str.length < 2) return alert("Ingresa X,Y válidos.");
+      const e2 = parseFloat(p2Str[0]), n2 = parseFloat(p2Str[1]);
+      const dx = e2 - parseFloat(p1Str[0]), dy = n2 - parseFloat(p1Str[1]), dist = Math.hypot(dx, dy);
+      let azRad = Math.atan2(dx, dy); if (azRad < 0) azRad += 2 * Math.PI;
+      pResultanteCOGO = { x: e2, y: n2, z: 0 };
+      document.getElementById('resCOGOInverso').innerHTML = `Dist: <b>${dist.toFixed(3)} m</b> | Azimut: <b>${(azRad * 180 / Math.PI).toFixed(4)}°</b>`;
+      document.getElementById('btnReplantearCOGO').style.display = 'inline-flex';
+    }
+    function replantearPuntoResultanteCOGO() { if (pResultanteCOGO) iniciarReplanteoElemento('PUNTO', pResultanteCOGO, "Punto COGO P2"); }
+
+    function calcularRadiacionDirecta() {
+      const baseStr = document.getElementById('radP1').value.split(/[\s,]+/);
+      const az = parseFloat(document.getElementById('radAzimut').value), dist = parseFloat(document.getElementById('radDist').value);
+      if (baseStr.length < 2 || isNaN(az) || isNaN(dist)) return alert("Completa los campos.");
+      const azRad = az * Math.PI / 180;
+      const xTarget = parseFloat(baseStr[0]) + dist * Math.sin(azRad), yTarget = parseFloat(baseStr[1]) + dist * Math.cos(azRad);
+      pResultanteRad = { x: xTarget, y: yTarget, z: 0 };
+      document.getElementById('resRadiacion').innerHTML = `E: <b>${xTarget.toFixed(3)} m</b> | N: <b>${yTarget.toFixed(3)} m</b>`;
+      document.getElementById('btnReplantearRad').style.display = 'inline-flex';
+    }
+    function replantearPuntoResultanteRad() { if (pResultanteRad) iniciarReplanteoElemento('PUNTO', pResultanteRad, "Punto Radiado"); }
+
+    function calcularInterseccionAzimuts() {
+      const p1Str = document.getElementById('intP1').value.split(/[\s,]+/);
+      const p2Str = document.getElementById('intP2').value.split(/[\s,]+/);
+      if (p1Str.length < 3 || p2Str.length < 3) return alert("Introduce P1 (X,Y,Az1) y P2 (X,Y,Az2).");
+      const x1 = parseFloat(p1Str[0]), y1 = parseFloat(p1Str[1]), az1 = parseFloat(p1Str[2]) * Math.PI / 180;
+      const x2 = parseFloat(p2Str[0]), y2 = parseFloat(p2Str[1]), az2 = parseFloat(p2Str[2]) * Math.PI / 180;
+      const m1 = Math.tan(Math.PI / 2 - az1), m2 = Math.tan(Math.PI / 2 - az2);
+      if (Math.abs(m1 - m2) < 1e-6) return alert("Líneas paralelas.");
+      const xInt = (y2 - y1 + m1 * x1 - m2 * x2) / (m1 - m2), yInt = y1 + m1 * (xInt - x1);
+      pResultanteInt = { x: xInt, y: yInt, z: 0 };
+      document.getElementById('resInterseccion').innerHTML = `E: <b>${xInt.toFixed(3)} m</b> | N: <b>${yInt.toFixed(3)} m</b>`;
+      document.getElementById('btnReplantearInt').style.display = 'inline-flex';
+    }
+    function replantearPuntoResultanteInt() { if (pResultanteInt) iniciarReplanteoElemento('PUNTO', pResultanteInt, "Intersección"); }
+
+    function exportarCSV() {
+      if (listaPuntos.length === 0) return alert("No hay puntos registrados.");
+      let csv = "ID,Codigo,Easting,Northing,Cota_NAP,Cota_Elipsoidal,N_Geoide,Precision,Fuente\n";
+      listaPuntos.forEach(p => { csv += `${p.id},${p.codigo},${p.easting},${p.northing},${p.cotaNAP},${p.hGPS},${p.N},${p.acc},${p.fuente}\n`; });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Topografia_Puntos_ETRS89.csv`; a.click();
+    }
+
+    function exportarDXF() {
+      if (listaPuntos.length === 0) return alert("No hay puntos registrados.");
+      let dxf = "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n";
+      listaPuntos.forEach(p => {
+        dxf += `0\nPOINT\n8\nPUNTOS_TOPOGRAFIA\n10\n${p.easting}\n20\n${p.northing}\n30\n${p.cotaNAP}\n`;
+        dxf += `0\nTEXT\n8\nETIQUETAS\n10\n${parseFloat(p.easting)+0.5}\n20\n${p.northing}\n30\n${p.cotaNAP}\n40\n0.5\n1\n${p.id} [${p.codigo}]\n`;
+      });
+      dxf += "0\nENDSEC\n0\nEOF\n";
+      const blob = new Blob([dxf], { type: 'application/dxf' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Topografia_Puntos_ETRS89.dxf`; a.click();
+    }
+
+    function reproyectarCapasMapa() {}
+    function ajustarExtensionDXF() { if (dxfEntidadesRenderizadas.length > 0) switchTab('tabMap', document.querySelectorAll('.tab-btn')[0]); else alert("No hay DXF cargado."); }
   </script>
 </body>
 </html>

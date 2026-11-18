@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.65.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.66.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.65 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.66 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3576,7 +3576,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.65 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.66 RC1</span>
       </div>
     </div>
 
@@ -4708,7 +4708,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.65.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.66.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -7259,7 +7259,7 @@ function stakeItem25(item,first=false){if(!item.cadEntity33)return before33_stak
 function hitItems25(latlng,tolerance=26){const hits=before33_hitItems25(latlng,tolerance);if(!cad33.doc?.entities.length||!cad33.layer||!map.hasLayer(cad33.layer))return hits;if(cad33.doc?.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)){const screen=map.latLngToContainerPoint(latlng);for(const e of mapOverviewCAD61(visibleCAD33('model'))){const vertices=geometry33(e),distance=screenGeometry25(vertices,screen,!!e.closed);if(distance<=tolerance)hits.push({kind:'vector',name:'CAD · '+e.type+' · '+e.layer,vertices,closed:!!e.closed,cadEntity33:e.id,distance});}}return hits.sort((a,b)=>a.distance-b.distance).slice(0,12);}
 
 /* Opt-in design copies. Source road remains analytical; CAD contains XYZ polylines. */
-const roadCAD34={ready:false,depth:0,project:null,busy:false,timer:null,force:false};
+const roadCAD34={ready:false,depth:0,project:null,busy:false,request:null};
 function hashRoadCAD34(text){let a=2166136261,b=5381;for(let i=0;i<text.length;i++){const c=text.charCodeAt(i);a=Math.imul(a^c,16777619);b=(Math.imul(b,33)^c)>>>0;}return (a>>>0).toString(16)+':'+(b>>>0).toString(16)+':'+text.length;}
 function signatureRoadCAD34(e){return hashRoadCAD34(JSON.stringify([e.type,e.points,!!e.closed,e.layer]));}
 function before44_fingerprintRoadCAD34(road){const m=road.model26;return hashRoadCAD34(JSON.stringify([m.zone,m.datum,m.horizontal,road.rasante||null,road.perfiles||null,m.sectionMode,m.source,m.gradeSource,m.sectionSource]));}
@@ -7270,7 +7270,7 @@ function before44_entriesRoadCAD34(profile){const points=profile.polyline31||pro
 function before44_buildRoadCAD34(road,{copyId='CP34_PREVIEW',roadId='R34_PREVIEW',maxVertices=280000}={}){validateModel26(road);const m=model26(road);require26(m,'Carga primero el eje de la carretera.');require26(m.zone===currentZone(),'La carretera pertenece a otro huso.');const allProfiles=road.perfiles||[],profiles=allProfiles.filter(p=>p.pk>=m.horizontal[0].pk0-1e-8&&p.pk<=m.horizontal.at(-1).pk1+1e-8),stations=[...new Set((road.eje||[]).map(p=>p.pk).filter(Number.isFinite).concat(m.horizontal.flatMap(e=>[e.pk0,e.pk1]),(road.rasante||[]).map(p=>p.pk),verticalCurves26(road.rasante||[]).flatMap(c=>[c.a,c.b]),profiles.map(p=>p.pk)))].sort((a,b)=>a-b),entities=[],layers=new Map(),stats={axis:0,sections:0,features:0,vertices:0,missingSections:0,missingIntervals:0,codeBreaks:0,arrivalSections:0,foldedSections:0,outsideSections:allProfiles.length-profiles.length},prefix=cleanLayerRoadCAD34('CAR_'+(m.name||'CARRETERA').slice(0,30)+'_'+copyId.slice(-7)),files=[m.source,m.gradeSource,m.sectionSource].filter(Boolean);
 const refined=new Set(stations);for(const e of m.horizontal){const k=e.type==='arc'?1/e.radius:e.type==='spiral'?Math.max(Math.abs(e.k0),Math.abs(e.k1)):0,step=Math.min(5,k?Math.sqrt(.008/k):5,k ? .05/k : 5),n=Math.ceil(e.length/step);require26(n<=40000,'La precisión de la copia exige demasiadas subdivisiones en un tramo.');for(let i=0;i<=n;i++)refined.add(e.pk0+e.length*i/n);}stations.length=0;for(const pk of [...refined].sort((a,b)=>a-b))stations.push(pk);require26(stations.length<=150000,'La carretera supera el límite de estaciones para la copia CAD.');
 const gradeCache=new Map(),axisCache=new Map(),gradeAt=pk=>{if(!gradeCache.has(pk))gradeCache.set(pk,elevation26(road,pk));return gradeCache.get(pk);},zProfile=(s,p)=>{if(m.sectionMode==='absolute')return p.dz;const z=gradeAt(s.pk);return finite(z)?z+p.dz:null;},point=(pk,offset,z)=>{if(!finite(z))return null;if(!axisCache.has(pk)){const a=axisAt26(road,pk,0),angle=a.azimut*Math.PI/180;axisCache.set(pk,{x:a.x,y:a.y,c:Math.cos(angle),s:Math.sin(angle)});}const a=axisCache.get(pk);return {x:a.x+a.c*offset,y:a.y-a.s*offset,z,pk};};
-function emit(path,part,key,extra={}){if(!path||path.length<2)return;let source=path;const normalized=[];for(const p of source)if(!normalized.length||len33(sub33(p,normalized.at(-1)))>1e-9)normalized.push(p);if(normalized.length<2)return;const suffix=part==='axis'?(road.rasante?.length?'EJE_RASANTE':'EJE_COTAS_PERFILES'):part==='section'?(extra.arrival?'TRANS_LLEGADA':'TRANSVERSALES'):'COD_'+cleanLayerRoadCAD34(extra.code).slice(0,22)+'_'+(extra.side<0?'I':extra.side>0?'D':'E'),layer=cleanLayerRoadCAD34(prefix+'_'+suffix);if(!layers.has(layer))layers.set(layer,{name:layer,color:part==='axis'?'#f2b544':part==='section'?'#52a8d7':'#58c5a4',visible:true,locked:false});for(let i=0,chunk=0;i<normalized.length-1;i+=19999,chunk++){const list=normalized.slice(i,i+20000),points=list.map(xyz33);stats.vertices+=points.length;require26(stats.vertices<=maxVertices,'La copia supera el límite de vértices disponibles en CAD. El dibujo anterior se conserva.');const entity=newEntity33('POLYLINE',points,{layer,closed:false,source33:{kind:'road-copy',file:m.name||m.source,datum:m.datum||'Sin verificar',road34:{roadId,copyId,part,key:key+'#'+chunk,files,pk0:list[0].pk,pk1:list.at(-1).pk,tolerance:.001,...(part==='axis'?{heightSource:road.rasante?.length?'rasante':'transversales absolutos en eje'}:{}),...extra}}});entities.push(entity);require26(entities.length<=28000&&layers.size<=900,'La carretera supera el límite de entidades o capas de la copia CAD.');stats[part==='axis'?'axis':part==='section'?'sections':'features']++;}}
+function emit(path,part,key,extra={}){if(!path||path.length<2)return;let source=path;const normalized=[];for(const p of source)if(!normalized.length||len33(sub33(p,normalized.at(-1)))>1e-9)normalized.push(p);if(normalized.length<2)return;const suffix=part==='axis'?(road.rasante?.length?'EJE_RASANTE':'EJE_COTAS_PERFILES'):part==='section'?(extra.arrival?'TRANS_LLEGADA':'TRANSVERSALES'):'COD_'+cleanLayerRoadCAD34(extra.code).slice(0,22)+'_'+(extra.side<0?'I':extra.side>0?'D':'E'),layer=cleanLayerRoadCAD34(prefix+'_'+suffix);if(!layers.has(layer))layers.set(layer,{name:layer,color:part==='axis'?'#f2b544':part==='section'?'#52a8d7':'#58c5a4',visible:true,locked:false});for(let i=0,chunk=0;i<normalized.length-1;i+=19999,chunk++){const list=normalized.slice(i,i+20000),points=list.map(xyz33);stats.vertices+=points.length;require26(stats.vertices<=maxVertices,'La copia supera el límite de vértices disponibles en CAD. El dibujo anterior se conserva.');const entity=newEntity33('POLYLINE',points,{layer,space56:'model',closed:false,source33:{kind:'road-copy',file:m.name||m.source,datum:m.datum||'Sin verificar',road34:{roadId,copyId,part,key:key+'#'+chunk,files,pk0:list[0].pk,pk1:list.at(-1).pk,tolerance:.001,...(part==='axis'?{heightSource:road.rasante?.length?'rasante':'transversales absolutos en eje'}:{}),...extra}}});entities.push(entity);require26(entities.length<=28000&&layers.size<=900,'La carretera supera el límite de entidades o capas de la copia CAD.');stats[part==='axis'?'axis':part==='section'?'sections':'features']++;}}
 let axisPath=[],axisPart=0;const axisZ=(pk,side)=>{const grade=gradeAt(pk);if(finite(grade))return grade;if(m.sectionMode==='absolute'&&profiles.length)return surfaceZ27(sectionRoad31(road,side),pk,0);return null;};
 for(let i=1;i<stations.length;i++){const a=stations[i-1],b=stations[i];if(a<m.horizontal[0].pk0-1e-8||b>m.horizontal.at(-1).pk1+1e-8||b-a<1e-9)continue;const segment=sampleRoadCAD34(pk=>point(pk,0,axisZ(pk,Math.abs(pk-b)<1e-9?'before':'after')),a,b);if(!segment){if(axisPath.length)emit(axisPath,'axis','E'+axisPart++);axisPath=[];stats.missingIntervals++;continue;}if(axisPath.length&&len33(sub33(axisPath.at(-1),segment[0]))>1e-7){emit(axisPath,'axis','E'+axisPart++);axisPath=[];}axisPath.push(...(axisPath.length?segment.slice(1):segment));}if(axisPath.length)emit(axisPath,'axis','E'+axisPart++);
 for(const profile of profiles){for(const [s,arrival]of [[profile,false],...(profile.before31?[[profile.before31,true]]:[])]){if(s.xmlGap44){stats.missingSections++;continue;}const raw=s.polyline31||s.puntos,points=raw.map(p=>point(s.pk,p.offset,zProfile(s,p)));if(points.some(p=>!p)){stats.missingSections++;continue;}if(arrival)stats.arrivalSections++;if(s.polyline31)stats.foldedSections++;emit(points,'section','T'+s.pk+(arrival?'A':'D'),{pk:s.pk,arrival,codes:raw.map(p=>p.code||''),originalPoints:raw.length});}}
@@ -7280,13 +7280,85 @@ return {entities,layers:[...layers.values()],stats,prefix};}
 function validateLinkRoadCAD34(road){const m=road?.model26;if(!m)return;const link=m.cad34Link;if(m.cad34RoadId!==undefined)require26(typeof m.cad34RoadId==='string'&&/^[\w-]{1,100}$/.test(m.cad34RoadId),'Identidad de copia CAD de carretera dañada.');if(!link)return;require26(typeof link.roadId==='string'&&link.roadId===m.cad34RoadId&&typeof link.copyId==='string'&&link.copyId.length<=100&&typeof link.fingerprint==='string'&&Array.isArray(link.entityIds)&&link.entityIds.length<=30000&&new Set(link.entityIds).size===link.entityIds.length&&link.signatures&&typeof link.signatures==='object'&&link.entityIds.every(id=>typeof id==='string'&&id.length<=120&&typeof link.signatures[id]==='string'&&link.signatures[id].length<=100),'Enlace entre carretera y copia CAD dañado.');}
 function intactRoadCAD34(link,doc){if(!link||!doc||!Array.isArray(link.entityIds)||!link.signatures)return false;const ids=new Set(link.entityIds),group=doc.entities.filter(e=>e.source33?.road34?.copyId===link.copyId);return group.length===ids.size&&group.every(e=>ids.has(e.id)&&!doc.layers.find(l=>l.name===e.layer)?.locked&&link.signatures[e.id]===signatureRoadCAD34(e));}
 function statusRoadCAD34(text){$('roadCADStatus34').textContent=text;}
-function copyRoadCAD34(manual=false){if(!roadCAD34.ready||roadCAD34.depth||roadCAD34.busy||!$('roadToCAD34').checked||roadCAD34.project!==workspace14.id||data15.closed)return;roadCAD34.busy=true;try{const road=mdtCarreteraVirtual,m=model26(road),source=$('roadSource31').value;if(!m){statusRoadCAD34('Activado: la copia se creará al incorporar el eje y sus cotas.');return;}if(road26.pending||(source&&source!==familyRoad31())){statusRoadCAD34('Activado: termina de crear la carretera del origen seleccionado.');return;}require26(m.zone===currentZone(),'La carretera no pertenece al huso activo. No se ha modificado el CAD.');if(cad33.doc)require26(cad33.doc.zone===m.zone,'El CAD pertenece a otro huso. No se ha modificado el dibujo.');validateLinkRoadCAD34(road);const fingerprint=fingerprintRoadCAD34(road),link=m.cad34Link,oldDoc=cad33.doc;if(!manual&&link?.fingerprint===fingerprint){statusRoadCAD34('No hay cambios en la carretera. Se conserva el CAD sin crear duplicados.');return;}const clean=intactRoadCAD34(link,oldDoc);if(link&&clean&&link.fingerprint===fingerprint){statusRoadCAD34('La copia CAD ya corresponde a esta carretera. No se han creado duplicados.');return;}if(link&&!clean&&!manual){statusRoadCAD34('La copia CAD se ha editado, bloqueado o retirado y se conserva. Para crear otra con la carretera actual, desactiva y vuelve a activar esta casilla.');return;}
-const roadId=m.cad34RoadId||'R34_'+idCAD33(),copyId=clean?link.copyId:'CP34_'+idCAD33(),remove=new Set(clean?link.entityIds:[]),oldVertices=(oldDoc?.entities||[]).filter(e=>!remove.has(e.id)).reduce((n,e)=>n+e.points.length,0),result=buildRoadCAD34(road,{roadId,copyId,maxVertices:Math.max(0,300000-oldVertices)});if(!result.entities.length){statusRoadCAD34('Pendiente de cotas: el eje sin rasante y los perfiles sin Z no se convierten en geometría 3D. No se ha asignado Z=0.');return;}const byKey=new Map(clean?oldDoc.entities.filter(e=>remove.has(e.id)).map(e=>[e.source33.road34.key,e.id]):[]);for(const e of result.entities)if(byKey.has(e.source33.road34.key))e.id=byKey.get(e.source33.road34.key);const previous=cad33.doc;let renderWarning='';try{changeCAD33('Copia CAD de carretera · '+(m.name||m.source),doc=>{for(const layer of result.layers)if(!doc.layers.some(l=>l.name===layer.name))doc.layers.push(layer);if(!doc.entities.length&&m.datum)doc.datum=m.datum;doc.entities=doc.entities.filter(e=>!remove.has(e.id)).concat(result.entities);},true);}catch(e){if(cad33.doc!==previous&&result.entities.every(item=>cad33.doc?.entities.some(e=>e.id===item.id)))renderWarning=e.message;else{if(!previous&&cad33.doc?.entities.length===0)cad33.doc=null;throw e;}}m.cad34RoadId=roadId;m.cad34Link={roadId,copyId,fingerprint,entityIds:result.entities.map(e=>e.id),signatures:Object.fromEntries(result.entities.map(e=>[e.id,signatureRoadCAD34(e)])),stats:result.stats,createdAt:new Date().toISOString()};scheduleSave();const s=result.stats;statusRoadCAD34('CAD: '+s.axis+' polilínea(s) de eje, '+s.sections+' transversales y '+s.features+' líneas por código · '+s.vertices+' vértices XYZ. '+(s.missingSections||s.missingIntervals||s.outsideSections?'Las zonas sin cota se han dejado sin dibujar. ':'')+'Copia editable independiente; tolerancia de discretización 1 mm.'+(renderWarning?' Datos guardados; aviso de representación: '+renderWarning:''));}catch(e){statusRoadCAD34('Carretera conservada. No se ha actualizado la copia CAD: '+e.message);}finally{roadCAD34.busy=false;}}
-function toggleRoadCAD34(){if(!$('roadToCAD34').checked){clearTimeout(roadCAD34.timer);roadCAD34.timer=null;roadCAD34.force=false;roadCAD34.project=null;statusRoadCAD34('Desactivado. Las copias que ya existen en CAD se conservan.');return;}if(!needProject15()){$('roadToCAD34').checked=false;return;}roadCAD34.project=workspace14.id;queueRoadCAD34(true);}
-function resetRoadCAD34(){clearTimeout(roadCAD34.timer);roadCAD34.timer=null;roadCAD34.force=false;$('roadToCAD34').checked=false;roadCAD34.project=null;statusRoadCAD34('Activa la casilla para copiar la carretera actual al CAD y completar la copia al añadir componentes.');}
+function copyRoadCAD34(manual=false){
+ if(!roadCAD34.ready||roadCAD34.depth||roadCAD34.busy||!$('roadToCAD34').checked||roadCAD34.project!==workspace14.id||data15.closed)return;
+ roadCAD34.busy=true;
+ try{
+  const road=mdtCarreteraVirtual,m=model26(road),source=$('roadSource31').value;
+  if(!m){statusRoadCAD34('Activado: la copia se creará al incorporar el eje y sus cotas.');return;}
+  if(road26.pending||(source&&source!==familyRoad31())){
+   statusRoadCAD34('Activado: termina de crear la carretera del origen seleccionado.');return;
+  }
+  require26(m.zone===currentZone(),'La carretera no pertenece al huso activo.');
+  validateLinkRoadCAD34(road);
+  const tab=captureCAD65(),doc=tab.doc;
+  require26(doc.zone===m.zone,'El dibujo «'+tab.name+'» pertenece a otro huso.');
+  const fingerprint=fingerprintRoadCAD34(road),roadId=m.cad34RoadId||'R34_'+idCAD33();
+  const legacy=m.cad34Link;
+  const link=doc.roadCopies66?.[roadId]||(legacy&&doc.entities.some(e=>e.source33?.road34?.copyId===legacy.copyId)?legacy:null);
+  const clean=intactRoadCAD34(link,doc);
+  const misplaced=clean&&doc.entities.some(e=>e.source33?.road34?.copyId===link.copyId&&e.space56==='paper');
+  if(clean&&!misplaced&&link.fingerprint===fingerprint){
+   if(doc.space56==='paper')commitCAD63('Ver carretera en Modelo',doc,{...doc,space56:'model'},true,true);
+   statusRoadCAD34('«'+tab.name+'» ya contiene la copia de esta carretera en el espacio Modelo.');return;
+  }
+  if(link&&!clean&&!manual){
+   statusRoadCAD34('«'+tab.name+'» conserva la copia que editaste, bloqueaste o retiraste. Reactiva la casilla para crear otra.');return;
+  }
+  const copyId=clean?link.copyId:'CP34_'+idCAD33(),removed=new Set(clean?link.entityIds:[]);
+  const retained=doc.entities.filter(e=>!removed.has(e.id));
+  const available=CAD_CAPACITY61.vertices-retained.reduce((total,e)=>total+e.points.length,0);
+  const result=buildRoadCAD34(road,{roadId,copyId,maxVertices:Math.min(300000,available)});
+  if(!result.entities.length){
+   statusRoadCAD34('Pendiente de cotas: añade la rasante o transversales con Z para crear polilíneas 3D.');return;
+  }
+  const previousIds=new Map();
+  if(clean)for(const e of doc.entities)if(removed.has(e.id))previousIds.set(e.source33.road34.key,e.id);
+  for(const e of result.entities){e.space56='model';e.id=previousIds.get(e.source33.road34.key)||e.id;}
+  const names=new Set(doc.layers.map(layer=>layer.name));
+  const info={roadId,copyId,fingerprint,entityIds:result.entities.map(e=>e.id),
+   signatures:Object.fromEntries(result.entities.map(e=>[e.id,signatureRoadCAD34(e)])),stats:result.stats,createdAt:new Date().toISOString()};
+  const next={...doc,space56:'model',layers:doc.layers.concat(result.layers.filter(layer=>!names.has(layer.name))),
+   entities:retained.concat(result.entities),roadCopies66:{...doc.roadCopies66,[roadId]:info}};
+  if(!doc.entities.length&&m.datum)next.datum=m.datum;
+  validateCAD33(next);
+  let renderWarning='';
+  try{commitCAD63('Copia CAD de carretera · '+(m.name||m.source),doc,next,true,true);}
+  catch(error){if(cad33.doc!==next)throw error;renderWarning=error.message;}
+  m.cad34RoadId=roadId;m.cad34Link=info;
+  scheduleSave();
+  const stats=result.stats;
+  statusRoadCAD34('«'+tab.name+'» · Modelo: '+stats.axis+' polilíneas de eje, '+stats.sections+' transversales y '+stats.features+
+   ' líneas por código · '+stats.vertices+' vértices XYZ. Guarda el dibujo desde Cad → Archivos.'+
+   (stats.missingSections||stats.missingIntervals||stats.outsideSections?' Los tramos sin cota quedan fuera.':'')+
+   (renderWarning?' Copia incorporada. Aviso de representación: '+renderWarning:''));
+ }catch(error){statusRoadCAD34('Carretera conservada. No se ha actualizado la copia CAD: '+error.message);}
+ finally{roadCAD34.busy=false;}
+}
+function toggleRoadCAD34(){
+ if(!$('roadToCAD34').checked){
+  roadCAD34.request=null;roadCAD34.project=null;
+  statusRoadCAD34('Desactivado. Las copias existentes se conservan.');return;
+ }
+ if(!needProject15()){$('roadToCAD34').checked=false;return;}
+ roadCAD34.project=workspace14.id;queueRoadCAD34(true);
+}
+function resetRoadCAD34(){
+ roadCAD34.request=null;roadCAD34.project=null;$('roadToCAD34').checked=false;
+ statusRoadCAD34('Activa la casilla para copiar la carretera al dibujo CAD activo al añadir sus componentes.');
+}
 function initRoadCAD34(){roadCAD34.ready=true;resetRoadCAD34();}
-
-function queueRoadCAD34(manual=false){if(!roadCAD34.ready||roadCAD34.depth||!$('roadToCAD34').checked||roadCAD34.project!==workspace14.id||data15.closed)return;clearTimeout(roadCAD34.timer);roadCAD34.force=roadCAD34.force||manual;statusRoadCAD34('Preparando la copia CAD de la carretera…');roadCAD34.timer=setTimeout(()=>{roadCAD34.timer=null;const force=roadCAD34.force;roadCAD34.force=false;copyRoadCAD34(force);},20);}
+function queueRoadCAD34(manual=false){
+ if(!roadCAD34.ready||roadCAD34.depth||!$('roadToCAD34').checked||roadCAD34.project!==workspace14.id||data15.closed)return;
+ if(roadCAD34.request){roadCAD34.request.manual||=manual;return;}
+ const request={manual};roadCAD34.request=request;
+ statusRoadCAD34('Preparando la copia en el dibujo CAD activo…');
+ // Finish the current import (including its source metadata) before copying.
+ queueMicrotask(()=>{
+  if(roadCAD34.request!==request)return;
+  roadCAD34.request=null;copyRoadCAD34(request.manual);
+ });
+}
 
 function before44_roadChanged26(fit=false){const result=before34_roadChanged26(fit);queueRoadCAD34(false);return result;}
 function before41_applyProject(data){roadCAD34.depth++;try{return before34_applyProject(data);}finally{roadCAD34.depth--;if(roadCAD34.ready)resetRoadCAD34();}}
@@ -7954,7 +8026,7 @@ function selectXMLLayer44(name){try{require26(canChange15(),'Espera a que termin
 function roadChanged26(fit=false){const r=before44_roadChanged26(fit);syncXML44();return r;}
 function applyProject(data){const r=before44_applyProject(data);syncXML44();return r;}
 function validateModel26(road){before44_validateModel26(road);const data=road.model26?.xml44;if(!data)return;require26(data.schema===1&&Array.isArray(data.layers)&&data.layers.length<=200,'Capas LandXML dañadas.');const names=new Set();for(const l of data.layers){require26(typeof l.name==='string'&&!names.has(l.name),'Nombre de capa LandXML repetido.');names.add(l.name);validateSections26(l.profiles);for(const p of l.profiles)if(p.before31){require26(p.before31.pk===p.pk&&!p.before31.before31,'Llegada LandXML dañada.');validateSections26([p.before31]);}for(const p of l.profiles)if(p.polyline31)require26(p.polyline31.every(v=>finite(v.offset)&&finite(v.dz)&&typeof v.code==='string'),'Polilínea LandXML dañada.');}require26(!data.layers.length||names.has(data.selected),'Capa activa LandXML no disponible.');if(data.layers.length)require26(['all','active',undefined].includes(data.cadScope)&&['before','after',undefined].includes(road.model26.sectionSide31)&&JSON.stringify(road.perfiles)===JSON.stringify(data.layers.find(l=>l.name===data.selected).profiles),'La capa activa no coincide con los transversales.');}
-function buildRoadCAD34(road,options={}){const data=road.model26?.xml44;if(!data?.layers?.length)return before44_buildRoadCAD34(road,options);validateModel26(road);if(data.cadScope==='active'){const one={...road,model26:{...road.model26,name:(road.model26.name||'EJE').slice(0,12)+'_'+data.selected.slice(0,10)}};delete one.model26.xml44;return before44_buildRoadCAD34(one,options);}const base={...road,perfiles:null,model26:{...road.model26}};delete base.model26.xml44;base.model26.xmlCADCache44=new Map();const result=before44_buildRoadCAD34(base,options),limit=options.maxVertices??280000;for(const [i,l]of data.layers.entries()){const model={...base.model26,name:(base.model26.name||'EJE').slice(0,12)+'_'+l.name.slice(0,10)+'_'+i,source:base.model26.source},r={...road,perfiles:l.profiles,model26:model},piece=before44_buildRoadCAD34(r,{...options,maxVertices:limit});for(const e of piece.entities){if(e.source33.road34.part==='axis')continue;e.source33.road34.key='XML'+i+':'+e.source33.road34.key;e.source33.road34.surface=l.name;result.entities.push(e);result.stats.vertices+=e.points.length;result.stats[e.source33.road34.part==='section'?'sections':'features']++;}for(const key of ['missingSections','codeBreaks','arrivalSections','foldedSections','outsideSections'])result.stats[key]+=piece.stats[key];const used=new Set(result.entities.map(e=>e.layer));for(const layer of piece.layers)if(used.has(layer.name)&&!result.layers.some(x=>x.name===layer.name))result.layers.push(layer);require26(result.stats.vertices<=limit&&result.entities.length<=28000&&result.layers.length<=900,'Todas las capas LandXML superan la capacidad de copia CAD. Conserva la carretera y exporta una capa por separado.');}result.stats.xmlLayers=data.layers.length;return result;}
+function buildRoadCAD34(road,options={}){const data=road.model26?.xml44;if(!data?.layers?.length)return before44_buildRoadCAD34(road,options);validateModel26(road);if(data.cadScope==='active'){const one={...road,model26:{...road.model26,name:(road.model26.name||'EJE').slice(0,12)+'_'+data.selected.slice(0,10)}};delete one.model26.xml44;return before44_buildRoadCAD34(one,options);}const base={...road,perfiles:null,model26:{...road.model26}};delete base.model26.xml44;base.model26.xmlCADCache44=new Map();const result=before44_buildRoadCAD34(base,options),limit=options.maxVertices??280000;for(const [i,l]of data.layers.entries()){const model={...base.model26,name:(base.model26.name||'EJE').slice(0,12)+'_'+l.name.slice(0,10)+'_'+i,source:base.model26.source},r={...road,perfiles:l.profiles,model26:model},piece=before44_buildRoadCAD34(r,{...options,maxVertices:limit});for(const e of piece.entities){if(e.source33.road34.part==='axis'&&(base.rasante?.length||l.name!==data.selected))continue;e.source33.road34.key='XML'+i+':'+e.source33.road34.key;e.source33.road34.surface=l.name;result.entities.push(e);result.stats.vertices+=e.points.length;result.stats[e.source33.road34.part==='axis'?'axis':e.source33.road34.part==='section'?'sections':'features']++;}for(const key of ['missingSections','codeBreaks','arrivalSections','foldedSections','outsideSections'])result.stats[key]+=piece.stats[key];const used=new Set(result.entities.map(e=>e.layer));for(const layer of piece.layers)if(used.has(layer.name)&&!result.layers.some(x=>x.name===layer.name))result.layers.push(layer);require26(result.stats.vertices<=limit&&result.entities.length<=28000&&result.layers.length<=900,'Todas las capas LandXML superan la capacidad de copia CAD. Conserva la carretera y exporta una capa por separado.');}result.stats.xmlLayers=data.layers.length;return result;}
 function fingerprintRoadCAD34(road){return hashRoadCAD34(before44_fingerprintRoadCAD34(road)+'|'+JSON.stringify([road.model26?.xml44?.layers||null,road.model26?.xml44?.cadScope||'all']));}
 function exportXMLSectionCSV44(){try{const road=mdtCarreteraVirtual,data=model26()?.xml44;require26(data?.layers.length,'No hay capas LandXML.');const rows=['capa;PK;lado_seccion;codigo;offset;X;Y;Z'];const cell=s=>'"'+String(s).replaceAll('"','""')+'"';for(const l of data.layers)for(const profile of l.profiles)for(const [s,side]of [[profile,'salida'],...(profile.before31?[[profile.before31,'llegada']]:[])])for(const p of s.polyline31||s.puntos){const xy=axisAt26(road,s.pk,p.offset);rows.push([cell(l.name),s.pk,side,cell(p.code),p.offset,xy.x.toFixed(6),xy.y.toFixed(6),p.dz].join(';'));}return downloadText('Carretera_Transversales_Istram.csv','\uFEFF'+rows.join('\r\n'),'text/csv;charset=utf-8');}catch(e){notify(e.message,true);}}
 async function importXMLSurfaces44(){const p=road26.pending;if(!p)return;const file=p.file44;require26(file,'Vuelve a abrir el XML para incorporar sus superficies.');await importarSuperficieLandXMLTIN({target:{id:'landxmlTinFileInput',files:[file],value:file.name,workspace14SkipOriginal:true}});}

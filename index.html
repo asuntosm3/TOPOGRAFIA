@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.56.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.57.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.56 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.57 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3493,6 +3493,32 @@ body.cad-full33 .workspace-head58{display:none}
 </style>
 
 <style id="drawStyle52">
+
+/* Two-tone command symbols with a stable contrast in light and dark themes. */
+:is(#cadMeasurePanel55,#cadEditPanel33) .draw-family52{
+ border:1px solid var(--border);border-radius:9px;margin:6px 0;background:var(--bg-card);
+}
+:is(#cadMeasurePanel55,#cadEditPanel33) .draw-family52>summary{
+ display:flex;align-items:center;gap:8px;padding:7px 8px;cursor:pointer;
+ font-size:.79rem;font-weight:650;line-height:1.25;list-style:none;
+}
+:is(#cadMeasurePanel55,#cadEditPanel33) .draw-family52>summary::-webkit-details-marker{display:none}
+:is(#cadMeasurePanel55,#cadEditPanel33) .draw-family52>summary::after{
+ content:'';width:6px;height:6px;border-right:2px solid currentColor;
+ border-bottom:2px solid currentColor;transform:rotate(-45deg);flex:none;margin:0 3px 0 auto;
+}
+:is(#cadMeasurePanel55,#cadEditPanel33) .draw-family52[open]>summary::after{transform:rotate(45deg)}
+#tabCAD33 .cad-action57{
+ width:100%;display:flex;align-items:center;justify-content:flex-start;gap:9px;
+ text-align:left;line-height:1.25;min-height:40px;padding:5px 8px;white-space:normal;
+}
+.cad-glyph57{
+ display:block;flex:0 0 28px;width:28px;height:28px;box-sizing:border-box;
+ padding:3px;border:1px solid #43576c;border-radius:6px;background:#1b2a38;
+}
+.draw-family52>summary>.cad-glyph57{flex-basis:25px;width:25px;height:25px}
+@media(pointer:coarse){#tabCAD33 .cad-action57{min-height:44px}}
+
 #cadDrawPanel33 .draw-family52{border:1px solid var(--border);border-radius:9px;margin:6px 0;padding:0;background:var(--bg-card)}
 #cadDrawPanel33 .draw-family52>summary{display:flex;align-items:center;gap:9px;padding:9px;cursor:pointer;font-size:.82rem;font-weight:650;list-style:none}
 #cadDrawPanel33 .draw-family52>summary::after{content:'▸';margin-left:auto}#cadDrawPanel33 .draw-family52[open]>summary::after{content:'▾'}
@@ -3527,7 +3553,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.56 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.57 RC1</span>
       </div>
     </div>
 
@@ -4563,7 +4589,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.56.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.57.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -8924,19 +8950,25 @@ function initDimensions55(){
  panel.id='cadMeasurePanel55';panel.className='cad-panel33';panel.hidden=true;
  panel.innerHTML='<h3>Medir y acotar</h3><p id="cadMeasureResult55" role="status" hidden></p>';
  const tabs=new Map();
- const button=(host,label,action)=>{
-  const item=document.createElement('button');item.type='button';item.className='btn';item.textContent=label;item.onclick=action;host.append(item);
+ const button=(host,label,key,action)=>{
+  const item=document.createElement('button');
+  item.type='button';
+  item.className='btn cad-action57';
+  item.textContent=label;
+  addCADGlyph57(item,measureGlyphs57,key);
+  item.onclick=action;
+  host.append(item);
  };
- button(panel,'Distancia y desnivel entre dos puntos',()=>openCommand36('tool-measure'));
+ button(panel,'Distancia y desnivel entre dos puntos','distance',()=>openCommand36('tool-measure'));
  for(const [family,kind,name,steps,fields=[],edit=false] of entries){
   if(!tabs.has(family)){
    const group=document.createElement('details'),heading=document.createElement('summary'),items=document.createElement('div');
-   group.className='draw-family52';heading.textContent=family;items.className='draw-methods52';
+   group.className='draw-family52';heading.textContent=family;addCADGlyph57(heading,measureGlyphs57,measureGroups57[family]);items.className='draw-methods52';
    group.append(heading,items);panel.append(group);tabs.set(family,items);
   }
   const id='dim55-'+kind,method={id,kind,name,family:'Medir',steps,fields:fields.map(f=>({...f})),edit,points:steps[0].label,note:''};
   dimMethods55.set(id,method);draw52.methods.set(id,method);
-  button(tabs.get(family),name,()=>{
+  button(tabs.get(family),name,kind,()=>{
    if(kind==='style'||kind==='modify'){
     const selection=dimGroups55(selectedDraw52(),ensureCAD33(),false);
     const defaults=kind==='modify'&&selection.length===1?{...selection[0].dimension55.style,caption:selection[0].dimension55.label||''}:cad33.doc?.dimensionStyle55||DIM_STYLE55;
@@ -9517,13 +9549,18 @@ function initModify56(){
  const panel=$('cadEditPanel33'),groups=new Map();
  const heading=panel.querySelector('h3');
  panel.replaceChildren(heading);
- const make=(family,label,run)=>{
+ const make=(family,label,key,run)=>{
   if(!groups.has(family)){
    const details=document.createElement('details'),summary=document.createElement('summary'),body=document.createElement('div');
-   details.className='draw-family52';summary.textContent=family;body.className='draw-methods52';details.append(summary,body);
+   details.className='draw-family52';summary.textContent=family;addCADGlyph57(summary,modifyGlyphs57,modifyGroups57[family]);body.className='draw-methods52';details.append(summary,body);
    panel.append(details);groups.set(family,body);
   }
-  const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=label;button.onclick=run;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='btn cad-action57';
+  button.textContent=label;
+  addCADGlyph57(button,modifyGlyphs57,key);
+  button.onclick=run;
   groups.get(family).append(button);
  };
  const P=stepPoint53,V=stepValue53,
@@ -9536,25 +9573,25 @@ function initModify56(){
  const add=(family,kind,name,steps,fields=[],seed=null)=>{
   const id='mod56-'+kind,method={id,kind,name,family:'Modificar',steps,fields:fields.map(f=>({...f})),points:steps[0].label,note:''};
   modify56.set(id,method);draw52.methods.set(id,method);
-  make(family,name,()=>{
+  make(family,name,kind,()=>{
    for(const field of method.fields)field.value=fields.find(f=>f.key===field.key).value;
    const defaults=seed?.(selectedDraw52()[0])||{};
    for(const field of method.fields)if(field.key in defaults)field.value=defaults[field.key];
    openDraw52(id);
   });
  };
- const native=(family,label,code)=>make(family,label,()=>{
-  const key=[...uiCAD36.commands].find(([,command])=>command.code===code)?.[0];
-  if(key)openCommand36(key);else messageCAD33('El comando no está disponible.');
+ const native=(family,label,key,code)=>make(family,label,key,()=>{
+  const commandId=[...uiCAD36.commands].find(([,command])=>command.code===code)?.[0];
+  if(commandId)openCommand36(commandId);else messageCAD33('El comando no está disponible.');
  });
  const fields=(defs)=>defs.map(f=>V(f.key,f.label));
  const props=[T('layer','Capa · vacío para conservar'),T('color','Color #RRGGBB o PorCapa'),T('dash','Continua, Discontinua o PorCapa'),T('weight','Grosor en centésimas de mm · vacío para conservar')];
  add('Propiedades','properties','Propiedades',[S(),...fields(props)],props,e=>e?{layer:e.layer,...e.style56}:null);
- make('Propiedades','Seleccionar y consultar',()=>openCommand36('selection'));
+ make('Propiedades','Seleccionar y consultar','inspect',()=>openCommand36('selection'));
  add('Propiedades','match','Igualar propiedades',[S(2,Infinity,MODIFY_TYPES56,'Primero el objeto de origen y después los destinos · Enter')]);
  add('Propiedades','byLayer','Establecer a PorCapa',[S()]);
- native('Objeto','Editar vértice o centro XYZ','editVertexCAD33()');
- native('Objeto','Actualizar copias desde puntos','refreshRefsCAD33()');
+ native('Objeto','Editar vértice o centro XYZ','vertex','editVertexCAD33()');
+ native('Objeto','Actualizar copias desde puntos','pointRefresh','refreshRefsCAD33()');
  for(const [kind,name] of [['polyReverse','Invertir trazado'],['polyClose','Abrir o cerrar polilínea']])add('Objeto',kind,name,[one(xy)]);
  for(const [kind,name,types,defs,seed] of [
   ['text','Editar texto',['TEXT'],[T('text','Texto'),N('height','Altura del texto',1),N('angle','Giro del texto (°)',0)],e=>e?.type==='TEXT'?{text:e.text,height:e.height,angle:e.rotation||0}:null],
@@ -9564,24 +9601,24 @@ function initModify56(){
  ])add('Objeto',kind,name,[one(types),...fields(defs)],defs,seed);
  add('Delimitar','clip','Marco rectangular',[S(1,Infinity,[...curves,'CIRCLE','ELLIPSE']),P('Primera esquina del marco'),P('Esquina opuesta')]);
  add('Delimitar','unclip','Quitar delimitación',[S(1,Infinity,[...curves,'CIRCLE','ELLIPSE'])]);
- make('Editar RefX y bloques','Vincular DXF',()=>attachReference56('attach'));
- make('Editar RefX y bloques','Recargar referencia DXF',()=>attachReference56('reload'));
- make('Editar RefX y bloques','Enlazar referencia al dibujo',()=>manageReference56(true));
- make('Editar RefX y bloques','Desvincular referencia',()=>manageReference56(false));
- make('Editar RefX y bloques','Crear / redefinir bloque',()=>openDraw52('blockCreate'));
- make('Editar RefX y bloques','Insertar definición',()=>openDraw52('blockInsert'));
- make('Editar RefX y bloques','Listar definiciones',()=>messageCAD33((cad33.doc?.blocks52||[]).map(b=>b.name).join(' · ')||'El dibujo no contiene definiciones.'));
+ make('Editar RefX y bloques','Vincular DXF','refAttach',()=>attachReference56('attach'));
+ make('Editar RefX y bloques','Recargar referencia DXF','refReload',()=>attachReference56('reload'));
+ make('Editar RefX y bloques','Enlazar referencia al dibujo','refBind',()=>manageReference56(true));
+ make('Editar RefX y bloques','Desvincular referencia','refDetach',()=>manageReference56(false));
+ make('Editar RefX y bloques','Crear / redefinir bloque','blockCreate',()=>openDraw52('blockCreate'));
+ make('Editar RefX y bloques','Insertar definición','blockInsert',()=>openDraw52('blockInsert'));
+ make('Editar RefX y bloques','Listar definiciones','blockList',()=>messageCAD33((cad33.doc?.blocks52||[]).map(b=>b.name).join(' · ')||'El dibujo no contiene definiciones.'));
  const blockName=T('name','Nombre de la definición');
  add('Editar RefX y bloques','blockRename','Renombrar definición',[V('name','Nombre actual'),V('newName','Nombre nuevo')],[blockName,T('newName','Nombre nuevo')]);
  add('Editar RefX y bloques','blockDelete','Borrar definición',[V('name','Nombre de la definición que se va a borrar')],[blockName]);
  const ratio=[N('ratio','Escala · denominador de 1:n',1)];
  for(const [kind,name] of [['annotate','Añadir escala'],['unannotate','Quitar escala']])add('Escala anotativa',kind,name,[S(1,Infinity,annotations),...fields(ratio)],ratio);
- make('Escala anotativa','Mostrar escala…',()=>{
+ make('Escala anotativa','Mostrar escala…','showScale',()=>{
   const value=prompt('Denominador de escala 1:n',String(cad33.doc?.annotationScale56||1));if(value===null)return;
   const scale=Number(value.replace(',','.'));if(!(scale>0&&scale<=1e6)){messageCAD33('Indica una escala entre 0 y 1.000.000.');return;}
   setCADSetting56('annotationScale56',scale,'Escala anotativa 1:'+scale);
  });
- for(const [name,action] of [['Copiar','copy'],['Simetría','mirror'],['Desfase','offset'],['Desplazar','move'],['Girar','rotate'],['Escala','scale']])native('Transformar',name,"editActionCAD33('"+action+"')");
+ for(const [name,action] of [['Copiar','copy'],['Simetría','mirror'],['Desfase','offset'],['Desplazar','move'],['Girar','rotate'],['Escala','scale']])native('Transformar',name,action,"editActionCAD33('"+action+"')");
  add('Transformar','erase','Borrar',[S(1,Infinity,MODIFY_TYPES56,'Selecciona los objetos a borrar · Enter para aplicar')]);
  add('Transformar','stretch','Estirar',[S(1,Infinity,['POINT','LINE','POLYLINE','FACE','SPLINE']),P('Punto base del desplazamiento'),P('Destino del desplazamiento'),P('Primera esquina de la zona de vértices'),P('Esquina opuesta')]);
  for(const [kind,name,label,initial] of [['lengthDelta','Incremento','Incremento en metros',1],['lengthTotal','Longitud total','Longitud final en metros',10],['lengthPercent','Porcentaje','Porcentaje de la longitud original',110]]){
@@ -9590,7 +9627,7 @@ function initModify56(){
  for(const [kind,name] of [['trimPath','Recortar'],['extendPath','Alargar']]){
   add('Cortar y unir',kind,name,[two([...xy,'CIRCLE','ARC'],'Primero el trazado y después el límite'),P('Marca el extremo que quieres modificar')]);
  }
- native('Cortar y unir','Partir en un punto',"editActionCAD33('split')");
+ native('Cortar y unir','Partir en un punto','split',"editActionCAD33('split')");
  add('Cortar y unir','joinPaths','Juntar',[S(2,Infinity,xy,'Selecciona los trazados · Enter para aceptar'),V('tolerance','Tolerancia de unión (m)')],[N('tolerance','Tolerancia (m)',.001)]);
  add('Cortar y unir','breakGap','Partir entre dos puntos',[one(['LINE']),P('Primer corte'),P('Segundo corte')]);
  add('Cortar y unir','chamfer','Chaflán',[two(['LINE']),V('distance','Distancia en la primera línea'),V('second','Distancia en la segunda línea')],[N('distance','Primera distancia (m)',1),N('second','Segunda distancia (m)',1)]);
@@ -9610,8 +9647,8 @@ function initModify56(){
  add('Editar sólidos · caras','shellFace','Dar espesor a cara',[one(face),V('height','Distancia según la normal')],[N('height','Distancia (m)',1)]);
  add('Editar malla','smooth','Suavizar vértices interiores',[S(1,Infinity,face),V('amount','Factor de suavizado de 0 a 1')],[N('amount','Factor',.25)]);
  add('Editar malla','meshFace','Extruir cara',[one(face),V('height','Distancia según la normal')],[N('height','Distancia (m)',1)]);
- make('Cambiar espacio','Ver modelo',()=>setCADSetting56('space56','model','Espacio modelo'));
- make('Cambiar espacio','Ver papel',()=>setCADSetting56('space56','paper','Espacio papel'));
+ make('Cambiar espacio','Ver modelo','model',()=>setCADSetting56('space56','model','Espacio modelo'));
+ make('Cambiar espacio','Ver papel','paper',()=>setCADSetting56('space56','paper','Espacio papel'));
  add('Cambiar espacio','transfer','Trasladar al otro espacio',[S(),P('Origen en el espacio actual'),P('Destino XY/XYZ en el otro espacio'),V('factor','Escala de traslado')],[N('factor','Factor de escala',1)]);
  add('Descomponer','explode','Descomponer selección',[S()]);
 }
@@ -9636,6 +9673,144 @@ function styleDXF56(e){
  if(e.lineType==='CONTINUOUS')style.dash='CONTINUA';
  if(Number.isInteger(e.lineweight)&&e.lineweight>=0&&e.lineweight<=211)style.weight=e.lineweight;
  return Object.keys(style).length?style:undefined;
+}
+
+// Each symbol uses the same 24-unit grid and a second stroke for the active part.
+const measureGlyphs57={
+ distance:['M3 18 20 4l2 3L5 21Z','m7 15 2 2m1-5 2 2m1-5 2 2m1-5 2 2'],
+ auto:['M4 8v12M20 8v12M5 16h14','m8 12 4-8 4 8m-7-2h6'],
+ quick:['M3 13v7m18-7v7M3 17h18','m13 3-4 6h5l-3 5 7-7h-5l2-4'],
+ linear:['M3 8v12M21 8v12','M3 15h18m-14-3-4 3 4 3m10-6 4 3-4 3'],
+ aligned:['m3 12 7 8M15 3l7 8','M6 15 18 6m-8 8-4 1 2-4m6-4 4-1-2 4'],
+ arcLength:['M4 16A12 12 0 0 1 17 4m-13 8-2 5 5-2m6-11 5-1-2 5','M8 20A12 12 0 0 1 21 8'],
+ ordinate:['M4 4v16h16m-4-3 4 3-4 3M1 8l3-4 3 4','M10 14h4v-4h6'],
+ radius:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','m12 12 6-6m-1 4 1-4-4 1m-4 5h4m-2-2v4'],
+ jogRadius:['M11 3a9 9 0 1 1-7 14','m3 20 6-6 1 5 4-7 5-5m-1 4 1-4-4 1'],
+ diameter:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','M6 18 18 6m-8 11-4 1 1-4m7-7 4-1-1 4'],
+ angular:['M4 5v15h16','M4 11a9 9 0 0 1 9 9m-9-9 3 3m6 6 3-3'],
+ baseline:['M3 4v16m8-14v7m7-5v9m3 1v4','M3 7h8M3 12h15M3 19h18'],
+ continue:['M3 8v12m6-12v12m6-12v12m6-12v12','M3 14h18m-13-2 2 4m4-4 2 4'],
+ centerLine:['M3 5h18M3 19h18','M2 12h6m3 0h2m3 0h6'],
+ centerMark:['M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14','M12 2v20M2 12h20'],
+ leader:['m3 20 10-10h8m-13 9-5 1 1-5','M15 5h6m-6 2h4'],
+ multiLeader:['m3 5 8 7h10m-18 7 8-7M4 8 3 5l3 1M4 16l-1 3 3-1','M15 7h6m-6 10h6'],
+ tolerance:['M2 6h20v12H2Zm7 0v12m7-12v12','M4 9v6m3-6v6m4-3h3m-1.5-2v4m6-4h2m-2 4h2'],
+ areaTable:['M3 4h18v16H3Zm0 6h18M3 15h18m-11-5v10','M7 7h10m-4 6h5m-5 5h5'],
+ space:['M2 5h20M2 12h14M2 19h20','M19 7v10m-2-8 2-2 2 2m-4 6 2 2 2-2'],
+ break:['M3 6v12M21 6v12M3 12h6m6 0h6','m9 15 3-6m0 6 3-6'],
+ jogLinearEdit:['M3 7v12M21 7v12','M3 13h6l2-4 2 8 2-4h6'],
+ oblique:['m3 20 5-13m8 13 5-13','M6 13h13m-10-2-3 2 3 2m7-4 3 2-3 2'],
+ alignHorizontal:['M4 5h10m-5 0v9','M3 19h18m-4-3 4 3-4 3'],
+ alignVertical:['M9 5h9m-5 0v10','M4 3v18m-2-4 2 4 2-4'],
+ alignRotate:['M8 7h8m-4 0v9','M20 15a8 8 0 1 1-3-10m1-3v4h-4'],
+ alignMove:['M3 5h8m-4 0v9','M13 15h8m-4-4 4 4-4 4'],
+ alignDefault:['M9 6h7m-3 0v9','M5 7a8 8 0 1 0 14 10M5 3v5h5'],
+ modify:['M3 4h13M3 9h9M3 14h5','m10 20 2-5 7-7 3 3-7 7Z'],
+ update:['M6 7a8 8 0 0 1 13 2m0-5v5h-5m4 8a8 8 0 0 1-13-2m0 5v-5h5','M9 12h6'],
+ reassociate:['m8 15-2 2a3 3 0 0 1-4-4l4-4a3 3 0 0 1 4 0m4 0 2-2a3 3 0 0 1 4 4l-4 4a3 3 0 0 1-4 0','m8 14 7-5'],
+ analyze:['M10 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12m5 10 6 6','M7 12V9m3 3V7m3 5v-2'],
+ style:['M4 7h16M4 12h16M4 17h16','M8 5v4m7 1v4m-5 1v4']
+};
+const modifyGlyphs57={
+ properties:['M5 3h14v18H5Z','M8 7h2m3 0h3m-8 5h2m3 0h3m-8 5h2m3 0h3'],
+ inspect:measureGlyphs57.analyze,
+ match:['M3 4h7v7H3Zm11 9h7v7h-7Z','M10 7h10v4m-2-2 2 2 2-2'],
+ byLayer:['m2 10 10-5 10 5-10 5ZM2 15l10 5 10-5','M12 2v8m-3-3 3 3 3-3'],
+ vertex:['m4 18 8-13 8 13','M2 16h4v4H2Zm8-13h4v4h-4Zm8 13h4v4h-4Z'],
+ pointRefresh:['m7 4 4 1-1 4M7 5a8 8 0 1 0 13 10','M11 12h4m-2-2v4'],
+ polyReverse:['M5 17l5-10 5 7 4-6','M2 5h6L5 2M2 5l3 3m17 11h-6l3-3m3 3-3 3'],
+ polyClose:['M8 19H3V5h17v8','m20 13-6 6H8m9-6h3v3'],
+ text:['M4 5h12m-6 0v14m-4 0h8','m15 19 2-5 4-4 2 2-4 4Z'],
+ radiusEdit:measureGlyphs57.radius,
+ ellipseEdit:['M2 12a10 6 0 1 0 20 0 10 6 0 1 0-20 0','M2 12h20M12 6v12'],
+ tableEdit:['M3 4h18v16H3Zm0 5h18M3 15h11M9 9v11','M10 10h9v4h-9Z'],
+ clip:['M6 3v15h15M3 6h15v15','m8 16 8-8m-5 1 1 2m3 1 1 2'],
+ unclip:['M6 3v15h15M3 6h15v15','m8 9 8 7m0-7-8 7'],
+ refAttach:['M4 4h10l4 4v12H4Zm10 0v4h4','M18 11v10m-5-5h10'],
+ refReload:['M3 4h11l3 4v12H3Zm11 0v4h3','M12 13a4 4 0 1 1 1 5m-1 2v-3h3'],
+ refBind:measureGlyphs57.reassociate,
+ refDetach:['m7 16-2 2a3 3 0 0 1-4-4l4-4m12-2 2-2a3 3 0 0 1 4 4l-4 4','m8 8 8 8m0-8-8 8'],
+ blockCreate:['m3 8 8-4 8 4-8 4Zm0 0v9l8 4 8-4V8m-8 4v9','M20 2v7m-3-3h6'],
+ blockInsert:['m3 10 8-4 8 4-8 4Zm0 0v8l8 4 8-4v-8m-8 4v8','M11 1v8m-3-3 3 3 3-3'],
+ blockList:['M3 5h4v4H3Zm0 6h4v4H3Zm0 6h4v4H3Z','M11 7h10m-10 6h10m-10 6h10'],
+ blockRename:['M3 5h11l6 6-7 7-10-9Z','M7 8h1m4 13 2-5 5-5 3 3-5 5Z'],
+ blockDelete:['m3 8 8-4 8 4-8 4Zm0 0v9l8 4 8-4V8m-8 4v9','m16 3 6 6m0-6-6 6'],
+ annotate:['M3 4h10m-5 0v13m-4 0h8','M18 9v10m-5-5h10'],
+ unannotate:['M3 4h10m-5 0v13m-4 0h8','M13 14h9'],
+ showScale:['M3 18 19 3l3 3L6 21Z','m8 13 2 2m2-6 2 2m2-6 2 2'],
+ copy:['M8 8h13v13H8ZM4 16V4h12','M12 15h5m-2.5-2.5v5'],
+ mirror:['M3 6v12l7-6Zm18 0v12l-7-6Z','M12 2v4m0 3v6m0 3v4'],
+ offset:['m3 16 8-10 8 4','m5 21 8-10 8 4m-9-5 1-3m0 3 3-1'],
+ move:['M12 2v20M2 12h20','m9 5 3-3 3 3m-6 14 3 3 3-3M5 9l-3 3 3 3m14-6 3 3-3 3'],
+ rotate:['M20 9a8 8 0 1 0 0 7','M20 4v5h-5m-3 3h.1'],
+ scale:['M3 21V10h11v11ZM9 3h12v12','m13 11 8-8m-5 0h5v5'],
+ erase:['M4 6h16m-13 0 1 14h8l1-14M9 6V3h6v3','M10 10v6m4-6v6'],
+ stretch:['M3 18l4-11 7 11','m7 7h14m-4-3 4 3-4 3m-3 8h7m-3-3 3 3-3 3'],
+ lengthDelta:['M3 15h11m3 0h5M3 12v6m19-6v6','M13 5h8m-4-4v8'],
+ lengthTotal:['M3 5v14m18-14v14','M3 12h18m-14-3-4 3 4 3m10-6 4 3-4 3'],
+ lengthPercent:['M4 19 20 5','M7 5a2 2 0 1 0 0 4 2 2 0 0 0 0-4m10 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4'],
+ trimPath:['M13 4v16M3 12h10m3 0h2m2 0h2','m15 6 5 4m0-4-5 4'],
+ extendPath:['M3 12h10m8-8v16','M13 12h8m-4-4 4 4-4 4'],
+ split:['M3 12h18','M12 6v12m-3-6h6'],
+ joinPaths:['M3 18l6-6m6 0 6-6','M9 12h6m-3-3v6'],
+ breakGap:['M3 12h6m6 0h6','M9 7v10m6-10v10'],
+ chamfer:['M4 4h9m7 7v9','m13 4 7 7'],
+ fillet:['M4 4h8m8 8v8','M12 4a8 8 0 0 1 8 8'],
+ blend:['M3 5h5m8 14h5','M8 5c8 0 0 14 8 14'],
+ rectArray:['M3 4h4v4H3Zm7 0h4v4h-4Zm7 0h4v4h-4ZM3 11h4v4H3Zm7 0h4v4h-4Zm7 0h4v4h-4ZM3 18h4v4H3Zm7 0h4v4h-4Zm7 0h4v4h-4Z','M5 5v2m0-1h2'],
+ polarArray:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','M11 2h2v2h-2Zm9 9h2v2h-2Zm-9 9h2v2h-2Zm-9-9h2v2H2Zm10 1h.1'],
+ pathArray:['M3 18C8 6 16 18 21 6','M2 16h3v4H2Zm9-6h3v4h-3Zm8-6h3v4h-3Z'],
+ rotate3d:['m4 10 8-4 8 4v8l-8 4-8-4Zm0 0 8 4 8-4m-8 4v8','M4 6a8 4 0 0 1 14-2m0-3v4h-4'],
+ mirror3d:['m2 13 6-4v8l-6 4Zm14-4 6 4v8l-6-4Z','m10 5 4-2v15l-4 4Z'],
+ align3d:['m2 17 6-3 3 3-6 3Zm12-9 7-4 1 5-7 4Z','m8 12 7-5m-4 0h4v4'],
+ section:['m4 8 8-4 8 4v9l-8 4-8-4Z','m1 14 13-6 9 5-13 6Z'],
+ union:['M3 5h10v4h8v10H11v-4H3Z','M4 7h8v9m0-5h7'],
+ subtract:['M3 5h10v5h-3v7H3Z','M13 10h8m-8 3h8m-8 3h8'],
+ intersection:['M3 5h10v10H3Zm8 4h10v10H11Z','M11 9h2v6h-2Z'],
+ refine:['M3 4h18v16H3Z','M9 4v16m6-16v16M3 9h18M3 15h18'],
+ triangulate:['M3 5h18v14H3Z','M3 5l18 14m-9-7 9-7'],
+ flip:['m4 14 8-4 8 4-8 5Z','M12 10V2m-3 3 3-3 3 3m-3 14v3'],
+ deleteFace:['m3 12 9-6 9 6-9 7Z','m8 8 8 8m0-8-8 8'],
+ shellFace:['m3 9 9-5 9 5-9 5Zm0 0v5l9 6 9-6V9m-9 5v6','M4 14l8 5 8-5'],
+ smooth:['M3 18l5-11 5 8 8-7','M3 18c4-10 9-2 14-7l4-3'],
+ meshFace:['m3 15 9-5 9 5-9 5Z','M12 12V3m-4 4 4-4 4 4'],
+ model:['m3 9 9-5 9 5v10l-9 4-9-4Zm0 0 9 5 9-5m-9 5v9','M12 4v3'],
+ paper:['M5 3h10l4 4v14H5Zm10 0v5h4','M8 12h8m-8 4h8'],
+ transfer:['m2 13 5-3 4 3-4 3Zm0 0v6l5 3 4-3v-6m-4 3v6M15 4h7v13h-7Z','M8 5h6m-3-3 3 3-3 3'],
+ explode:['m9 9 3-2 3 2v4l-3 2-3-2Zm0 0 3 2 3-2m-3 2v4','m7 7-4-4m0 3V3h3m11 4 4-4m-3 0h3v3M7 17l-4 4m3 0H3v-3m14-1 4 4m0-3v3h-3']
+};
+
+const measureGroups57={
+ 'Crear cotas':'linear','Series y centros':'baseline','Anotación':'leader',
+ 'Edición de cotas':'modify','Alinea texto':'alignHorizontal','Medición y estilos':'style'
+};
+const modifyGroups57={
+ 'Propiedades':'properties','Objeto':'vertex','Delimitar':'clip','Editar RefX y bloques':'blockInsert',
+ 'Escala anotativa':'showScale','Transformar':'move','Longitud':'lengthTotal','Cortar y unir':'chamfer',
+ 'Matriz':'rectArray','Operaciones 3D':'rotate3d','Editar sólidos · cajas alineadas XYZ':'union',
+ 'Editar sólidos · caras':'shellFace','Editar malla':'triangulate','Cambiar espacio':'transfer','Descomponer':'explode'
+};
+function addCADGlyph57(element,catalog,key){
+ const strokes=catalog[key];
+ if(!strokes)return;
+ const icon=document.createElement('canvas');
+ icon.className='cad-glyph57';
+ icon.width=72;
+ icon.height=72;
+ icon.setAttribute('aria-hidden','true');
+ const ctx=icon.getContext('2d');
+ if(!ctx||typeof Path2D==='undefined')return;
+ ctx.scale(3,3);
+ ctx.lineWidth=1.55;
+ ctx.lineCap='round';
+ ctx.lineJoin='round';
+ ctx.strokeStyle='#e6edf3';
+ ctx.stroke(new Path2D(strokes[0]));
+ if(strokes[1]){
+  ctx.strokeStyle=['erase','blockDelete','deleteFace','refDetach','unclip'].includes(key)?'#ffa997':'#83e2cd';
+  ctx.stroke(new Path2D(strokes[1]));
+ }
+ element.prepend(icon);
 }
 
 init55();

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.59.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.61.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.59 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.61 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3543,6 +3543,15 @@ body.cad-full33 .workspace-head58{display:none}
 @media(max-width:600px){#cadFloating53{top:51px;left:6px;max-width:calc(100% - 78px)}#cadFloating53.expanded53{width:320px;max-height:calc(100% - 60px)}#cadFloatingBody53{padding:7px}#cadDynamic53{left:7px;top:90px;width:min(250px,calc(100% - 80px));padding:7px}.dynamic-actions53 .btn{min-height:32px;font-size:.6rem}#cadDynamicPrompt53{font-size:.69rem}#cadDynamic53>strong{font-size:.67rem}}
 @media(orientation:landscape) and (max-height:550px){#cadDynamic53{padding:6px;max-height:calc(100% - 14px);overflow:auto;width:260px}#cadDynamic53>strong{font-size:.65rem}#cadDynamicPrompt53{font-size:.65rem;margin-bottom:3px}#cadDynamicValue53{margin:2px 0}.dynamic-actions53 .btn{min-height:26px;padding:3px 6px}#cadFloating53{top:43px}#cadFloating53.expanded53{max-height:calc(100% - 49px)}}
 </style>
+<style>
+.dwg-layers60{width:min(90vw,510px);max-height:85vh;background:var(--bg-card,#243443);color:var(--text,#fff);border:1px solid var(--border,#556575);border-radius:12px;padding:16px}
+.dwg-layers60::backdrop{background:#0008}
+.dwg-layers60 form{display:grid;gap:10px}
+.dwg-layers60 p,.dwg-layers60 h3{margin:0}
+.dwg-layer-list60{max-height:48vh;overflow:auto;display:grid}
+.dwg-layer-list60 label{padding:7px 0;border-bottom:1px solid var(--border,#556575)}
+.dwg-layers60 footer{text-align:right}
+</style>
 </head>
 <body>
 
@@ -3553,7 +3562,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.59 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.61 RC1</span>
       </div>
     </div>
 
@@ -4595,7 +4604,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.59.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.61.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -6942,10 +6951,11 @@ function idCAD33(){return 'C'+Date.now().toString(36)+'-'+Math.random().toString
 function newEntity33(type,points,extra={}){return {id:idCAD33(),type,layer:cad33.doc?.activeLayer||'DIBUJO',points:points.map(xyz33),...(cad33.doc?.space56==='paper'?{space56:'paper'}:{}),...extra};}
 function curvePoint33(e,a){const b=basis33(e.normal),u=e.u||b.u,v=cross33(b.n,u);return add33(e.points[0],add33(mul33(u,e.radius*Math.cos(a)),mul33(v,e.radius*Math.sin(a))));}
 function geometry33(e){if(!['CIRCLE','ARC'].includes(e.type))return e.points;const from=e.type==='ARC'?e.start:0,span=e.type==='ARC'?e.sweep:Math.PI*2,n=Math.min(1024,Math.max(16,Math.ceil(Math.abs(span)*Math.sqrt(Math.max(1,e.radius)/.008)))),out=[];for(let i=0;i<=n;i++)out.push(curvePoint33(e,from+span*i/n));return out;}
-function validateCAD33(doc){if(doc==null)return;require26(doc.schema===1&&[28,29,30,31].includes(doc.zone),'CAD: esquema o huso no válido.');require26(typeof doc.datum==='string'&&doc.datum.length<=300&&Number.isFinite(doc.planeZ),'CAD: referencia o plano de trabajo no válido.');require26(Array.isArray(doc.layers)&&doc.layers.length>0&&doc.layers.length<=1000,'CAD: capas no válidas.');const names=new Set();for(const l of doc.layers){require26(typeof l.name==='string'&&l.name.trim()&&l.name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(l.name)&&!names.has(l.name)&&/^#[\da-f]{6}$/i.test(l.color)&&typeof l.visible==='boolean'&&typeof l.locked==='boolean','CAD: capa inválida o repetida.');names.add(l.name);}require26(names.has(doc.activeLayer)&&Array.isArray(doc.entities)&&doc.entities.length<=100000,'CAD: capa activa o entidades inválidas.');const ids=new Set();let count=0;for(const e of doc.entities){require26(e&&typeof e.id==='string'&&e.id.length<=120&&!ids.has(e.id)&&names.has(e.layer)&&['POINT','LINE','POLYLINE','CIRCLE','ARC','TEXT','FACE','RAY','XLINE','ELLIPSE','SPLINE'].includes(e.type),'CAD: entidad inválida.');ids.add(e.id);require26(Array.isArray(e.points)&&e.points.length>=(['LINE','POLYLINE','RAY','XLINE'].includes(e.type)?2:e.type==='FACE'?3:1)&&e.points.length<=250000,'CAD: número de vértices inválido.');count+=e.points.length;for(const p of e.points)xyz33(p);validateCurve55(e);validateMods56(e);require26(count<=600000,'CAD: más de 600.000 vértices.');if(['CIRCLE','ARC'].includes(e.type)){require26(Number.isFinite(e.radius)&&e.radius>0&&e.radius<1e8,'CAD: radio inválido.');const b=basis33(xyz33(e.normal)),u=xyz33(e.u||b.u);require26(Math.abs(len33(u)-1)<1e-8&&Math.abs(dot33(u,b.n))<1e-8,'CAD: plano de curva inválido.');if(e.type==='ARC')require26(Number.isFinite(e.start)&&Number.isFinite(e.sweep)&&e.sweep>0&&e.sweep<=2*Math.PI+1e-9,'CAD: ángulos de arco inválidos.');}if(e.type==='TEXT')require26(typeof e.text==='string'&&e.text.length<=2000&&Number.isFinite(e.height)&&e.height>0&&Number.isFinite(e.rotation||0),'CAD: texto inválido.');if(e.closed!==undefined)require26(typeof e.closed==='boolean','CAD: cierre inválido.');require26(e.type==='POLYLINE'||e.points.length===(['POINT','TEXT','CIRCLE','ARC'].includes(e.type)?1:['LINE','RAY','XLINE'].includes(e.type)?2:e.points.length),'CAD: estructura geométrica inválida.');if(e.type==='FACE')require26([3,4].includes(e.points.length),'CAD: cara inválida.');if(e.refs)require26(Array.isArray(e.refs)&&e.refs.length===e.points.length&&e.refs.every(r=>r===null||typeof r==='string'),'CAD: referencias de puntos inválidas.');}}
+const CAD_CAPACITY61={entities:350000,vertices:2000000};
+function validateCAD33(doc){if(doc==null)return;require26(doc.schema===1&&[28,29,30,31].includes(doc.zone),'CAD: esquema o huso no válido.');require26(typeof doc.datum==='string'&&doc.datum.length<=300&&Number.isFinite(doc.planeZ),'CAD: referencia o plano de trabajo no válido.');require26(Array.isArray(doc.layers)&&doc.layers.length>0&&doc.layers.length<=1000,'CAD: capas no válidas.');const names=new Set();for(const l of doc.layers){require26(typeof l.name==='string'&&l.name.trim()&&l.name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(l.name)&&!names.has(l.name)&&/^#[\da-f]{6}$/i.test(l.color)&&typeof l.visible==='boolean'&&typeof l.locked==='boolean','CAD: capa inválida o repetida.');names.add(l.name);}require26(names.has(doc.activeLayer)&&Array.isArray(doc.entities)&&doc.entities.length<=CAD_CAPACITY61.entities,'CAD: capa activa inválida o más de 350.000 entidades.');const ids=new Set();let count=0;for(const e of doc.entities){require26(e&&typeof e.id==='string'&&e.id.length<=120&&!ids.has(e.id)&&names.has(e.layer)&&['POINT','LINE','POLYLINE','CIRCLE','ARC','TEXT','FACE','RAY','XLINE','ELLIPSE','SPLINE'].includes(e.type),'CAD: entidad inválida.');ids.add(e.id);require26(Array.isArray(e.points)&&e.points.length>=(['LINE','POLYLINE','RAY','XLINE'].includes(e.type)?2:e.type==='FACE'?3:1)&&e.points.length<=250000,'CAD: número de vértices inválido.');count+=e.points.length;for(const p of e.points)xyz33(p);validateCurve55(e);validateMods56(e);require26(count<=CAD_CAPACITY61.vertices,'CAD: más de 2.000.000 de vértices.');if(['CIRCLE','ARC'].includes(e.type)){require26(Number.isFinite(e.radius)&&e.radius>0&&e.radius<1e8,'CAD: radio inválido.');const b=basis33(xyz33(e.normal)),u=xyz33(e.u||b.u);require26(Math.abs(len33(u)-1)<1e-8&&Math.abs(dot33(u,b.n))<1e-8,'CAD: plano de curva inválido.');if(e.type==='ARC')require26(Number.isFinite(e.start)&&Number.isFinite(e.sweep)&&e.sweep>0&&e.sweep<=2*Math.PI+1e-9,'CAD: ángulos de arco inválidos.');}if(e.type==='TEXT')require26(typeof e.text==='string'&&e.text.length<=2000&&Number.isFinite(e.height)&&e.height>0&&Number.isFinite(e.rotation||0),'CAD: texto inválido.');if(e.closed!==undefined)require26(typeof e.closed==='boolean','CAD: cierre inválido.');require26(e.type==='POLYLINE'||e.points.length===(['POINT','TEXT','CIRCLE','ARC'].includes(e.type)?1:['LINE','RAY','XLINE'].includes(e.type)?2:e.points.length),'CAD: estructura geométrica inválida.');if(e.type==='FACE')require26([3,4].includes(e.points.length),'CAD: cara inválida.');if(e.refs)require26(Array.isArray(e.refs)&&e.refs.length===e.points.length&&e.refs.every(r=>r===null||typeof r==='string'),'CAD: referencias de puntos inválidas.');}}
 function ensureCAD33(){if(!cad33.doc)cad33.doc=emptyCAD33();return cad33.doc;}
 function layerCAD33(name){return ensureCAD33().layers.find(l=>l.name===name);}
-function changeCAD33(label,fn,live=false){if(!live&&!canChange15()){if(cad33.ready)refreshCADUI33();return false;}const before=clone33(ensureCAD33()),next=clone33(before);require26(next.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');fn(next);validateCAD33(next);if(live!=='survey'||!cad33.live.undoSaved)cad33.undo.push({label,doc:before});if(cad33.undo.length>40)cad33.undo.shift();while(cad33.undo.length>1&&JSON.stringify(cad33.undo).length>16*1024*1024)cad33.undo.shift();cad33.redo=[];invalidateTargetCAD33(next);cad33.doc=next;if(live!=='survey'){cad33.live.groups={};cad33.live.undoSaved=false;}cad33.selected=new Set([...cad33.selected].filter(id=>next.entities.some(e=>e.id===id)));refreshCAD33();scheduleSave();return true;}
+function changeCAD33(label,fn,live=false){if(!live&&!canChange15()){if(cad33.ready)refreshCADUI33();return false;}const before=clone33(ensureCAD33()),next=clone33(before);require26(next.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');fn(next);validateCAD33(next);if(live!=='survey'||!cad33.live.undoSaved)cad33.undo.push({label,doc:before});if(cad33.undo.length>40)cad33.undo.shift();while(cad33.undo.length>1&&JSON.stringify(cad33.undo).length>16*1024*1024)cad33.undo.shift();cad33.redo=[];invalidateTargetCAD33(next);cad33.doc=next;if(live!=='survey'){cad33.live.groups={};cad33.live.undoSaved=false;}if(cad33.selected.size){const ids=new Set(next.entities.map(e=>e.id));cad33.selected=new Set([...cad33.selected].filter(id=>ids.has(id)));}refreshCAD33();scheduleSave();return true;}
 function before36_undoCAD33(redo=false){if(!canChange15())return;const from=redo?cad33.redo:cad33.undo,to=redo?cad33.undo:cad33.redo;if(!from.length)return;const step=from.pop();to.push({label:step.label,doc:clone33(cad33.doc)});invalidateTargetCAD33(step.doc);cad33.doc=step.doc;cad33.selected.clear();cad33.draft=[];cad33.live.groups={};cad33.live.undoSaved=false;refreshCAD33();scheduleSave();}
 function selectionCAD33(){const d=ensureCAD33(),list=[...cad33.selected].map(id=>d.entities.find(e=>e.id===id)).filter(Boolean);require26(list.length,'Selecciona al menos una entidad.');return list;}
 function editableCAD33(){const list=selectionCAD33();require26(list.every(e=>!layerCAD33(e.layer).locked),'Hay entidades en capas bloqueadas.');return list;}
@@ -6998,6 +7008,7 @@ async function importCAD33(event){
   report.textContent='Leyendo '+file.name+'…';
   try{
    const parsed=await loadEditableCAD58(file,$('cadAssumeMeters33').checked,$('cadPartial33').checked);
+   if(!parsed){report.textContent='Importación cancelada.';return false;}
    require26(project===workspace14.id&&!data15.closed&&base===cad33.doc,'El proyecto o el dibujo cambió durante la lectura. Repite la importación.');
    require26(changeCAD33('Importar '+file.name,doc=>{
     for(const layer of parsed.layers)if(!doc.layers.some(existing=>existing.name===layer.name))doc.layers.push(layer);
@@ -7006,7 +7017,7 @@ async function importCAD33(event){
    const omitted=Object.entries(parsed.report.skipped).map(([kind,count])=>kind+' ('+count+')').join(', ');
    const unit=parsed.report.unitScale&&parsed.report.unitScale!==1?' Coordenadas del modelo convertidas a metros.':'';
    report.textContent=(parsed.report.dwgVersion?'DWG '+parsed.report.dwgVersion+' · ':'')+
-    parsed.report.imported+' entidades editables incorporadas.'+(omitted?' Omitidas: '+omitted+'.':'')+unit;
+    parsed.report.imported+' entidades editables incorporadas.'+(parsed.report.layerSelection?' Solo capas elegidas.':'') +(omitted?' Omitidas: '+omitted+'.':'')+unit+(largeCAD61()?' Dibujo grande: vista simplificada en mapa y referencias básicas en Cad.':'');
    fitCAD33();
   }catch(error){
    report.textContent=error.message;
@@ -7049,12 +7060,12 @@ function before36_resizeCAD33(){const r=cad33.runtime;if(!r)return;const host=$(
 function before38_viewCAD33(view,fit=false){require26(['2d','3d'].includes(view),'Vista no válida.');cad33.view=view;const r=cad33.runtime;if(r){const old=r.controls,center=old.target.clone(),distance=Math.max(10,r.camera.position.distanceTo(center));old.dispose();const aspect=($('cadCanvas33').clientWidth||800)/($('cadCanvas33').clientHeight||500);r.camera=view==='2d'?new THREE.OrthographicCamera(-r.span*aspect/2,r.span*aspect/2,r.span/2,-r.span/2,.01,1e8):new THREE.PerspectiveCamera(45,aspect,.01,1e8);r.camera.up.set(0,view==='2d'?0:1,view==='2d'?-1:0);r.camera.position.copy(center).add(view==='2d'?new THREE.Vector3(0,distance,0):new THREE.Vector3(distance*.6,distance*.7,distance*.6));r.camera.lookAt(center);r.controls=new THREE.OrbitControls(r.camera,r.renderer.domElement);r.controls.enableDamping=true;r.controls.enableRotate=view==='3d';r.controls.touches.ONE=view==='2d'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;r.controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;r.controls.target.copy(center);r.controls.update();resizeCAD33();if(fit)fitCAD33();}for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===view));}
 function fitCAD33(){const r=cad33.runtime;if(!r)return;const p=[...visibleCAD33().flatMap(e=>['RAY','XLINE'].includes(e.type)?e.points:geometry33(e)),...($('cadSurveyVisible33').checked&&modifySpace56()==='model'?surveyPointsCAD33():[])];r.origin=p.length?xyz33(p[0]):{x:0,y:0,z:ensureCAD33().planeZ};drawCAD33();const box=new THREE.Box3();for(const v of p)box.expandByPoint(localCAD33(v));if(!p.length)box.setFromCenterAndSize(new THREE.Vector3(),new THREE.Vector3(10,10,10));const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(10,size.x,size.y,size.z)*1.4;r.span=span;r.controls.target.copy(center);r.camera.position.copy(center).add(cad33.view==='2d'?new THREE.Vector3(0,span*2,0):new THREE.Vector3(span,span,span));r.camera.lookAt(center);if(r.camera.isOrthographicCamera)r.camera.zoom=1;resizeCAD33();r.controls.update();}
 function before36_drawCAD33(){const r=cad33.runtime;if(!r)return;if(r.preview){r.scene.remove(r.preview);r.preview.geometry.dispose();r.preview.material.dispose();r.preview=null;}for(const o of [...r.group.children]){r.group.remove(o);o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();}let vertices=0;function add(e,reference=false){const points=geometry33(e),color=reference?'#53d1c5':cad33.selected.has(e.id)?'#ffffff':e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',material=points.length===1?new THREE.PointsMaterial({color,size:reference?7:10,sizeAttenuation:false}):(e.style56?.dash==='DISCONTINUA'?new THREE.LineDashedMaterial({color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color})),coords=points.map(localCAD33);if(e.closed&&points.length>2)coords.push(coords[0]);const geometry=new THREE.BufferGeometry().setFromPoints(coords);let object;if(e.type==='TEXT'){material.dispose();geometry.dispose();const canvas=document.createElement('canvas');canvas.width=512;canvas.height=48;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,512,48);ctx.fillStyle=color;ctx.font='30px sans-serif';ctx.textBaseline='middle';ctx.fillText(e.text.slice(0,150),3,24,506);const width=Math.max(e.height,e.height*Math.min(14,e.text.length*.65)),mat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,side:THREE.DoubleSide,depthTest:false});object=new THREE.Mesh(new THREE.PlaneGeometry(width,e.height),mat);const a=(e.rotation||0)*Math.PI/180,x=new THREE.Vector3(Math.cos(a),0,-Math.sin(a)),y=new THREE.Vector3(-Math.sin(a),0,-Math.cos(a)),z=new THREE.Vector3(0,1,0),basis=new THREE.Matrix4().makeBasis(x,y,z);object.quaternion.setFromRotationMatrix(basis);object.position.copy(localCAD33(e.points[0])).add(x.multiplyScalar(width/2)).add(y.multiplyScalar(e.height/2));}else if(e.type==='FACE'){material.dispose();const vals=[];for(const i of points.length===4?[0,1,2,0,2,3]:[0,1,2])vals.push(...coords[i].toArray());geometry.dispose();const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vals,3));object=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity:.3}));}else object=points.length===1?new THREE.Points(geometry,material):new THREE.Line(geometry,material);if(object.isLine&&material.isLineDashedMaterial)object.computeLineDistances();object.userData.cad33=e.id;object.userData.reference33=reference;r.group.add(object);vertices+=points.length;}
-vertices+=batchesCAD42(visibleCAD33(),r,add);if($('cadSurveyVisible33').checked&&modifySpace56()==='model'){const points=surveyPointsCAD33();if(points.length){const g=new THREE.BufferGeometry().setFromPoints(points.map(localCAD33)),object=new THREE.Points(g,new THREE.PointsMaterial({color:'#53d1c5',size:7,sizeAttenuation:false}));object.userData.referencePoints33=points.map(p=>'P:'+p.id);r.group.add(object);vertices+=points.length;}}if(cad33.draft.length){const points=cad33.draft.filter(p=>p.x!==undefined);if(points.length)add({id:'DRAFT',type:points.length===1?'POINT':'POLYLINE',layer:cad33.doc.activeLayer,points});}r.scene.updateMatrixWorld(true);$('cadEntityCount33').textContent=cad33.doc.entities.length+' entidades · '+vertices+' vértices representados';}
+vertices+=batchesCAD61(visibleCAD33(),r,add);if($('cadSurveyVisible33').checked&&modifySpace56()==='model'){const points=surveyPointsCAD33();if(points.length){const g=new THREE.BufferGeometry().setFromPoints(points.map(localCAD33)),object=new THREE.Points(g,new THREE.PointsMaterial({color:'#53d1c5',size:7,sizeAttenuation:false}));object.userData.referencePoints33=points.map(p=>'P:'+p.id);r.group.add(object);vertices+=points.length;}}if(cad33.draft.length){const points=cad33.draft.filter(p=>p.x!==undefined);if(points.length)add({id:'DRAFT',type:points.length===1?'POINT':'POLYLINE',layer:cad33.doc.activeLayer,points});}r.scene.updateMatrixWorld(true);$('cadEntityCount33').textContent=cad33.doc.entities.length+' entidades · '+vertices+' vértices representados'+(largeCAD61()?' · mapa con vista simplificada':'');}
 function screenCAD33(p){const r=cad33.runtime;r.camera.updateMatrixWorld(true);const v=localCAD33(p).project(r.camera),rect=r.renderer.domElement.getBoundingClientRect();return {x:(v.x+1)*rect.width/2,y:(1-v.y)*rect.height/2,z:v.z};}
 function before38_snapCAD33(screen,radius=18){if(!$('cadSnap33').checked||!cad33.runtime)return null;let best=null,distance=radius;const consider=(p,kind)=>{const q=screenCAD33(p),d=Math.hypot(q.x-screen.x,q.y-screen.y);if(q.z>=-1&&q.z<=1&&d<distance){best={...p,snap:kind};distance=d;}};if($('cadSurveyVisible33').checked)for(const p of surveyPointsCAD33())consider(p,'Punto '+p.id);for(const e of visibleCAD33()){for(const p of e.points)consider(p,e.type==='CIRCLE'||e.type==='ARC'?'Centro':'Extremo');if(e.type==='ARC'){consider(curvePoint33(e,e.start),'Extremo de arco');consider(curvePoint33(e,e.start+e.sweep),'Extremo de arco');}if(e.type==='CIRCLE')for(let i=0;i<4;i++)consider(curvePoint33(e,i*Math.PI/2),'Cuadrante');if($('cadMid33').checked&&['LINE','POLYLINE'].includes(e.type))for(let i=1;i<e.points.length;i++)consider(mul33(add33(e.points[i-1],e.points[i]),.5),'Punto medio');}if($('cadPerp33').checked&&cad33.draft.at(-1)?.x!==undefined){const a=cad33.draft.at(-1);for(const e of visibleCAD33().filter(e=>['LINE','POLYLINE'].includes(e.type)))for(let i=1;i<e.points.length+(e.closed?1:0);i++){const p=e.points[i-1],v=sub33(e.points[i%e.points.length],p),L=dot33(v,v);if(L<1e-12)continue;const t=dot33(sub33(a,p),v)/L;if(t>=0&&t<=1)consider(add33(p,mul33(v,t)),'Perpendicular 3D');}}if($('cadIntersect33').checked){const lines=visibleCAD33().filter(e=>e.type==='LINE');require26(lines.length<=300,'Desactiva referencia a intersección o reduce las líneas visibles (máximo 300).');for(let i=0;i<lines.length;i++)for(let j=i+1;j<lines.length;j++)try{consider(intersectionCAD33(lines[i],lines[j]).point,'Intersección 3D');}catch{}}return best;}
 function rayCAD33(e){const r=cad33.runtime;r.camera.updateMatrixWorld(true);const rect=r.renderer.domElement.getBoundingClientRect(),screen={x:e.clientX-rect.left,y:e.clientY-rect.top},ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(screen.x/rect.width*2-1,1-screen.y/rect.height*2),r.camera);const scale=r.camera.isOrthographicCamera?r.span/(r.camera.zoom||1):r.camera.position.distanceTo(r.controls.target);ray.params.Line.threshold=scale*12/Math.max(1,rect.height);ray.params.Points.threshold=scale*14/Math.max(1,rect.height);return {screen,ray};}
 function before38_cursorCAD33(e){if(!cad33.runtime)return null;const {screen,ray}=rayCAD33(e),snap=snapCAD33(screen);if(snap)return snap;const r=cad33.runtime,plane=new THREE.Plane(new THREE.Vector3(0,1,0),-(cad33.doc.planeZ-r.origin.z)),p=new THREE.Vector3();if(!ray.ray.intersectPlane(plane,p))return null;const q=worldCAD33(p),a=cad33.draft.at(-1);if(a&&$('cadOrtho33').checked){if(Math.abs(q.x-a.x)>=Math.abs(q.y-a.y))q.y=a.y;else q.x=a.x;}else if(a&&$('cadPolar33').checked){const step=numCAD33('cadPolarStep33');require26(step>0&&step<=180,'Incremento polar entre 0 y 180 grados.');const angle=Math.atan2(q.y-a.y,q.x-a.x),unit=step*Math.PI/180,snapped=Math.round(angle/unit)*unit,L=Math.hypot(q.x-a.x,q.y-a.y);q.x=a.x+L*Math.cos(snapped);q.y=a.y+L*Math.sin(snapped);}return q;}
-function pickCAD33(e){const {ray}=rayCAD33(e),hits=ray.intersectObjects(cad33.runtime.group.children,false);return hits.map(h=>h.object.userData.pointIds42?.[h.index]||h.object.userData.faceIds42?.[h.faceIndex]||h.object.userData.referencePoints33?.[h.index]||h.object.userData.cad33).find(id=>id&&id!=='DRAFT')||null;}
+function pickCAD33(e){const {ray}=rayCAD33(e),hits=ray.intersectObjects(cad33.runtime.group.children,false);return hits.map(h=>h.object.userData.segmentIds61?.[Math.floor(h.index/2)]||h.object.userData.pointIds42?.[h.index]||h.object.userData.faceIds42?.[h.faceIndex]||h.object.userData.referencePoints33?.[h.index]||h.object.userData.cad33).find(id=>id&&id!=='DRAFT')||null;}
 function before36_clickCAD33(e){if(cad33.tool==='window'){const q=rayCAD33(e).screen;cad33.draft.push(q);if(cad33.draft.length===2){const [a,b]=cad33.draft,minX=Math.min(a.x,b.x),maxX=Math.max(a.x,b.x),minY=Math.min(a.y,b.y),maxY=Math.max(a.y,b.y);cad33.selected.clear();for(const entity of visibleCAD33()){const p=geometry33(entity).map(screenCAD33);if(p.every(v=>v.x>=minX&&v.x<=maxX&&v.y>=minY&&v.y<=maxY&&v.z>=-1&&v.z<=1))cad33.selected.add(entity.id);}cad33.draft=[];toolCAD33('select');refreshCADUI33();drawCAD33();}return;}if(cad33.tool==='select'){const id=pickCAD33(e);if(id?.startsWith('P:')){messageCAD33('Punto medido '+id.slice(2)+' · referencia de solo lectura. Usa Puntos para incorporarlo al dibujo.');return;}if(!$('cadMulti33').checked&&!e.shiftKey)cad33.selected.clear();if(id){if(cad33.selected.has(id))cad33.selected.delete(id);else cad33.selected.add(id);}if(id)for(const panel of document.querySelectorAll('.cad-panel33'))panel.hidden=panel.id!=='cadEditPanel33';refreshCADUI33();drawCAD33();return;}const p=cursorCAD33(e);require26(p,'No se puede proyectar el cursor: cambia de vista o introduce XYZ.');inputPointCAD33(p);}
 
 function previewCAD33(p){const r=cad33.runtime,a=cad33.draft.at(-1);if(!r||!a||!Number.isFinite(a.x)||['select','window','measure'].includes(cad33.tool))return;const g=new THREE.BufferGeometry().setFromPoints([localCAD33(a),localCAD33(p)]);if(!r.preview){r.preview=new THREE.Line(g,new THREE.LineBasicMaterial({color:'#ffffff',transparent:true,opacity:.6}));r.scene.add(r.preview);}else{r.preview.geometry.dispose();r.preview.geometry=g;}}
@@ -7068,7 +7079,7 @@ function inputPointCAD33(point){const p=xyz33(point);require26(cad33.doc.zone===
 function finishCAD33(closed=false){return guardCAD33(()=>{require26(cad33.tool==='polyline'&&cad33.draft.length>=(closed?3:2),'Añade al menos '+(closed?3:2)+' vértices a una polilínea.');require26(addEntities33([newEntity33('POLYLINE',cad33.draft,{closed})]),'No se guardó la polilínea.');cad33.draft=[];toolCAD33('select');});}
 function inputXYZCAD33(){return guardCAD33(()=>inputPointCAD33({x:numCAD33('cadX33'),y:numCAD33('cadY33'),z:numCAD33('cadZ33')}));}
 function panelCAD33(id){for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=p.id!==id||!p.hidden;refreshCADUI33();}
-function refreshCADUI33(){if(!cad33.ready)return;const d=ensureCAD33(),sel=$('cadActiveLayer33'),old=sel.value;sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;const host=$('cadLayers33');host.replaceChildren();for(const l of d.layers){const row=document.createElement('div');row.className='cad-layer33';const visibility=document.createElement('input');visibility.type='checkbox';visibility.checked=l.visible;visibility.setAttribute('aria-label','Mostrar capa '+l.name);visibility.onchange=()=>guardCAD33(()=>changeCAD33('Visibilidad de capa',doc=>doc.layers.find(a=>a.name===l.name).visible=visibility.checked));const lock=document.createElement('button');lock.className='btn';lock.textContent=l.locked?'🔒':'🔓';lock.setAttribute('aria-label','Bloquear/desbloquear '+l.name);lock.onclick=()=>guardCAD33(()=>changeCAD33('Bloqueo de capa',doc=>doc.layers.find(a=>a.name===l.name).locked=!l.locked));const color=document.createElement('input');color.type='color';color.value=l.color;color.setAttribute('aria-label','Color '+l.name);color.onchange=()=>guardCAD33(()=>changeCAD33('Color de capa',doc=>doc.layers.find(a=>a.name===l.name).color=color.value));const name=document.createElement('span');name.textContent=l.name;row.append(visibility,color,name,lock);host.append(row);}const selected=d.entities.filter(e=>cad33.selected.has(e.id));$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.map(e=>e.type+' / '+e.layer).join(', '):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+m.spatial.toFixed(4)+' m · horizontal '+m.horizontal.toFixed(4)+(m.horizontalApprox?' aprox.':'')+' m · área en planta '+m.area.toFixed(4)+' m² · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();for(const e of d.entities.filter(e=>(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query)).slice(0,500)){const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
+function refreshCADUI33(){if(!cad33.ready)return;const d=ensureCAD33(),sel=$('cadActiveLayer33'),old=sel.value;sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;const host=$('cadLayers33');host.replaceChildren();for(const l of d.layers){const row=document.createElement('div');row.className='cad-layer33';const visibility=document.createElement('input');visibility.type='checkbox';visibility.checked=l.visible;visibility.setAttribute('aria-label','Mostrar capa '+l.name);visibility.onchange=()=>guardCAD33(()=>changeCAD33('Visibilidad de capa',doc=>doc.layers.find(a=>a.name===l.name).visible=visibility.checked));const lock=document.createElement('button');lock.className='btn';lock.textContent=l.locked?'🔒':'🔓';lock.setAttribute('aria-label','Bloquear/desbloquear '+l.name);lock.onclick=()=>guardCAD33(()=>changeCAD33('Bloqueo de capa',doc=>doc.layers.find(a=>a.name===l.name).locked=!l.locked));const color=document.createElement('input');color.type='color';color.value=l.color;color.setAttribute('aria-label','Color '+l.name);color.onchange=()=>guardCAD33(()=>changeCAD33('Color de capa',doc=>doc.layers.find(a=>a.name===l.name).color=color.value));const name=document.createElement('span');name.textContent=l.name;row.append(visibility,color,name,lock);host.append(row);}const selected=d.entities.filter(e=>cad33.selected.has(e.id));$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.map(e=>e.type+' / '+e.layer).join(', '):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+m.spatial.toFixed(4)+' m · horizontal '+m.horizontal.toFixed(4)+(m.horizontalApprox?' aprox.':'')+' m · área en planta '+m.area.toFixed(4)+' m² · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
 function loadVertexCAD33(){const e=ensureCAD33().entities.find(e=>cad33.selected.has(e.id)),p=e?.points[Number($('cadVertex33').value)];if(!p)return;for(const k of ['x','y','z'])$('cadV'+k.toUpperCase()+'33').value=String(p[k]);}
 function editVertexCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(list.length===1,'Selecciona una entidad.');const i=Number($('cadVertex33').value),p={x:numCAD33('cadVX33'),y:numCAD33('cadVY33'),z:numCAD33('cadVZ33')};changeCAD33('Editar vértice XYZ',d=>{const e=d.entities.find(e=>e.id===list[0].id);require26(i>=0&&i<e.points.length,'Vértice inexistente.');e.points[i]=p;delete e.refs;});});}
 function deleteCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(confirm('¿Borrar '+list.length+' entidades del dibujo? Los puntos medidos no se modifican. Puedes deshacer.'),'Borrado cancelado.');const ids=new Set(list.map(e=>e.id));changeCAD33('Borrar',d=>d.entities=d.entities.filter(e=>!ids.has(e.id)));});}
@@ -7085,7 +7096,7 @@ function toggleLiveCAD33(){if(!needProject15())return;cad33.live={enabled:$('cad
 function liveSurveyCAD33(p){if(!cad33.live.enabled||data15.closed||cad33.restoring)return;if(!finite(p.cotaNAP)||!finite(p.easting)||!finite(p.northing)){if(cad33.ready)$('cadLiveStatus33').textContent='Punto '+p.id+' sin XYZ completas: no se ha dibujado. Se conserva en el levantamiento.';return;}const code=String(p.codigo||'SIN_CODIGO'),name=('LEV_'+code.replace(/[<>/\\":;?*|=\r\n]/g,'_')).slice(0,80),point={x:Number(p.easting),y:Number(p.northing),z:Number(p.cotaNAP)},id=cad33.live.groups[code];changeCAD33('Levantamiento dibujado',d=>{if(!d.layers.some(l=>l.name===name))d.layers.push({name,color:'#57c6b6',visible:true,locked:false});require26(!d.layers.find(l=>l.name===name).locked,'La capa de levantamiento está bloqueada.');let e=d.entities.find(e=>e.id===id);if(e&&(e.source33?.datum||null)!==(p.datum||null)){e=null;if(cad33.ready)$('cadLiveStatus33').textContent='Referencia vertical cambiada: se inicia un tramo nuevo para '+code+'. Revisa las referencias del dibujo.';}if(!e){e=newEntity33('POINT',[point],{layer:name,refs:[String(p.id)],source33:{kind:'survey-live',code,datum:p.datum||null}});d.entities.push(e);cad33.live.groups[code]=e.id;}else{require26(!e.refs?.includes(String(p.id)),'Ese punto ya está dibujado.');e.points.push(point);e.refs.push(String(p.id));e.type='POLYLINE';}},'survey');cad33.live.undoSaved=true;}
 function newLiveLineCAD33(close=false){return guardCAD33(()=>{if(close){const ids=new Set(Object.values(cad33.live.groups));changeCAD33('Cerrar líneas del levantamiento',d=>{for(const e of d.entities)if(ids.has(e.id)&&e.type==='POLYLINE'&&e.points.length>=3)e.closed=true;},'survey');}cad33.live.groups={};cad33.live.undoSaved=false;messageCAD33('Nuevo tramo de dibujo para los siguientes puntos medidos.');if(cad33.ready)$('cadLiveStatus33').textContent='Nuevo tramo: los siguientes puntos iniciarán líneas independientes por código.';});}
 function before36_restoreCAD33(doc){disposeCAD33();validateCAD33(doc);cad33.doc=doc?clone33(doc):null;cad33.undo=[];cad33.redo=[];cad33.selected.clear();cad33.draft=[];cad33.pointOrder=[];cad33.live={enabled:false,groups:{}};if(cad33.ready){$('cadLive33').checked=false;refreshMapCAD33();if(ui58.section==='tabCAD33')openCAD33();}}
-function before39_refreshMapCAD33(){if(!cad33.layer)return;cad33.layer.clearLayers();if(!cad33.doc||cad33.doc.zone!==currentZone())return;for(const e of visibleCAD33('model')){const p=geometry33(e),ll=p.map(v=>utmALatLng(v.x,v.y,cad33.doc.zone)),color=e.style56?.color||layerCAD33(e.layer).color;let layer;if(p.length===1)layer=L.circleMarker(ll[0],{radius:4,color});else if(e.closed||e.type==='FACE')layer=L.polygon(ll,{color,weight:2,fillOpacity:.05});else layer=L.polyline(ll,{color,weight:2});const div=document.createElement('div'),title=document.createElement('p'),open=document.createElement('button');title.textContent='CAD · '+e.type+' · '+e.layer+' · Z '+p[0].z.toFixed(3);open.className='btn';open.textContent='Editar en CAD';open.onclick=()=>{switchTab('tabCAD33');cad33.selected=new Set([e.id]);refreshCADUI33();drawCAD33();};div.append(title,open);if(e.type==='TEXT')layer.bindTooltip(e.text,{permanent:true,direction:'right'});layer.bindPopup(div).addTo(cad33.layer);}}
+function before39_refreshMapCAD33(){if(!cad33.layer)return;cad33.layer.clearLayers();if(!cad33.doc||cad33.doc.zone!==currentZone())return;for(const e of mapOverviewCAD61(visibleCAD33('model'))){const p=geometry33(e),ll=p.map(v=>utmALatLng(v.x,v.y,cad33.doc.zone)),color=e.style56?.color||layerCAD33(e.layer).color;let layer;if(p.length===1)layer=L.circleMarker(ll[0],{radius:4,color});else if(e.closed||e.type==='FACE')layer=L.polygon(ll,{color,weight:2,fillOpacity:.05});else layer=L.polyline(ll,{color,weight:2});const div=document.createElement('div'),title=document.createElement('p'),open=document.createElement('button');title.textContent='CAD · '+e.type+' · '+e.layer+' · Z '+p[0].z.toFixed(3);open.className='btn';open.textContent='Editar en CAD';open.onclick=()=>{switchTab('tabCAD33');cad33.selected=new Set([e.id]);refreshCADUI33();drawCAD33();};div.append(title,open);if(e.type==='TEXT')layer.bindTooltip(e.text,{permanent:true,direction:'right'});layer.bindPopup(div).addTo(cad33.layer);}}
 function refreshCAD33(){if(cad33.restoring)return;if(cad33.ready&&ui58.section==='tabCAD33'){refreshCADUI33();drawCAD33();}if(cad33.layer)refreshMapCAD33();}
 function initCAD33(){UI_VIEWS58.tabCAD33=['Cad','Dibujo y edición XYZ del proyecto.','Encuadrar'];cad33.ready=true;cad33.layer=L.featureGroup().addTo(map);const observer=new ResizeObserver(()=>{if(ui58.section==='tabCAD33')resizeCAD33();});observer.observe($('cadCanvas33'));document.addEventListener('keydown',e=>{if(ui58.section!=='tabCAD33'||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='Escape'){toolCAD33('select');for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=true;}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undoCAD33(e.shiftKey);}else if(e.key==='Delete')deleteCAD33();else if(e.key==='Enter'&&cad33.tool==='polyline')finishCAD33();});}
 
@@ -7515,6 +7526,7 @@ function projectedSnap38(index){
 }
 function fixedNear38(index,screen,radius){const {grid}=projectedSnap38(index),out=[];for(let x=Math.floor((screen.x-radius)/48);x<=Math.floor((screen.x+radius)/48);x++)for(let y=Math.floor((screen.y-radius)/48);y<=Math.floor((screen.y+radius)/48);y++)out.push(...(grid.get(x+':'+y)||[]));return out;}
 function snapCAD33(screen,radius=18){
+ if(largeCAD61())return snapLargeCAD61(screen,radius);
  if(!$('cadSnap33').checked||!cad33.runtime){hideSnap38();return null;}const index=snapIndex38(),candidates=[],consider=(p,k,priority=0)=>{if(!mode38(k)||!p)return;const q=screenCAD33(p),d=Math.hypot(q.x-screen.x,q.y-screen.y);if(q.z>=-1&&q.z<=1&&d<=radius)candidates.push({...p,snap:SNAP38[k].label,snapKey38:k,distance38:d,priority38:priority});};
  for(const c of fixedNear38(index,screen,radius))consider(c.p,c.k);
  const anchor=cad33.draft.at(-1)?.z!==undefined?cad33.draft.at(-1):null;
@@ -7588,7 +7600,7 @@ function validXY39(p){return !!p&&finite(p.x)&&finite(p.y);}
 function validXYZ39(p){return validXY39(p)&&finite(p.z);}
 function geometry39(e){let points=stakeView39.geometryCache.get(e);if(!points){points=geometry33(e);if(e.closed&&points.length>2)points=[...points,points[0]];stakeView39.geometryCache.set(e,points);}return points;}
 function cadVisible39(){return !!cad33.ready&&!!cad33.doc&&cad33.doc.zone===currentZone()&&!!cad33.layer&&map.hasLayer(cad33.layer);}
-function cadItems39(){if(!cadVisible39())return [];return visibleCAD33('model').map(e=>({cad39:true,entityId:e.id,project39:workspace14.id,verticesUTM:geometry39(e),colorHex:e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',layerName:'Dibujo CAD · '+e.layer,entidad:{type:e.type},entity39:e}));}
+function cadItems39(){if(!cadVisible39())return [];return mapOverviewCAD61(visibleCAD33('model')).map(e=>({cad39:true,entityId:e.id,project39:workspace14.id,verticesUTM:geometry39(e),colorHex:e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',layerName:'Dibujo CAD · '+e.layer,entidad:{type:e.type},entity39:e}));}
 function zonePoint39(p){return !p?.huso||Number(p.huso)===currentZone();}
 function axisFocus39(){const source=stake56.source;if(!source)return null;let p,label;if(ui58.method==='PK'){try{p=makePlanPoint56(source,parsePK56($('stakePK56').value),planSettings56());label='PK '+metric(p.pk)+' · O '+metric(p.offset)+' · '+source.title;}catch{return null;}}else{const n=Number($('stakeVertex56').value);if(!Number.isInteger(n)||n<1||n>source.vertices.length)return null;p={...source.vertices[n-1]};if(source.road)try{p.z=designZ56(source,p.pk,0,p,{mode:'AUTO',slope:0,dz:0});}catch{p.z=null;}label='V'+n+' · '+source.title;}
  return validXY39(p)?{point:p,geometry:source.vertices,key:source,kind:'preview',label}:null;}
@@ -9842,135 +9854,271 @@ function addCADGlyph57(element,catalog,key){
 }
 
 // The versioned reader runs in a short-lived worker. Only engine assets are fetched.
-const DWG_READER58=[
- 'https://cdn.jsdelivr.net/npm/@mlightcad/libredwg-web@0.9.0/wasm/',
- 'https://unpkg.com/@mlightcad/libredwg-web@0.9.0/wasm/'
-];
-const DWG_MAX58=32*1024*1024;
-async function decodeDWGWorker58({bytes,urls,limit},loadReader){
- let reader,lastError;
- for(const url of urls){
-  try{reader=await loadReader(url);break;}catch(error){lastError=error;}
+// Native DWG records are mapped to SiteSCad entities inside the worker.
+function nativeDrawing60(db,stats,options){
+ const supported=new Set(['LINE','POINT','POLYLINE3D','POLYLINE2D','LWPOLYLINE','ARC','CIRCLE','3DFACE','TEXT','ATTRIB','INSERT','RAY','XLINE','ELLIPSE','SPLINE']);
+ const tables=db.tables?.BLOCK_RECORD?.entries||[];
+ const blocks=new Map(tables.map(b=>[b.name.toLowerCase(),b]));
+ const paper=new Set(tables.filter(b=>/^\*Paper_Space/i.test(b.name)).map(b=>b.handle));
+ const byLayer=new Map();
+ const layerOf=e=>e.layer||'0';
+ const countOf=e=>e.vertices?.length||e.controlPoints?.length||(e.type==='LINE'?2:1);
+ const estimate=e=>e.vertices?.some(v=>v.bulge)?e.vertices.length:1;
+ for(const e of db.entities){
+  const name=layerOf(e);
+  if(!byLayer.has(name))byLayer.set(name,{name,count:0,vertices:0,editable:0});
+  const row=byLayer.get(name);row.count++;
+  if(supported.has(e.type)){row.editable+=estimate(e);row.vertices+=countOf(e)*(estimate(e)>1?2:1);}
  }
- if(!reader)throw Error('No se pudo cargar el lector DWG. Comprueba la conexión e inténtalo de nuevo.',{cause:lastError});
- const input='/sitescad.dwg',output='/sitescad.dxf';
+ if(!options.layers){
+  const rows=[...byLayer.values()].sort((a,b)=>b.count-a.count);
+  if(rows.reduce((sum,l)=>sum+l.editable,0)>options.entityLimit||rows.reduce((sum,l)=>sum+l.vertices,0)>options.vertexLimit)return {choose:rows};
+ }
+ const assert=(ok,message)=>{if(!ok)throw Error(message);};
+ const nil={x:0,y:0,z:0},vertical={x:0,y:0,z:1};
+ const plus=(a,b)=>({x:a.x+b.x,y:a.y+b.y,z:a.z+b.z});
+ const times=(a,k)=>({x:a.x*k,y:a.y*k,z:a.z*k});
+ const minus=(a,b)=>plus(a,times(b,-1));
+ const cross=(a,b)=>({x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x});
+ const length=a=>Math.hypot(a.x,a.y,a.z);
+ const unit=a=>{const l=length(a);assert(l>1e-12,'Vector nulo.');return times(a,1/l);};
+ const tau=Math.PI*2,wrap=a=>(a%tau+tau)%tau;
+ const point=(p,z=0)=>{const q={x:p?.x,y:p?.y,z:p?.z??z};assert(Object.values(q).every(Number.isFinite),'Coordenadas inválidas.');return q;};
+ const frame=e=>{
+  const a=point(e.extrusionDirection||vertical),n=length(a)>1e-12?unit(a):vertical;
+  const u=unit(cross(Math.abs(n.x)<1/64&&Math.abs(n.y)<1/64?{x:0,y:1,z:0}:vertical,n));
+  const v=cross(n,u);
+  return {n,u,world:p=>plus(plus(times(u,p.x),times(v,p.y)),times(n,p.z))};
+ };
+ const units=Number(db.header?.INSUNITS??0),scale=({1:.0254,2:.3048,4:.001,5:.01,6:1,7:1000,10:.9144,14:.1,21:1200/3937})[units]||(units===0&&options.assumeMeters?1:0);
+ assert(scale,'DWG: confirma metros si el archivo no declara unidades, o revisa las unidades del dibujo.');
+ const allowed=options.layers?new Set(options.layers):null,entities=[],usedLayers=new Set(),skipped=Object.create(null);
+ const attributesInserts=new Set(db.entities.filter(e=>e.type==='INSERT'&&(!allowed||allowed.has(layerOf(e)))).flatMap(e=>(e.attribs||[]).map(a=>a.handle)).filter(Boolean));
+ const skip=type=>{skipped[type]=(skipped[type]||0)+1;};
+ let vertices=0,serial=0,expanded=0;
+ function convert(e,ctx,depth){
+  assert(depth<=8,'Bloques anidados en exceso.');
+  const layer=layerOf(e)==='0'&&ctx.layer?ctx.layer:layerOf(e),space=ctx.space;
+  const f=frame(e),style56={};
+  assert(layer.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(layer),'Nombre de capa no válido.');
+  const colorIndex=e.colorIndex;
+  if(colorIndex!==256&&colorIndex!==0&&Number.isInteger(e.color)&&e.color>=0&&e.color<=0xffffff)style56.color='#'+e.color.toString(16).padStart(6,'0');
+  if(Number.isInteger(e.lineweight)&&e.lineweight>=0&&e.lineweight<=211)style56.weight=e.lineweight;
+  const lineType=String(e.lineType||'').toUpperCase();
+  if(lineType==='CONTINUOUS'||lineType==='DASHED')style56.dash=lineType==='DASHED'?'DISCONTINUA':'CONTINUA';
+  const add=(type,points,extra={})=>{
+   assert(points.length&&points.length<=250000,'Entidad con demasiados vértices.');
+   const mapped=points.map(p=>ctx.map(point(p)));
+   assert(mapped.every(p=>Object.values(p).every(v=>Number.isFinite(v)&&Math.abs(v)<1e9)),'Coordenadas fuera de rango.');
+   if(entities.length>=options.entityLimit||vertices+points.length>options.vertexLimit)throw RangeError('La selección supera la capacidad editable disponible. Abre el DWG otra vez y elige menos capas.');
+   usedLayers.add(layer);vertices+=points.length;
+   entities.push({id:options.prefix+(++serial),type,points:mapped,layer,space56:space,style56,...extra,
+    source33:{file:options.name,type:e.type,handle:e.handle||null}});
+  };
+  const axisFrame=(u,n)=>{
+   const a=unit(ctx.vec(u)),b=unit(ctx.vec(cross(n,u)));
+   return {u:a,normal:unit(cross(a,b))};
+  };
+  if(e.type==='INSERT'){
+   const block=blocks.get(String(e.name||'').toLowerCase());
+   const sx=e.xScale??1,sy=e.yScale??1,sz=e.zScale??1;
+   assert(block&&Math.max(e.rowCount||0,e.columnCount||0)<=1&&f.n.z>0.999999&&[sx,sy,sz].every(v=>Number.isFinite(v)&&v!==0),'Bloque no compatible.');
+   const angle=e.rotation||0,c=Math.cos(angle),s=Math.sin(angle),o=point(block.basePoint||nil),p=point(e.insertionPoint);
+   const vec=q=>({x:q.x*sx*c-q.y*sy*s,y:q.x*sx*s+q.y*sy*c,z:q.z*sz});
+   const similarity=ctx.similarity&&Math.abs(Math.abs(sx)-Math.abs(sy))<1e-9&&Math.abs(Math.abs(sx)-Math.abs(sz))<1e-9;
+   const nested={space,layer,map:q=>ctx.map(plus(p,vec(minus(q,o)))),vec:q=>ctx.vec(vec(q)),similarity,scale:ctx.scale*Math.abs(sx)};
+   for(const item of block.entities||[])if(item.type!=='ATTDEF')safe(item,nested,depth+1);
+   for(const attr of e.attribs||[])safe(attr,ctx,depth+1);
+   return;
+  }
+  if(e.type==='LINE'){add('LINE',[e.startPoint,e.endPoint]);return;}
+  if(e.type==='POINT'){add('POINT',[e.position]);return;}
+  if(e.type==='RAY'||e.type==='XLINE'){add(e.type,[point(e.firstPoint),plus(point(e.firstPoint),unit(point(e.unitDirection)))]);return;}
+  if(e.type==='3DFACE'){
+   const points=[e.corner1,e.corner2,e.corner3,e.corner4].filter(Boolean).map(p=>point(p));
+   if(points.length===4&&length(minus(points[2],points[3]))<1e-9)points.pop();
+   assert(points.length>=3,'Cara degenerada.');add('FACE',points,{closed:true});return;
+  }
+  if(e.type==='CIRCLE'||e.type==='ARC'||e.type==='ELLIPSE'){
+   assert(ctx.similarity,'Escala no uniforme en curva de bloque.');
+   const ellipse=e.type==='ELLIPSE',arc=e.type==='ARC',sweep=e.type==='CIRCLE'?tau:Math.abs(e.endAngle-e.startAngle)>=tau-1e-10?tau:wrap(e.endAngle-e.startAngle);
+   assert(sweep>1e-10,'Curva degenerada.');
+   if(ellipse){
+    const axis=point(e.majorAxisEndPoint);
+    assert(e.axisRatio>0&&e.axisRatio<=1&&length(axis)>1e-9,'Elipse inválida.');
+    add(e.type,[point(e.center)],{majorAxis:ctx.vec(axis),ratio:e.axisRatio,normal:axisFrame(unit(axis),f.n).normal,start:wrap(e.startAngle),sweep,closed:sweep===tau});
+   }else{
+    const radius=e.radius*ctx.scale;
+    assert(radius>0&&radius<1e8,'Radio inválido.');
+    add(e.type,[f.world(point(e.center))],{radius,...axisFrame(f.u,f.n),...(arc?{start:wrap(e.startAngle),sweep}:{})});
+   }return;
+  }
+  if(e.type==='TEXT'||e.type==='ATTRIB'){
+   const t=e.type==='TEXT'?e:e.text,tf=frame(t);
+   assert(t&&ctx.similarity&&Math.abs(tf.n.z-1)<1e-8&&t.textHeight>0,'Texto no compatible.');
+   const position=t.halign||t.valign?t.endPoint||t.startPoint:t.startPoint;
+   const dir=ctx.vec({x:Math.cos(t.rotation||0),y:Math.sin(t.rotation||0),z:0});
+   add('TEXT',[tf.world(point(position,t.elevation??0))],{text:String(t.text??'').slice(0,2000),height:t.textHeight*ctx.scale,rotation:Math.atan2(dir.y,dir.x)*180/Math.PI});return;
+  }
+  if(e.type==='SPLINE'){
+   const points=e.controlPoints||[],knots=Array.from(e.knots||[]),degree=e.degree,weights=e.weights?.length?Array.from(e.weights):undefined;
+   assert(degree>=1&&degree<=16&&points.length>degree&&knots.length===points.length+degree+1&&knots.every((k,i)=>Number.isFinite(k)&&(!i||k>=knots[i-1]))&&knots[degree]<knots[points.length]&&(!weights||weights.length===points.length&&weights.every(w=>w>0&&Number.isFinite(w))),'Spline no compatible.');
+   add('SPLINE',points,{degree,knots,weights,closed:!!(e.flag&1),periodic:!!(e.flag&2)});return;
+  }
+  if(['POLYLINE3D','POLYLINE2D','LWPOLYLINE'].includes(e.type)){
+   const is3d=e.type==='POLYLINE3D',raw=e.vertices||[],closed=!!(e.flag&(e.type==='LWPOLYLINE'?512:1));
+   assert(raw.length>=2&&!(e.smoothType>0),'Polilínea no compatible.');
+   const local=raw.map(v=>point(v,e.elevation??0));
+   const world=local.map(v=>is3d?v:f.world(v));
+   if(is3d||!raw.some(v=>v.bulge)){add('POLYLINE',world,{closed});return;}
+   assert(ctx.similarity,'Escala no uniforme con segmentos curvos.');
+   for(let i=0;i<raw.length-(closed?0:1);i++){
+    const j=(i+1)%raw.length,a=local[i],b=local[j],dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy),bulge=raw[i].bulge||0;
+    if(l<1e-10)continue;
+    if(!bulge){add('LINE',[world[i],world[j]]);continue;}
+    const factor=(1-bulge*bulge)/(4*bulge);
+    const center={x:(a.x+b.x)/2-dy*factor,y:(a.y+b.y)/2+dx*factor,z:a.z};
+    const start=Math.atan2(a.y-center.y,a.x-center.x),sweep=Math.abs(4*Math.atan(bulge));
+    add('ARC',[f.world(center)],{radius:l*(1+bulge*bulge)/(4*Math.abs(bulge))*ctx.scale,start:wrap(bulge>0?start:-start),sweep,...axisFrame(f.u,times(f.n,Math.sign(bulge)))});
+   }expanded++;return;
+  }
+  skip(e.type);
+ }
+ function safe(entity,ctx,depth){
+  const count=entities.length,oldVertices=vertices;
+  try{convert(entity,ctx,depth);}catch(error){
+   if(error instanceof RangeError)throw error;
+   entities.length=count;vertices=oldVertices;skip(entity.type);
+  }
+ }
+ for(const e of db.entities){
+  if(allowed&&!allowed.has(layerOf(e)))continue;
+  if(e.type==='ATTRIB'&&attributesInserts.has(e.handle))continue;
+  const space=paper.has(e.ownerBlockRecordSoftId)?'paper':'model',k=space==='paper'?1:scale;
+  safe(e,{space,map:p=>times(p,k),vec:p=>times(p,k),scale:k,similarity:true},0);
+ }
+ if(stats?.unknownEntityCount)skipped.DESCONOCIDO=stats.unknownEntityCount;
+ const tableLayers=new Map((db.tables?.LAYER?.entries||[]).map(l=>[l.name,l]));
+ const layers=[...usedLayers].map(name=>{
+  const l=tableLayers.get(name),index=l?.colorIndex??7;
+  const rgb=[0,0xff0000,0xffff00,0x00ff00,0x00ffff,0x0000ff,0xff00ff,0xffffff,0x808080,0xc0c0c0];
+  const color=(index>0&&index<10&&(l?.color===undefined||l.color===0xffffff))?rgb[index]:l?.color;
+  return {name,color:'#'+(Number.isInteger(color)?color&0xffffff:0x76b6df).toString(16).padStart(6,'0'),visible:!l?.off&&!l?.frozen,locked:!!l?.locked};
+ });
+ return {entities,layers,report:{imported:entities.length,skipped,explodedBulges:expanded,unitScale:scale,layerSelection:!!allowed}};
+}
+const DWG_MAX58=32*1024*1024;
+const DWG_BUNDLES60=[
+ 'https://cdn.jsdelivr.net/npm/@mlightcad/libredwg-web@0.9.0/',
+ 'https://unpkg.com/@mlightcad/libredwg-web@0.9.0/'
+];
+async function readNativeDWG60(bytes,urls,load){
+ let reader;
+ for(const base of urls){try{reader=await load(base);break;}catch{}}
+ if(!reader)throw Error('No se pudo cargar el lector DWG. Comprueba la conexión.');
+ const path='/sitescad.dwg';
+ let data;
  try{
-  reader.FS.writeFile(input,new Uint8Array(bytes));
-  const code=reader.dwg_write_dxf(input,output);
-  if(code!==0||!reader.FS.analyzePath(output).exists)throw Error('El lector no pudo convertir este DWG (código '+code+').');
-  const converted=reader.FS.readFile(output);
-  if(!converted.length||converted.length>limit)throw Error('El dibujo convertido supera el límite de 32 MB o está vacío.');
-  return converted;
+  reader.FS.writeFile(path,new Uint8Array(bytes));
+  const result=reader.dwg_read_file(path);
+  data=result.data;
+  if(result.error||!data)throw Error('No se pudo leer el DWG (código '+result.error+').');
+  return reader.convertEx(data);
  }finally{
-  for(const path of [input,output])if(reader.FS.analyzePath(path).exists)reader.FS.unlink(path);
+  if(reader.FS.analyzePath(path).exists)reader.FS.unlink(path);
+  if(data)reader.dwg_free(data);
  }
 }
-function runDWGReader58(bytes){
- return new Promise((resolve,reject)=>{
-  if(typeof Worker!=='function'||typeof WebAssembly!=='object'){
-   reject(Error('Este navegador no admite el lector DWG.'));return;
+function selectDWGLayers60(layers,options){
+ return new Promise(resolve=>{
+  const dialog=document.createElement('dialog');
+  dialog.className='dwg-layers60';
+  dialog.innerHTML='<form method="dialog"><h3>Elegir capas del DWG</h3><p>El dibujo completo supera la capacidad editable de este proyecto. Marca las capas que quieres añadir.</p><div class="dwg-layer-list60"></div><p role="status"></p><footer><button class="btn" value="cancel">Cancelar</button> <button class="btn btn-primary" value="ok">Importar selección</button></footer></form>';
+  const list=dialog.querySelector('.dwg-layer-list60'),status=dialog.querySelector('[role="status"]'),ok=dialog.querySelector('[value="ok"]');
+  const checked=[];
+  for(const layer of layers){
+   const label=document.createElement('label'),box=document.createElement('input');
+   box.type='checkbox';box.disabled=!layer.editable;
+   label.append(box,document.createTextNode(' '+layer.name+' · '+layer.count.toLocaleString('es-ES')+' registros'));
+   list.append(label);checked.push([box,layer]);
   }
-  const source=`
-  self.onmessage=async ({data})=>{
-   try{
-    const result=await (${decodeDWGWorker58.toString()})(data,async base=>{
-     const {default:create}=await import(base+'libredwg-web.js');
-     return create({locateFile:name=>base+name,print(){},printErr(){}});
-    });
-    self.postMessage({result},[result.buffer]);
-   }catch(error){self.postMessage({message:error.message});}
-  };`;
-  const url=URL.createObjectURL(new Blob([source],{type:'application/javascript'}));
-  let worker,timer;
+  const selected=()=>checked.filter(([box])=>box.checked).map(([,layer])=>layer);
+  const refresh=()=>{
+   const rows=selected(),count=rows.reduce((n,l)=>n+l.editable,0),vertices=rows.reduce((n,l)=>n+l.vertices,0);
+   const exceeds=count>options.entityLimit||vertices>options.vertexLimit;
+   ok.disabled=!rows.length||exceeds;
+   status.textContent=count.toLocaleString('es-ES')+' entidades estimadas'+(exceeds?' · Quita capas para continuar.':'.');
+  };
+  list.addEventListener('change',refresh);
+  dialog.addEventListener('close',()=>{
+   const selection=dialog.returnValue==='ok'&& !ok.disabled?selected().map(l=>l.name):null;
+   dialog.remove();resolve(selection);
+  },{once:true});
+  refresh();document.body.append(dialog);dialog.showModal();
+ });
+}
+function runDWGReader60(bytes,options){
+ return new Promise((resolve,reject)=>{
+  const script=`
+   const read=${readNativeDWG60.toString()};
+   const convert=${nativeDrawing60.toString()};
+   let source;
+   self.onmessage=async ({data})=>{
+    try{
+     if(data.bytes)source=await read(data.bytes,data.urls,async base=>{
+      const {createModule,LibreDwg}=await import(base+'dist/libredwg-web.js');
+      const module=await createModule({locateFile:name=>base+'wasm/'+name,print(){},printErr(){}});
+      return LibreDwg.createByWasmInstance(module);
+     });
+     const result=convert(source.database,source.stats,data.options);
+     self.postMessage({result});
+    }catch(error){self.postMessage({error:error.message});}
+   };
+  `;
+  const url=URL.createObjectURL(new Blob([script],{type:'text/javascript'}));
+  let worker,timer,finished=false;
   const finish=(error,result)=>{
-   clearTimeout(timer);
-   if(worker)worker.terminate();
-   URL.revokeObjectURL(url);
+   if(finished)return;
+   finished=true;clearTimeout(timer);worker?.terminate();URL.revokeObjectURL(url);
    if(error)reject(error);else resolve(result);
   };
+  const arm=()=>{timer=setTimeout(()=>finish(Error('El lector DWG tardó demasiado.')),150000);};
   try{
-   worker=new Worker(url,{type:'module'});
-   timer=setTimeout(()=>finish(Error('Se agotó el tiempo de lectura del DWG. Prueba con un dibujo más pequeño.')),90000);
-   worker.onmessage=({data})=>data.result?finish(null,data.result):finish(Error(data.message||'No se pudo leer el DWG.'));
-   worker.onerror=event=>{event.preventDefault();finish(Error('El navegador bloqueó el lector DWG o no pudo iniciarlo.'));};
-   worker.onmessageerror=()=>finish(Error('No se pudo recibir el dibujo convertido.'));
-   worker.postMessage({bytes,urls:DWG_READER58,limit:DWG_MAX58},[bytes]);
+   worker=new Worker(url,{type:'module'});arm();
+   worker.onmessage=async ({data})=>{
+    clearTimeout(timer);
+    if(data.error){finish(Error(data.error));return;}
+    if(!data.result?.choose){finish(null,data.result);return;}
+    try{
+     const layers=await selectDWGLayers60(data.result.choose,options);
+     if(!layers){finish(null,null);return;}
+     arm();worker.postMessage({options:{...options,layers}});
+    }catch(error){finish(error);}
+   };
+   worker.onerror=e=>{e.preventDefault();finish(Error('El navegador no pudo iniciar el lector DWG.'));};
+   worker.onmessageerror=()=>finish(Error('No se pudo recibir el dibujo.')); 
+   worker.postMessage({bytes,urls:DWG_BUNDLES60,options},[bytes]);
   }catch(error){finish(error);}
  });
 }
-function inspectConvertedDWG58(bytes){
- let text;
- try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}
- catch{
-  const legacy=new TextDecoder('windows-1252').decode(bytes);
-  const codePage=legacy.match(/\$DWGCODEPAGE\s*\r?\n\s*3\s*\r?\n\s*([^\r\n]+)/)?.[1]?.trim().toUpperCase();
-  const encoding={ANSI_932:'shift_jis',ANSI_936:'gbk',ANSI_949:'euc-kr',ANSI_950:'big5'}[codePage]||
-    (/^ANSI_125[0-8]$/.test(codePage||'')?'windows-'+codePage.slice(5):'windows-1252');
-  text=new TextDecoder(encoding).decode(bytes);
- }
- const lines=text.split(/\r?\n/),known=new Set(['LINE','POINT','POLYLINE','LWPOLYLINE','ARC','CIRCLE','3DFACE','TEXT','INSERT','RAY','XLINE','ELLIPSE','SPLINE','VERTEX','SEQEND']);
- const root=[],blocks=new Map();
- let section='',table=null,item=null,unitCode=0,unitLine=-1;
- for(let i=0;i+1<lines.length;i+=2){
-  const code=lines[i].trim(),value=lines[i+1].trim();
-  if(code==='0'&&value==='SECTION'){section=lines[i+3]?.trim();i+=2;continue;}
-  if(code==='0'&&value==='ENDSEC'){section='';item=null;continue;}
-  if(section==='HEADER'&&code==='9'&&value==='$INSUNITS'&&lines[i+2]?.trim()==='70'){
-   unitLine=i+3;unitCode=Number(lines[unitLine]);continue;
-  }
-  if(section!=='ENTITIES'&&section!=='BLOCKS')continue;
-  if(code==='0'){
-   item=null;
-   if(section==='BLOCKS'&&value==='BLOCK'){
-    table=[];item={type:'BLOCK',name:null};continue;
-   }
-   if(section==='BLOCKS'&&value==='ENDBLK'){table=null;continue;}
-   item={type:value.toUpperCase(),name:null};
-   (section==='ENTITIES'?root:table)?.push(item);
-  }else if(code==='2'&&item){
-   item.name=value.toLowerCase();
-   if(item.type==='BLOCK')blocks.set(item.name,table);
-  }
- }
- const skipped={},visited=new Set();
- function scan(items){
-  for(const item of items){
-   if(!known.has(item.type))skipped[item.type]=(skipped[item.type]||0)+1;
-   if(item.type==='INSERT'&&item.name&&!visited.has(item.name)&&blocks.has(item.name)){
-    visited.add(item.name);scan(blocks.get(item.name));
-   }
-  }
- }
- scan(root);
- const scales={1:.0254,2:.3048,4:.001,5:.01,6:1,7:1000,10:.9144,14:.1,21:1200/3937};
- const scale=scales[unitCode];
- require26(unitCode===0||scale,'DWG: unidad de dibujo no compatible. Configura unidades en el archivo de origen.');
- if(scale&&scale!==1){lines[unitLine]='6';text=lines.join('\n');}
- return {text,skipped,scale:scale||1,unitCode};
-}
 async function loadEditableCAD58(file,assumeMeters,allowPartial){
  if(!/\.dwg$/i.test(file.name))return parseCADDXF33(await readFile(file),file.name,assumeMeters,allowPartial);
- require26(file.size>=6&&file.size<=DWG_MAX58,'DWG: hasta 32 MB de archivo.');
- const bytes=await file.arrayBuffer();
- const version=new TextDecoder().decode(new Uint8Array(bytes,0,6));
+ require26(file.size>=6&&file.size<=DWG_MAX58,'DWG: el archivo de origen debe ocupar hasta 32 MiB.');
+ require26(typeof Worker==='function'&&typeof WebAssembly==='object','Este navegador no admite el lector DWG.');
+ const bytes=await file.arrayBuffer(),version=new TextDecoder().decode(new Uint8Array(bytes,0,6));
  require26(/^AC10\d\d$/.test(version),'El archivo seleccionado no tiene una cabecera DWG reconocida.');
- const bridge=inspectConvertedDWG58(await runDWGReader58(bytes));
- const describe=records=>Object.entries(records).map(([type,count])=>type+' ('+count+')').join(', ');
- require26(allowPartial||!Object.keys(bridge.skipped).length,'DWG contiene entidades no compatibles: '+describe(bridge.skipped)+'. Activa la importación parcial para incorporar las compatibles.');
- const parsed=parseCADDXF33(bridge.text,file.name,assumeMeters,allowPartial);
- if(bridge.scale!==1){
-  parsed.entities=parsed.entities.map(entity=>{
-   if(entity.space56==='paper')return entity;
-   const scaled=transformEntity33(entity,p=>mul33(p,bridge.scale),bridge.scale);
-   scaled.source33={...scaled.source33,unitScale58:bridge.scale};
-   return scaled;
-  });
- }
- for(const [kind,count] of Object.entries(bridge.skipped))parsed.report.skipped[kind]=Math.max(parsed.report.skipped[kind]||0,count);
+ const current=cad33.doc?.entities||[];
+ const entityLimit=CAD_CAPACITY61.entities-current.length,vertexLimit=CAD_CAPACITY61.vertices-current.reduce((total,e)=>total+e.points.length,0);
+ require26(entityLimit>0&&vertexLimit>0,'El proyecto alcanzó su capacidad editable. Abre el DWG en un proyecto nuevo.');
+ const parsed=await runDWGReader60(bytes,{name:file.name,assumeMeters,entityLimit,vertexLimit,prefix:idCAD33()+'-'});
+ if(!parsed)return null;
+ const omitted=Object.entries(parsed.report.skipped);
+ require26(allowPartial||!omitted.length,'DWG contiene entidades no compatibles: '+omitted.map(([k,v])=>k+' ('+v+')').join(', ')+'. Activa la importación parcial para añadir las compatibles.');
+ require26(parsed.entities.length,'No hay geometría editable en las capas elegidas.');
  parsed.report.dwgVersion=version;
- parsed.report.unitScale=bridge.scale;
  return parsed;
 }
+
 function openCADImport58(){
  switchTab('tabCAD33');
  const panel=$('cadFilesPanel33');
@@ -10104,6 +10252,77 @@ function initDWGExport59(){
  };
  section.append(button,format,status);
  $('cadFilesPanel33').append(section);
+}
+
+
+function largeCAD61(){return (cad33.doc?.entities.length||0)>75000;}
+function mapOverviewCAD61(entities){
+ if(!largeCAD61())return entities;
+ const step=Math.max(1,Math.ceil(entities.length/4000));
+ return entities.filter((e,i)=>i%step===0);
+}
+function batchesCAD61(entities,r,add){
+ if(!largeCAD61())return batchesCAD42(entities,r,add);
+ const groups=new Map(),rest=[],types=new Set(['LINE','POLYLINE','ARC','CIRCLE','ELLIPSE','SPLINE','RAY','XLINE']);
+ const layerColors=new Map(cad33.doc.layers.map(l=>[l.name,l.color]));
+ let vertices=0;
+ const flush=group=>{
+  if(!group.ids.length)return;
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(group.xyz,3));
+  const material=group.dashed?new THREE.LineDashedMaterial({color:group.color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color:group.color});
+  const object=new THREE.LineSegments(geometry,material);
+  object.userData.segmentIds61=group.ids;
+  object.userData.vertexIndices61=Uint32Array.from(group.indices);
+  if(group.dashed)object.computeLineDistances();
+  r.group.add(object);group.xyz=[];group.ids=[];group.indices=[];
+ };
+ for(const e of entities){
+  if(!types.has(e.type)||e.source33?.draw52?.kind==='wipeout'){rest.push(e);continue;}
+  const color=cad33.selected.has(e.id)?'#ffffff':e.style56?.color||layerColors.get(e.layer)||'#e4ad50';
+  const dashed=e.style56?.dash==='DISCONTINUA',key=e.layer+'|'+color+'|'+dashed;
+  if(!groups.has(key))groups.set(key,{color,dashed,xyz:[],ids:[],indices:[]});
+  const group=groups.get(key),p=geometry33(e);
+  vertices+=p.length;
+  for(let i=0;i<p.length-1+(e.closed&&p.length>2?1:0);i++){
+   const a=p[i],b=p[(i+1)%p.length],o=r.origin;
+   group.xyz.push(a.x-o.x,a.z-o.z,o.y-a.y,b.x-o.x,b.z-o.z,o.y-b.y);
+   group.ids.push(e.id);group.indices.push(i);
+   if(group.ids.length>=24000)flush(group);
+  }
+ }
+ for(const group of groups.values())flush(group);
+ return vertices+batchesCAD42(rest,r,add);
+}
+// Large drawings use the actual cursor hit for endpoint snaps.
+function snapLargeCAD61(screen,radius){
+ const r=cad33.runtime;
+ if(!r||!$('cadSnap33').checked){hideSnap38();return null;}
+ const rect=r.renderer.domElement.getBoundingClientRect();
+ const {ray}=rayCAD33({clientX:rect.left+screen.x,clientY:rect.top+screen.y});
+ if(r.pickDocument61!==cad33.doc){
+  r.pickDocument61=cad33.doc;r.byId61=new Map(cad33.doc.entities.map(e=>[e.id,e]));
+ }
+ const hits=ray.intersectObjects(r.group.children,false).slice(0,12);
+ let best=null,distance=radius;
+ for(const hit of hits){
+  const object=hit.object,user=object.userData,segment=user.segmentIds61?.[Math.floor(hit.index/2)];
+  const id=segment||user.pointIds42?.[hit.index]||user.faceIds42?.[hit.faceIndex]||user.cad33;
+  const e=r.byId61.get(id);
+  if(!e)continue;
+  const index=user.vertexIndices61?.[Math.floor(hit.index/2)];
+  let candidates=segment&&e.clip56?[]:segment?[e.points[index],e.points[(index+1)%e.points.length]].filter(Boolean):e.points.slice(0,4);
+  let kind=e.type==='POINT'?'node':'end';
+  if(segment&&!e.clip56&&!['LINE','POLYLINE','RAY','XLINE'].includes(e.type)){
+   candidates=['ARC','CIRCLE','ELLIPSE'].includes(e.type)?e.points:[];kind='center';
+  }
+  if(!mode38(kind))continue;
+  for(const p of candidates){
+   const q=screenCAD33(p),d=Math.hypot(q.x-screen.x,q.y-screen.y);
+   if(d<=distance&&q.z>=-1&&q.z<=1){best={...p,snap:SNAP38[kind].label,snapKey38:kind};distance=d;}
+  }
+ }
+ showSnap38(best);return best;
 }
 
 init55();

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.62.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.63.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.62 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.63 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3562,7 +3562,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.62 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.63 RC1</span>
       </div>
     </div>
 
@@ -4604,7 +4604,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.62.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.63.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -4804,7 +4804,7 @@ function beforeUIApply58(data){maps57.internal=true;maps57.comparison='OFF';try{
 
 function before59_applyProject(data){beforeUIApply58(data);restoreUI58(data);}
 function before14_importProject(event){useFile(event,async file=>{const data=validateProject(JSON.parse(await readFile(file)));if((listaPuntos.length||app55.cad.length||app55.surfaces.length)&&!confirm('Se sustituirá el proyecto abierto. Exporta antes una copia si quieres conservarlo. ¿Continuar?'))return;applyProject(data);await saveProjectLocal();notify('Proyecto recuperado.');});}
-async function before14_restoreLocal(){try{app55.db=await openDB55();const data=await new Promise((resolve,reject)=>{const tx=app55.db.transaction('project','readonly'),r=tx.objectStore('project').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});if(data){applyProject(validateProject(data));$('saveStatus').textContent='Proyecto recuperado de este navegador';}else $('saveStatus').textContent='Proyecto nuevo · guardado automático';}catch(e){$('saveStatus').textContent='Guardado local no disponible; usa Exportar proyecto';}}
+async function before14_restoreLocal(){try{app55.db=await openDB55();const data=await new Promise((resolve,reject)=>{const tx=app55.db.transaction('project','readonly'),r=tx.objectStore('project').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});if(data){applyProject(await restoreProjectCAD63(data));$('saveStatus').textContent='Proyecto recuperado de este navegador';}else $('saveStatus').textContent='Proyecto nuevo · guardado automático';}catch(e){$('saveStatus').textContent='Guardado local no disponible; usa Exportar proyecto';}}
 function before14_newProject(){if(!confirm('¿Crear un proyecto vacío? Exporta el actual si quieres conservarlo.'))return;applyProject({format:'TOPOGRAFIA_PROJECT',schema:1,huso:currentZone(),points:[],cad:[],surfaces:[],vectors:[],rasters:[],road:{eje:null,rasante:null,perfiles:null},axis:[],settings:settings55()});scheduleSave();notify('Proyecto vacío creado.');}
 function beforeUITheme58(){document.body.classList.toggle('daylight');try{localStorage.setItem('topografia-daylight',document.body.classList.contains('daylight')?'1':'0');}catch{} }
 
@@ -5340,7 +5340,7 @@ async function store14(store,mode,fn){const db=await db14();return new Promise((
 function error14(e){return e?.name==='NotAllowedError'||e?.name==='SecurityError'?'No hay permiso para escribir en la carpeta. Vuelve a abrirla y autoriza el acceso.':e?.message||'No se pudo completar la operación.';}
 function folderMessage14(){const c=workspace14.context;return c?'Carpeta conectada: '+c.dir.name+' · proyecto.json':workspace14.lastFolder?'Guardado en este navegador. Carpeta anterior: '+workspace14.lastFolder+'; vuelve a abrirla para guardar allí.':'Guardado en este navegador · sin carpeta conectada. Puedes elegir una ubicación o guardar el proyecto JSON.';}
 function before15_renderWorkspace14(){if(!workspace14.ready)return;$('folderStatus14').textContent=workspace14.error||folderMessage14();$('folderCapability14').textContent=supportedFolders14()?'Este navegador permite elegir carpetas. El guardado requiere tu autorización.':'Este navegador no permite escribir en carpetas. Usa Mis proyectos y Guardar proyecto JSON, o abre la app en un navegador compatible.';}
-async function recentProjects14(){if(!workspace14.ready)return;try{const rows=(await store14('projects','readonly',s=>s.getAll())).map(({data,...metadata})=>metadata);if(!workspace14.ready||!window.document)return;const host=$('recentProjects14');host.replaceChildren();rows.sort((a,b)=>b.savedAt.localeCompare(a.savedAt));for(const p of rows){const row=document.createElement('div');row.className='recent-row14';row.setAttribute('role','listitem');const text=document.createElement('div'),title=document.createElement('strong'),detail=document.createElement('small');row.dataset.project29=p.id;title.textContent=p.name+(p.id===workspace14.id?' · abierto':'');detail.textContent=new Date(p.savedAt).toLocaleString()+' · '+p.points+' puntos'+(p.folder?' · carpeta: '+p.folder:' · navegador');text.append(title,detail);const b=document.createElement('button');b.className='btn';b.textContent='Abrir';b.disabled=p.id===workspace14.id;b.onclick=()=>openRecent14(p.id);row.append(text,b);host.append(row);}if(!rows.length)host.textContent='Todavía no hay proyectos guardados.';}catch(e){if(!window.document)return;$('recentProjects14').textContent='Lista no disponible: '+error14(e);}}
+async function recentProjects14(){if(!workspace14.ready||$('myProjectsDialog46')?.hidden)return;try{const rows=(await store14('projects','readonly',s=>s.getAll())).map(({data,...metadata})=>metadata);if(!workspace14.ready||!window.document)return;const host=$('recentProjects14');host.replaceChildren();rows.sort((a,b)=>b.savedAt.localeCompare(a.savedAt));for(const p of rows){const row=document.createElement('div');row.className='recent-row14';row.setAttribute('role','listitem');const text=document.createElement('div'),title=document.createElement('strong'),detail=document.createElement('small');row.dataset.project29=p.id;title.textContent=p.name+(p.id===workspace14.id?' · abierto':'');detail.textContent=new Date(p.savedAt).toLocaleString()+' · '+p.points+' puntos'+(p.folder?' · carpeta: '+p.folder:' · navegador');text.append(title,detail);const b=document.createElement('button');b.className='btn';b.textContent='Abrir';b.disabled=p.id===workspace14.id;b.onclick=()=>openRecent14(p.id);row.append(text,b);host.append(row);}if(!rows.length)host.textContent='Todavía no hay proyectos guardados.';}catch(e){if(!window.document)return;$('recentProjects14').textContent='Lista no disponible: '+error14(e);}}
 function snapshotWorkspace14(){return {...before14_projectSnapshot(),workspace14:{format:1,id:workspace14.id,folder:workspace14.context?.dir.name||workspace14.lastFolder||''}};}
 function projectRecord14(data){return {id:data.workspace14.id,name:data.ui58?.name||'Proyecto sin nombre',savedAt:data.savedAt,points:data.points.length,folder:data.workspace14.folder||'',data};}
 async function readOptional14(dir,name){try{return await (await dir.getFileHandle(name)).getFile();}catch(e){if(e.name==='NotFoundError')return null;throw e;}}
@@ -5349,10 +5349,10 @@ async function folders14(dir){for(const name of groups14)await dir.getDirectoryH
 async function requireFolder14(dir){if(dir.queryPermission&&await dir.queryPermission({mode:'readwrite'})!=='granted'){if(!dir.requestPermission||await dir.requestPermission({mode:'readwrite'})!=='granted')throw new DOMException('Permiso denegado','NotAllowedError');}}
 async function writeProjectFolder14(ctx,data){const previous=await readOptional14(ctx.dir,'proyecto.json'),text=previous?await previous.text():null;if(text!==ctx.lastText)throw Error('proyecto.json ha cambiado fuera de esta sesión. No se ha sobrescrito. Guarda el proyecto JSON y vuelve a abrir la carpeta para revisar los cambios.');await folders14(ctx.dir);const json=JSON.stringify(data);await writeFile14(ctx.dir,'proyecto.json',json);ctx.lastText=json;}
 async function before15_saveWorkspace14(){const ok=await saveProjectLocal();if(ok)notify(workspace14.context?'Proyecto guardado en su carpeta y en este navegador.':'Proyecto guardado en este navegador. Guarda el proyecto JSON para conservar una copia.');return ok;}
-async function before37_persistWorkspace14(){if(app55.restoring)return true;const data=JSON.parse(JSON.stringify(projectSnapshot()));const ok=await runIO14(async()=>{try{await store14('projects','readwrite',st=>st.put(projectRecord14(data)));if(!app55.db)app55.db=await openDB55();await writeDB55(data);workspace14.error='';$('saveStatus').textContent='Trabajo conservado en este navegador · '+new Date().toLocaleTimeString();return true;}catch(e){workspace14.error=error14(e);$('saveStatus').textContent=workspace14.error;return false;}});await recentProjects14();return ok;}
+async function before37_persistWorkspace14(){if(app55.restoring)return true;const snapshot=projectSnapshot();const ok=await runIO14(async()=>{try{const data=await packProjectCAD63(snapshot);await store14('projects','readwrite',st=>st.put(projectRecord14(data)));if(!app55.db)app55.db=await openDB55();await writeDB55(data);workspace14.error='';$('saveStatus').textContent='Trabajo conservado en este navegador · '+new Date().toLocaleTimeString();return true;}catch(e){workspace14.error=error14(e);$('saveStatus').textContent=workspace14.error;return false;}});await recentProjects14();return ok;}
 async function flushWorkspace14(){clearTimeout(app55.saveTimer);if(!await saveProjectLocal())throw Error(workspace14.error||'No se ha podido guardar el proyecto actual. Descarga una copia antes de cambiar.');await workspace14.tail;}
 function before37_setProject14(data,ctx=null){applyProject(data);workspace14.context=ctx;workspace14.error='';renderWorkspace14();recentProjects14();refreshFiles14();}
-async function before37_openRecent14(id){if(id===workspace14.id)return;if(workspace14.busy)return;if(workspace14.imports)return notify('Espera a que termine la importación antes de cambiar de proyecto.',true);workspace14.busy=true;try{const rec=await store14('projects','readonly',s=>s.get(id));if(!rec)throw Error('El proyecto ya no está disponible.');const data=validateProject(JSON.parse(JSON.stringify(rec.data)));await flushWorkspace14();setProject14(data);await saveProjectLocal();notify('Proyecto abierto desde este navegador.');}catch(e){notify(error14(e),true);}finally{workspace14.busy=false;}}
+async function before37_openRecent14(id){if(id===workspace14.id)return;if(workspace14.busy)return;if(workspace14.imports)return notify('Espera a que termine la importación antes de cambiar de proyecto.',true);workspace14.busy=true;try{const rec=await store14('projects','readonly',s=>s.get(id));if(!rec)throw Error('El proyecto ya no está disponible.');const data=await restoreProjectCAD63(rec.data);await flushWorkspace14();setProject14(data);await saveProjectLocal();notify('Proyecto abierto desde este navegador.');}catch(e){notify(error14(e),true);}finally{workspace14.busy=false;}}
 function newProject(){if(workspace14.busy||workspace14.imports)return notify('Espera a que termine la operación actual.',true);$('newProjectName14').value='';$('newProjectDialog14').hidden=false;$('newProjectName14').focus();}
 function closeNewProject14(){if(workspace14.busy)return;$('newProjectDialog14').hidden=true;}
 async function uniqueDirectory14(parent,name){try{await parent.getDirectoryHandle(name);throw Error('Ya existe una carpeta con ese nombre. Abre ese proyecto o usa otro nombre.');}catch(e){if(e.name!=='NotFoundError')throw e;}return parent.getDirectoryHandle(name,{create:true});}
@@ -6627,7 +6627,7 @@ const cleanup29={deleting:false};
 const before29_syncUI58=syncUI58;
 syncUI58=function(){before29_syncUI58();if(!ui58.initialized)return;$('projectSummary58').textContent=data15.closed?'Crea un trabajo o abre uno de Mis proyectos.':'Importa datos para trabajar. GUARDAR y exportar piden ubicación.';$('deleteProject29').disabled=data15.closed||cleanup29.deleting||workspace14.busy||!!workspace14.imports;};
 const before29_recentProjects14=recentProjects14;
-recentProjects14=async function(){await before29_recentProjects14();if(!workspace14.ready||!window.document)return;for(const row of $('recentProjects14').querySelectorAll('.recent-row14')){const open=row.querySelector('button');if(!open||row.querySelector('[data-delete29]'))continue;const rec={id:row.dataset.project29,name:row.querySelector('strong')?.textContent||'Proyecto'};if(!rec.id)continue;const b=document.createElement('button');b.className='btn danger15';b.type='button';b.dataset.delete29=rec.id;b.textContent='Borrar';b.setAttribute('aria-label','Borrar proyecto '+rec.name);b.onclick=()=>deleteProject29(rec.id);row.append(b);}};
+recentProjects14=async function(){await before29_recentProjects14();if(!workspace14.ready||!window.document||$('myProjectsDialog46')?.hidden)return;for(const row of $('recentProjects14').querySelectorAll('.recent-row14')){const open=row.querySelector('button');if(!open||row.querySelector('[data-delete29]'))continue;const rec={id:row.dataset.project29,name:row.querySelector('strong')?.textContent||'Proyecto'};if(!rec.id)continue;const b=document.createElement('button');b.className='btn danger15';b.type='button';b.dataset.delete29=rec.id;b.textContent='Borrar';b.setAttribute('aria-label','Borrar proyecto '+rec.name);b.onclick=()=>deleteProject29(rec.id);row.append(b);}};
 async function deleteProject29(id=workspace14.id){
  if(cleanup29.deleting||workspace14.busy||workspace14.imports||data15.closing||photo23.busy||cat16.job)return notify('Espera a que termine la operación en curso.',true);
  let record;try{record=await store14('projects','readonly',s=>s.get(id));}catch(e){return notify(error14(e),true);}
@@ -6952,11 +6952,19 @@ function newEntity33(type,points,extra={}){return {id:idCAD33(),type,layer:cad33
 function curvePoint33(e,a){const b=basis33(e.normal),u=e.u||b.u,v=cross33(b.n,u);return add33(e.points[0],add33(mul33(u,e.radius*Math.cos(a)),mul33(v,e.radius*Math.sin(a))));}
 function geometry33(e){if(!['CIRCLE','ARC'].includes(e.type))return e.points;const from=e.type==='ARC'?e.start:0,span=e.type==='ARC'?e.sweep:Math.PI*2,n=Math.min(1024,Math.max(16,Math.ceil(Math.abs(span)*Math.sqrt(Math.max(1,e.radius)/.008)))),out=[];for(let i=0;i<=n;i++)out.push(curvePoint33(e,from+span*i/n));return out;}
 const CAD_CAPACITY61={entities:350000,vertices:2000000};
-function validateCAD33(doc){if(doc==null)return;require26(doc.schema===1&&[28,29,30,31].includes(doc.zone),'CAD: esquema o huso no válido.');require26(typeof doc.datum==='string'&&doc.datum.length<=300&&Number.isFinite(doc.planeZ),'CAD: referencia o plano de trabajo no válido.');require26(Array.isArray(doc.layers)&&doc.layers.length>0&&doc.layers.length<=1000,'CAD: capas no válidas.');const names=new Set();for(const l of doc.layers){require26(typeof l.name==='string'&&l.name.trim()&&l.name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(l.name)&&!names.has(l.name)&&/^#[\da-f]{6}$/i.test(l.color)&&typeof l.visible==='boolean'&&typeof l.locked==='boolean','CAD: capa inválida o repetida.');names.add(l.name);}require26(names.has(doc.activeLayer)&&Array.isArray(doc.entities)&&doc.entities.length<=CAD_CAPACITY61.entities,'CAD: capa activa inválida o más de 350.000 entidades.');const ids=new Set();let count=0;for(const e of doc.entities){require26(e&&typeof e.id==='string'&&e.id.length<=120&&!ids.has(e.id)&&names.has(e.layer)&&['POINT','LINE','POLYLINE','CIRCLE','ARC','TEXT','FACE','RAY','XLINE','ELLIPSE','SPLINE'].includes(e.type),'CAD: entidad inválida.');ids.add(e.id);require26(Array.isArray(e.points)&&e.points.length>=(['LINE','POLYLINE','RAY','XLINE'].includes(e.type)?2:e.type==='FACE'?3:1)&&e.points.length<=250000,'CAD: número de vértices inválido.');count+=e.points.length;for(const p of e.points)xyz33(p);validateCurve55(e);validateMods56(e);require26(count<=CAD_CAPACITY61.vertices,'CAD: más de 2.000.000 de vértices.');if(['CIRCLE','ARC'].includes(e.type)){require26(Number.isFinite(e.radius)&&e.radius>0&&e.radius<1e8,'CAD: radio inválido.');const b=basis33(xyz33(e.normal)),u=xyz33(e.u||b.u);require26(Math.abs(len33(u)-1)<1e-8&&Math.abs(dot33(u,b.n))<1e-8,'CAD: plano de curva inválido.');if(e.type==='ARC')require26(Number.isFinite(e.start)&&Number.isFinite(e.sweep)&&e.sweep>0&&e.sweep<=2*Math.PI+1e-9,'CAD: ángulos de arco inválidos.');}if(e.type==='TEXT')require26(typeof e.text==='string'&&e.text.length<=2000&&Number.isFinite(e.height)&&e.height>0&&Number.isFinite(e.rotation||0),'CAD: texto inválido.');if(e.closed!==undefined)require26(typeof e.closed==='boolean','CAD: cierre inválido.');require26(e.type==='POLYLINE'||e.points.length===(['POINT','TEXT','CIRCLE','ARC'].includes(e.type)?1:['LINE','RAY','XLINE'].includes(e.type)?2:e.points.length),'CAD: estructura geométrica inválida.');if(e.type==='FACE')require26([3,4].includes(e.points.length),'CAD: cara inválida.');if(e.refs)require26(Array.isArray(e.refs)&&e.refs.length===e.points.length&&e.refs.every(r=>r===null||typeof r==='string'),'CAD: referencias de puntos inválidas.');}}
+function* validateCADSteps63(doc){if(doc==null)return;require26(doc.schema===1&&[28,29,30,31].includes(doc.zone),'CAD: esquema o huso no válido.');require26(typeof doc.datum==='string'&&doc.datum.length<=300&&Number.isFinite(doc.planeZ),'CAD: referencia o plano de trabajo no válido.');require26(Array.isArray(doc.layers)&&doc.layers.length>0&&doc.layers.length<=1000,'CAD: capas no válidas.');const names=new Set();for(const l of doc.layers){require26(typeof l.name==='string'&&l.name.trim()&&l.name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(l.name)&&!names.has(l.name)&&/^#[\da-f]{6}$/i.test(l.color)&&typeof l.visible==='boolean'&&typeof l.locked==='boolean','CAD: capa inválida o repetida.');names.add(l.name);}require26(names.has(doc.activeLayer)&&Array.isArray(doc.entities)&&doc.entities.length<=CAD_CAPACITY61.entities,'CAD: capa activa inválida o más de 350.000 entidades.');const ids=new Set();let count=0;for(const e of doc.entities){require26(e&&typeof e.id==='string'&&e.id.length<=120&&!ids.has(e.id)&&names.has(e.layer)&&['POINT','LINE','POLYLINE','CIRCLE','ARC','TEXT','FACE','RAY','XLINE','ELLIPSE','SPLINE'].includes(e.type),'CAD: entidad inválida.');ids.add(e.id);require26(Array.isArray(e.points)&&e.points.length>=(['LINE','POLYLINE','RAY','XLINE'].includes(e.type)?2:e.type==='FACE'?3:1)&&e.points.length<=250000,'CAD: número de vértices inválido.');count+=e.points.length;for(const p of e.points)xyz33(p);validateCurve55(e);validateMods56(e);require26(count<=CAD_CAPACITY61.vertices,'CAD: más de 2.000.000 de vértices.');if(['CIRCLE','ARC'].includes(e.type)){require26(Number.isFinite(e.radius)&&e.radius>0&&e.radius<1e8,'CAD: radio inválido.');const b=basis33(xyz33(e.normal)),u=xyz33(e.u||b.u);require26(Math.abs(len33(u)-1)<1e-8&&Math.abs(dot33(u,b.n))<1e-8,'CAD: plano de curva inválido.');if(e.type==='ARC')require26(Number.isFinite(e.start)&&Number.isFinite(e.sweep)&&e.sweep>0&&e.sweep<=2*Math.PI+1e-9,'CAD: ángulos de arco inválidos.');}if(e.type==='TEXT')require26(typeof e.text==='string'&&e.text.length<=2000&&Number.isFinite(e.height)&&e.height>0&&Number.isFinite(e.rotation||0),'CAD: texto inválido.');if(e.closed!==undefined)require26(typeof e.closed==='boolean','CAD: cierre inválido.');require26(e.type==='POLYLINE'||e.points.length===(['POINT','TEXT','CIRCLE','ARC'].includes(e.type)?1:['LINE','RAY','XLINE'].includes(e.type)?2:e.points.length),'CAD: estructura geométrica inválida.');if(e.type==='FACE')require26([3,4].includes(e.points.length),'CAD: cara inválida.');if(e.refs)require26(Array.isArray(e.refs)&&e.refs.length===e.points.length&&e.refs.every(r=>r===null||typeof r==='string'),'CAD: referencias de puntos inválidas.');yield;}}
+function validateCAD33(doc){for(const step of validateCADSteps63(doc)){} }
 function ensureCAD33(){if(!cad33.doc)cad33.doc=emptyCAD33();return cad33.doc;}
 function layerCAD33(name){return ensureCAD33().layers.find(l=>l.name===name);}
-function changeCAD33(label,fn,live=false){if(!live&&!canChange15()){if(cad33.ready)refreshCADUI33();return false;}const before=clone33(ensureCAD33()),next=clone33(before);require26(next.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');fn(next);validateCAD33(next);if(live!=='survey'||!cad33.live.undoSaved)cad33.undo.push({label,doc:before});if(cad33.undo.length>40)cad33.undo.shift();while(cad33.undo.length>1&&JSON.stringify(cad33.undo).length>16*1024*1024)cad33.undo.shift();cad33.redo=[];invalidateTargetCAD33(next);cad33.doc=next;if(live!=='survey'){cad33.live.groups={};cad33.live.undoSaved=false;}if(cad33.selected.size){const ids=new Set(next.entities.map(e=>e.id));cad33.selected=new Set([...cad33.selected].filter(id=>ids.has(id)));}refreshCAD33();scheduleSave();return true;}
-function before36_undoCAD33(redo=false){if(!canChange15())return;const from=redo?cad33.redo:cad33.undo,to=redo?cad33.undo:cad33.redo;if(!from.length)return;const step=from.pop();to.push({label:step.label,doc:clone33(cad33.doc)});invalidateTargetCAD33(step.doc);cad33.doc=step.doc;cad33.selected.clear();cad33.draft=[];cad33.live.groups={};cad33.live.undoSaved=false;refreshCAD33();scheduleSave();}
+function changeCAD33(label,fn,live=false){if(!live&&!canChange15()){if(cad33.ready)refreshCADUI33();return false;}const before=ensureCAD33(),next=clone33(before);require26(next.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');fn(next);validateCAD33(next);return commitCAD63(label,before,next,live);}
+function changeCADLayer63(label,name,updates){
+ if(!canChange15())return false;
+ const doc=ensureCAD33();
+ require26(doc.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');
+ return commitCAD63(label,doc,{...doc,layers:doc.layers.map(layer=>layer.name===name?{...layer,...updates}:layer)},false);
+}
+function commitCAD63(label,before,next,live,fit=false){if(live!=='survey'||!cad33.live.undoSaved)cad33.undo.push({label,doc:before});if(cad33.undo.length>40)cad33.undo.shift();while(cad33.undo.length>1&&(largeCAD61(next)||largeCAD61(before)||JSON.stringify(cad33.undo).length>16*1024*1024))cad33.undo.shift();cad33.redo=[];invalidateTargetCAD33(next);cad33.doc=next;if(live!=='survey'){cad33.live.groups={};cad33.live.undoSaved=false;}if(cad33.selected.size){const ids=new Set(next.entities.map(e=>e.id));cad33.selected=new Set([...cad33.selected].filter(id=>ids.has(id)));}refreshCAD33(fit);scheduleSave();return true;}
+function before36_undoCAD33(redo=false){if(!canChange15())return;const from=redo?cad33.redo:cad33.undo,to=redo?cad33.undo:cad33.redo;if(!from.length)return;const step=from.pop();to.push({label:step.label,doc:cad33.doc});invalidateTargetCAD33(step.doc);cad33.doc=step.doc;cad33.selected.clear();cad33.draft=[];cad33.live.groups={};cad33.live.undoSaved=false;refreshCAD33();scheduleSave();}
 function selectionCAD33(){const d=ensureCAD33(),list=[...cad33.selected].map(id=>d.entities.find(e=>e.id===id)).filter(Boolean);require26(list.length,'Selecciona al menos una entidad.');return list;}
 function editableCAD33(){const list=selectionCAD33();require26(list.every(e=>!layerCAD33(e.layer).locked),'Hay entidades en capas bloqueadas.');return list;}
 function addEntities33(items,label='Dibujar'){const layer=layerCAD33(ensureCAD33().activeLayer);require26(layer&&!layer.locked,'Desbloquea la capa activa.');return changeCAD33(label,d=>{d.entities.push(...items);});}
@@ -7007,18 +7015,25 @@ async function importCAD33(event){
   const report=$('cadImportReport33');
   report.textContent='Leyendo '+file.name+'…';
   try{
-   const parsed=await loadEditableCAD58(file,$('cadAssumeMeters33').checked,$('cadPartial33').checked);
+   const parsed=await loadEditableCAD58(file,$('cadAssumeMeters33').checked,$('cadPartial33').checked,count=>{
+    report.textContent='Recibiendo el DWG · '+count.toLocaleString('es-ES')+' entidades procesadas…';
+   });
    if(!parsed){report.textContent='Importación cancelada.';return false;}
    require26(project===workspace14.id&&!data15.closed&&base===cad33.doc,'El proyecto o el dibujo cambió durante la lectura. Repite la importación.');
-   require26(changeCAD33('Importar '+file.name,doc=>{
-    for(const layer of parsed.layers)if(!doc.layers.some(existing=>existing.name===layer.name))doc.layers.push(layer);
-    for(const entity of parsed.entities)doc.entities.push(entity);
-   },true),'No se incorporó el dibujo.');
+   const before=base||emptyCAD33(),doc={...before,layers:before.layers.slice(),entities:before.entities.concat(parsed.entities)};
+   require26(doc.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');
+   const names=new Set(doc.layers.map(layer=>layer.name));
+   for(const layer of parsed.layers)if(!names.has(layer.name)){doc.layers.push(layer);names.add(layer.name);}
+   if(largeCAD61(doc)){
+    report.textContent='Comprobando '+parsed.report.imported.toLocaleString('es-ES')+' entidades…';
+    await runCADSteps63(validateCADSteps63(doc));
+   }else validateCAD33(doc);
+   require26(project===workspace14.id&&!data15.closed&&base===cad33.doc,'El proyecto o el dibujo cambió durante la lectura. Repite la importación.');
+   commitCAD63('Importar '+file.name,before,doc,true,true);
    const omitted=Object.entries(parsed.report.skipped).map(([kind,count])=>kind+' ('+count+')').join(', ');
    const unit=parsed.report.unitScale&&parsed.report.unitScale!==1?' Coordenadas del modelo convertidas a metros.':'';
    report.textContent=(parsed.report.dwgVersion?'DWG '+parsed.report.dwgVersion+' · ':'')+
     parsed.report.imported+' entidades editables incorporadas.'+(parsed.report.layerSelection?' Solo capas elegidas.':'') +(omitted?' Omitidas: '+omitted+'.':'')+unit+(largeCAD61()?' Dibujo grande: vista simplificada en mapa y referencias básicas en Cad.':'');
-   fitCAD33();
   }catch(error){
    report.textContent=error.message;
    throw error;
@@ -7040,32 +7055,46 @@ function exportCAD33(){try{if(!needProject15())return;return downloadText('SiteS
 
 function messageCAD33(text){if($('cadMessage33'))$('cadMessage33').textContent=text;}
 function visibleCAD33(space=modifySpace56()){
- const doc=ensureCAD33(),layers=new Set(doc.layers.filter(l=>l.visible).map(l=>l.name)),scale=doc.annotationScale56||1;
  const out=[];
- for(const e of doc.entities){
-  if(!inSpace56(e,space)||!layers.has(e.layer))continue;
-  if(e.annotation56?.length&&!e.annotation56.includes(scale))continue;
-  if(e.type==='TEXT'&&e.annotation56?.length)out.push({...e,height:e.height*scale/(e.annotationBase56||1)});
-  else if(e.clip56)out.push(...clipDisplay56(e));
-  else out.push(e);
- }
+ for(const e of visibleStepsCAD63(ensureCAD33(),space))if(e)out.push(e);
  return out;
 }
 function surveyPointsCAD33(){return listaPuntos.filter(p=>finite(p.easting)&&finite(p.northing)&&finite(p.cotaNAP)&&(!p.huso||Number(p.huso)===currentZone())).map(p=>({x:Number(p.easting),y:Number(p.northing),z:Number(p.cotaNAP),id:String(p.id),code:p.codigo||'',datum:p.datum||null}));}
 function localCAD33(p){const o=cad33.runtime.origin;return new THREE.Vector3(p.x-o.x,p.z-o.z,-(p.y-o.y));}
 function worldCAD33(p){const o=cad33.runtime.origin;return {x:p.x+o.x,y:o.y-p.z,z:p.y+o.z};}
-function before38_disposeCAD33(){const r=cad33.runtime;if(!r)return;cancelAnimationFrame(r.frame);r.controls?.dispose();r.observer?.disconnect();r.scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose?.();}}});r.renderer.dispose();r.renderer.domElement.remove();cad33.runtime=null;}
-function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const all=[...visibleCAD33().flatMap(e=>e.points),...surveyPointsCAD33()],p=all[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r)return;r.moveEvent33=e;if(r.moveQueued)return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(r.moveEvent33);if(p){previewCAD33(p);$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;drawCAD33();viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;r.controls.update();r.renderer.render(r.scene,r.camera);r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
-function before36_resizeCAD33(){const r=cad33.runtime;if(!r)return;const host=$('cadCanvas33'),w=host.clientWidth,h=host.clientHeight;if(w<=0||h<=0)return;r.renderer.setSize(w,h);const aspect=w/h;if(r.camera.isOrthographicCamera){r.camera.left=-r.span*aspect/2;r.camera.right=r.span*aspect/2;r.camera.top=r.span/2;r.camera.bottom=-r.span/2;}else r.camera.aspect=aspect;r.camera.updateProjectionMatrix();}
-function before38_viewCAD33(view,fit=false){require26(['2d','3d'].includes(view),'Vista no válida.');cad33.view=view;const r=cad33.runtime;if(r){const old=r.controls,center=old.target.clone(),distance=Math.max(10,r.camera.position.distanceTo(center));old.dispose();const aspect=($('cadCanvas33').clientWidth||800)/($('cadCanvas33').clientHeight||500);r.camera=view==='2d'?new THREE.OrthographicCamera(-r.span*aspect/2,r.span*aspect/2,r.span/2,-r.span/2,.01,1e8):new THREE.PerspectiveCamera(45,aspect,.01,1e8);r.camera.up.set(0,view==='2d'?0:1,view==='2d'?-1:0);r.camera.position.copy(center).add(view==='2d'?new THREE.Vector3(0,distance,0):new THREE.Vector3(distance*.6,distance*.7,distance*.6));r.camera.lookAt(center);r.controls=new THREE.OrbitControls(r.camera,r.renderer.domElement);r.controls.enableDamping=true;r.controls.enableRotate=view==='3d';r.controls.touches.ONE=view==='2d'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;r.controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;r.controls.target.copy(center);r.controls.update();resizeCAD33();if(fit)fitCAD33();}for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===view));}
-function fitCAD33(){const r=cad33.runtime;if(!r)return;const p=[...visibleCAD33().flatMap(e=>['RAY','XLINE'].includes(e.type)?e.points:geometry33(e)),...($('cadSurveyVisible33').checked&&modifySpace56()==='model'?surveyPointsCAD33():[])];r.origin=p.length?xyz33(p[0]):{x:0,y:0,z:ensureCAD33().planeZ};drawCAD33();const box=new THREE.Box3();for(const v of p)box.expandByPoint(localCAD33(v));if(!p.length)box.setFromCenterAndSize(new THREE.Vector3(),new THREE.Vector3(10,10,10));const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(10,size.x,size.y,size.z)*1.4;r.span=span;r.controls.target.copy(center);r.camera.position.copy(center).add(cad33.view==='2d'?new THREE.Vector3(0,span*2,0):new THREE.Vector3(span,span,span));r.camera.lookAt(center);if(r.camera.isOrthographicCamera)r.camera.zoom=1;resizeCAD33();r.controls.update();}
-function before36_drawCAD33(){const r=cad33.runtime;if(!r)return;if(r.preview){r.scene.remove(r.preview);r.preview.geometry.dispose();r.preview.material.dispose();r.preview=null;}for(const o of [...r.group.children]){r.group.remove(o);o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();}let vertices=0;function add(e,reference=false){const points=geometry33(e),color=reference?'#53d1c5':cad33.selected.has(e.id)?'#ffffff':e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',material=points.length===1?new THREE.PointsMaterial({color,size:reference?7:10,sizeAttenuation:false}):(e.style56?.dash==='DISCONTINUA'?new THREE.LineDashedMaterial({color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color})),coords=points.map(localCAD33);if(e.closed&&points.length>2)coords.push(coords[0]);const geometry=new THREE.BufferGeometry().setFromPoints(coords);let object;if(e.type==='TEXT'){material.dispose();geometry.dispose();const canvas=document.createElement('canvas');canvas.width=512;canvas.height=48;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,512,48);ctx.fillStyle=color;ctx.font='30px sans-serif';ctx.textBaseline='middle';ctx.fillText(e.text.slice(0,150),3,24,506);const width=Math.max(e.height,e.height*Math.min(14,e.text.length*.65)),mat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,side:THREE.DoubleSide,depthTest:false});object=new THREE.Mesh(new THREE.PlaneGeometry(width,e.height),mat);const a=(e.rotation||0)*Math.PI/180,x=new THREE.Vector3(Math.cos(a),0,-Math.sin(a)),y=new THREE.Vector3(-Math.sin(a),0,-Math.cos(a)),z=new THREE.Vector3(0,1,0),basis=new THREE.Matrix4().makeBasis(x,y,z);object.quaternion.setFromRotationMatrix(basis);object.position.copy(localCAD33(e.points[0])).add(x.multiplyScalar(width/2)).add(y.multiplyScalar(e.height/2));}else if(e.type==='FACE'){material.dispose();const vals=[];for(const i of points.length===4?[0,1,2,0,2,3]:[0,1,2])vals.push(...coords[i].toArray());geometry.dispose();const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vals,3));object=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity:.3}));}else object=points.length===1?new THREE.Points(geometry,material):new THREE.Line(geometry,material);if(object.isLine&&material.isLineDashedMaterial)object.computeLineDistances();object.userData.cad33=e.id;object.userData.reference33=reference;r.group.add(object);vertices+=points.length;}
-vertices+=batchesCAD61(visibleCAD33(),r,add);if($('cadSurveyVisible33').checked&&modifySpace56()==='model'){const points=surveyPointsCAD33();if(points.length){const g=new THREE.BufferGeometry().setFromPoints(points.map(localCAD33)),object=new THREE.Points(g,new THREE.PointsMaterial({color:'#53d1c5',size:7,sizeAttenuation:false}));object.userData.referencePoints33=points.map(p=>'P:'+p.id);r.group.add(object);vertices+=points.length;}}if(cad33.draft.length){const points=cad33.draft.filter(p=>p.x!==undefined);if(points.length)add({id:'DRAFT',type:points.length===1?'POINT':'POLYLINE',layer:cad33.doc.activeLayer,points});}r.scene.updateMatrixWorld(true);$('cadEntityCount33').textContent=cad33.doc.entities.length+' entidades · '+vertices+' vértices representados'+(largeCAD61()?' · mapa con vista simplificada':'');}
+function before38_disposeCAD33(){const r=cad33.runtime;if(!r)return;if(r.build63)r.build63.cancelled=true;cancelAnimationFrame(r.frame);r.controls?.dispose();r.observer?.disconnect();r.scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose?.();}}});r.renderer.dispose();r.renderer.domElement.remove();cad33.runtime=null;}
+function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const p=firstVisibleCAD63()||surveyPointsCAD33()[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r)return;r.moveEvent33=e;if(r.moveQueued||largeCAD61()&&cad33.tool==='select')return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(r.moveEvent33);if(p){previewCAD33(p);r.renderDirty63=true;$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;const moved=r.controls.update();if(largeCAD61())updateTextCAD63(r,moved);if(!largeCAD61()||moved||r.renderDirty63){r.renderDirty63=false;r.renderer.render(r.scene,r.camera);}r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
+function before36_resizeCAD33(){const r=cad33.runtime;if(!r)return;const host=$('cadCanvas33'),w=host.clientWidth,h=host.clientHeight;if(w<=0||h<=0)return;r.renderDirty63=true;r.textDirty63=true;r.renderer.setSize(w,h);const aspect=w/h;if(r.camera.isOrthographicCamera){r.camera.left=-r.span*aspect/2;r.camera.right=r.span*aspect/2;r.camera.top=r.span/2;r.camera.bottom=-r.span/2;}else r.camera.aspect=aspect;r.camera.updateProjectionMatrix();}
+function before38_viewCAD33(view,fit=false){require26(['2d','3d'].includes(view),'Vista no válida.');cad33.view=view;const r=cad33.runtime;if(r){const old=r.controls,center=old.target.clone(),distance=Math.max(10,r.camera.position.distanceTo(center));old.dispose();const aspect=($('cadCanvas33').clientWidth||800)/($('cadCanvas33').clientHeight||500);r.camera=view==='2d'?new THREE.OrthographicCamera(-r.span*aspect/2,r.span*aspect/2,r.span/2,-r.span/2,.01,1e8):new THREE.PerspectiveCamera(45,aspect,.01,1e8);r.camera.up.set(0,view==='2d'?0:1,view==='2d'?-1:0);r.camera.position.copy(center).add(view==='2d'?new THREE.Vector3(0,distance,0):new THREE.Vector3(distance*.6,distance*.7,distance*.6));r.camera.lookAt(center);r.renderDirty63=true;r.textDirty63=true;r.controls=new THREE.OrbitControls(r.camera,r.renderer.domElement);r.controls.enableDamping=true;r.controls.enableRotate=view==='3d';r.controls.touches.ONE=view==='2d'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;r.controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;r.controls.target.copy(center);r.controls.update();resizeCAD33();if(fit)fitCAD33();}for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===view));}
+function fitCAD33(){
+ const r=cad33.runtime;if(!r)return;
+ if(largeCAD61()){drawCAD33(true);return;}
+ const box=new THREE.Box3(),entities=visibleCAD33();
+ const points=$('cadSurveyVisible33').checked&&modifySpace56()==='model'?surveyPointsCAD33():[];
+ r.origin=entities[0]?.points[0]||points[0]||{x:0,y:0,z:ensureCAD33().planeZ};
+ for(const e of entities)for(const p of ['RAY','XLINE'].includes(e.type)?e.points:geometry33(e))box.expandByPoint(localCAD33(p));
+ for(const p of points)box.expandByPoint(localCAD33(p));
+ frameCAD63(r,box);drawCAD33();
+}
+function frameCAD63(r,box){
+ if(box.isEmpty())box.setFromCenterAndSize(new THREE.Vector3(),new THREE.Vector3(10,10,10));
+ const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(10,size.x,size.y,size.z)*1.4;
+ r.span=span;r.controls.target.copy(center);
+ r.camera.position.copy(center).add(cad33.view==='2d'?new THREE.Vector3(0,span*2,0):new THREE.Vector3(span,span,span));
+ r.camera.lookAt(center);if(r.camera.isOrthographicCamera)r.camera.zoom=1;resizeCAD33();r.controls.update();
+}
+function before36_drawCAD33(fit=false){const r=cad33.runtime;if(!r)return;
+ if(largeCAD61()){drawLargeCAD63(r,fit||!!r.build63?.fitPending);return;}
+ if(r.build63)r.build63.cancelled=true;
+ r.build63=null;r.cached63=null;r.textEntries63=null;r.renderDirty63=true;if(r.preview){r.scene.remove(r.preview);r.preview.geometry.dispose();r.preview.material.dispose();r.preview=null;}for(const o of [...r.group.children]){r.group.remove(o);o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();}let vertices=0;function add(e,reference=false){vertices+=addObjectCAD63(r,e,reference).userData.vertexCount63;}
+
+vertices+=batchesCAD42(visibleCAD33(),r,add);if($('cadSurveyVisible33').checked&&modifySpace56()==='model'){const points=surveyPointsCAD33();if(points.length){const g=new THREE.BufferGeometry().setFromPoints(points.map(localCAD33)),object=new THREE.Points(g,new THREE.PointsMaterial({color:'#53d1c5',size:7,sizeAttenuation:false}));object.userData.referencePoints33=points.map(p=>'P:'+p.id);r.group.add(object);vertices+=points.length;}}if(cad33.draft.length){const points=cad33.draft.filter(p=>p.x!==undefined);if(points.length)add({id:'DRAFT',type:points.length===1?'POINT':'POLYLINE',layer:cad33.doc.activeLayer,points});}r.scene.updateMatrixWorld(true);$('cadEntityCount33').textContent=cad33.doc.entities.length+' entidades · '+vertices+' vértices representados'+(largeCAD61()?' · mapa con vista simplificada':'');}
+function addObjectCAD63(r,e,reference=false){const points=geometry33(e),color=reference?'#53d1c5':cad33.selected.has(e.id)?'#ffffff':e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',material=points.length===1?new THREE.PointsMaterial({color,size:reference?7:10,sizeAttenuation:false}):(e.style56?.dash==='DISCONTINUA'?new THREE.LineDashedMaterial({color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color})),coords=points.map(localCAD33);if(e.closed&&points.length>2)coords.push(coords[0]);const geometry=new THREE.BufferGeometry().setFromPoints(coords);let object;if(e.type==='TEXT'){material.dispose();geometry.dispose();const canvas=document.createElement('canvas');canvas.width=512;canvas.height=48;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,512,48);ctx.fillStyle=color;ctx.font='30px sans-serif';ctx.textBaseline='middle';ctx.fillText(e.text.slice(0,150),3,24,506);const width=Math.max(e.height,e.height*Math.min(14,e.text.length*.65)),mat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,side:THREE.DoubleSide,depthTest:false});object=new THREE.Mesh(new THREE.PlaneGeometry(width,e.height),mat);const a=(e.rotation||0)*Math.PI/180,x=new THREE.Vector3(Math.cos(a),0,-Math.sin(a)),y=new THREE.Vector3(-Math.sin(a),0,-Math.cos(a)),z=new THREE.Vector3(0,1,0),basis=new THREE.Matrix4().makeBasis(x,y,z);object.quaternion.setFromRotationMatrix(basis);object.position.copy(localCAD33(e.points[0])).add(x.multiplyScalar(width/2)).add(y.multiplyScalar(e.height/2));}else if(e.type==='FACE'){material.dispose();const vals=[];for(const i of points.length===4?[0,1,2,0,2,3]:[0,1,2])vals.push(...coords[i].toArray());geometry.dispose();const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vals,3));object=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity:.3}));}else object=points.length===1?new THREE.Points(geometry,material):new THREE.Line(geometry,material);if(object.isLine&&material.isLineDashedMaterial)object.computeLineDistances();object.userData.cad33=e.id;object.userData.vertexCount63=points.length;object.userData.reference33=reference;r.group.add(object);return object;}
 function screenCAD33(p){const r=cad33.runtime;r.camera.updateMatrixWorld(true);const v=localCAD33(p).project(r.camera),rect=r.renderer.domElement.getBoundingClientRect();return {x:(v.x+1)*rect.width/2,y:(1-v.y)*rect.height/2,z:v.z};}
 function before38_snapCAD33(screen,radius=18){if(!$('cadSnap33').checked||!cad33.runtime)return null;let best=null,distance=radius;const consider=(p,kind)=>{const q=screenCAD33(p),d=Math.hypot(q.x-screen.x,q.y-screen.y);if(q.z>=-1&&q.z<=1&&d<distance){best={...p,snap:kind};distance=d;}};if($('cadSurveyVisible33').checked)for(const p of surveyPointsCAD33())consider(p,'Punto '+p.id);for(const e of visibleCAD33()){for(const p of e.points)consider(p,e.type==='CIRCLE'||e.type==='ARC'?'Centro':'Extremo');if(e.type==='ARC'){consider(curvePoint33(e,e.start),'Extremo de arco');consider(curvePoint33(e,e.start+e.sweep),'Extremo de arco');}if(e.type==='CIRCLE')for(let i=0;i<4;i++)consider(curvePoint33(e,i*Math.PI/2),'Cuadrante');if($('cadMid33').checked&&['LINE','POLYLINE'].includes(e.type))for(let i=1;i<e.points.length;i++)consider(mul33(add33(e.points[i-1],e.points[i]),.5),'Punto medio');}if($('cadPerp33').checked&&cad33.draft.at(-1)?.x!==undefined){const a=cad33.draft.at(-1);for(const e of visibleCAD33().filter(e=>['LINE','POLYLINE'].includes(e.type)))for(let i=1;i<e.points.length+(e.closed?1:0);i++){const p=e.points[i-1],v=sub33(e.points[i%e.points.length],p),L=dot33(v,v);if(L<1e-12)continue;const t=dot33(sub33(a,p),v)/L;if(t>=0&&t<=1)consider(add33(p,mul33(v,t)),'Perpendicular 3D');}}if($('cadIntersect33').checked){const lines=visibleCAD33().filter(e=>e.type==='LINE');require26(lines.length<=300,'Desactiva referencia a intersección o reduce las líneas visibles (máximo 300).');for(let i=0;i<lines.length;i++)for(let j=i+1;j<lines.length;j++)try{consider(intersectionCAD33(lines[i],lines[j]).point,'Intersección 3D');}catch{}}return best;}
 function rayCAD33(e){const r=cad33.runtime;r.camera.updateMatrixWorld(true);const rect=r.renderer.domElement.getBoundingClientRect(),screen={x:e.clientX-rect.left,y:e.clientY-rect.top},ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(screen.x/rect.width*2-1,1-screen.y/rect.height*2),r.camera);const scale=r.camera.isOrthographicCamera?r.span/(r.camera.zoom||1):r.camera.position.distanceTo(r.controls.target);ray.params.Line.threshold=scale*12/Math.max(1,rect.height);ray.params.Points.threshold=scale*14/Math.max(1,rect.height);return {screen,ray};}
-function before38_cursorCAD33(e){if(!cad33.runtime)return null;const {screen,ray}=rayCAD33(e),snap=snapCAD33(screen);if(snap)return snap;const r=cad33.runtime,plane=new THREE.Plane(new THREE.Vector3(0,1,0),-(cad33.doc.planeZ-r.origin.z)),p=new THREE.Vector3();if(!ray.ray.intersectPlane(plane,p))return null;const q=worldCAD33(p),a=cad33.draft.at(-1);if(a&&$('cadOrtho33').checked){if(Math.abs(q.x-a.x)>=Math.abs(q.y-a.y))q.y=a.y;else q.x=a.x;}else if(a&&$('cadPolar33').checked){const step=numCAD33('cadPolarStep33');require26(step>0&&step<=180,'Incremento polar entre 0 y 180 grados.');const angle=Math.atan2(q.y-a.y,q.x-a.x),unit=step*Math.PI/180,snapped=Math.round(angle/unit)*unit,L=Math.hypot(q.x-a.x,q.y-a.y);q.x=a.x+L*Math.cos(snapped);q.y=a.y+L*Math.sin(snapped);}return q;}
-function pickCAD33(e){const {ray}=rayCAD33(e),hits=ray.intersectObjects(cad33.runtime.group.children,false);return hits.map(h=>h.object.userData.segmentIds61?.[Math.floor(h.index/2)]||h.object.userData.pointIds42?.[h.index]||h.object.userData.faceIds42?.[h.faceIndex]||h.object.userData.referencePoints33?.[h.index]||h.object.userData.cad33).find(id=>id&&id!=='DRAFT')||null;}
+function before38_cursorCAD33(e,skipSnap=false){if(!cad33.runtime)return null;const {screen,ray}=rayCAD33(e),snap=skipSnap?null:snapCAD33(screen);if(snap)return snap;const r=cad33.runtime,plane=new THREE.Plane(new THREE.Vector3(0,1,0),-(cad33.doc.planeZ-r.origin.z)),p=new THREE.Vector3();if(!ray.ray.intersectPlane(plane,p))return null;const q=worldCAD33(p),a=cad33.draft.at(-1);if(a&&$('cadOrtho33').checked){if(Math.abs(q.x-a.x)>=Math.abs(q.y-a.y))q.y=a.y;else q.x=a.x;}else if(a&&$('cadPolar33').checked){const step=numCAD33('cadPolarStep33');require26(step>0&&step<=180,'Incremento polar entre 0 y 180 grados.');const angle=Math.atan2(q.y-a.y,q.x-a.x),unit=step*Math.PI/180,snapped=Math.round(angle/unit)*unit,L=Math.hypot(q.x-a.x,q.y-a.y);q.x=a.x+L*Math.cos(snapped);q.y=a.y+L*Math.sin(snapped);}return q;}
+function pickCAD33(e){if(cad33.runtime.build63)return null;const {ray}=rayCAD33(e),hits=ray.intersectObjects(cad33.runtime.group.children,false);if(largeCAD61())rankCADHits63(hits,ray);return hits.map(h=>h.object.userData.segmentIds61?.[Math.floor(h.index/2)]||h.object.userData.pointIds42?.[h.index]||h.object.userData.faceIds42?.[h.faceIndex]||h.object.userData.referencePoints33?.[h.index]||h.object.userData.cad33).find(id=>id&&id!=='DRAFT')||null;}
 function before36_clickCAD33(e){if(cad33.tool==='window'){const q=rayCAD33(e).screen;cad33.draft.push(q);if(cad33.draft.length===2){const [a,b]=cad33.draft,minX=Math.min(a.x,b.x),maxX=Math.max(a.x,b.x),minY=Math.min(a.y,b.y),maxY=Math.max(a.y,b.y);cad33.selected.clear();for(const entity of visibleCAD33()){const p=geometry33(entity).map(screenCAD33);if(p.every(v=>v.x>=minX&&v.x<=maxX&&v.y>=minY&&v.y<=maxY&&v.z>=-1&&v.z<=1))cad33.selected.add(entity.id);}cad33.draft=[];toolCAD33('select');refreshCADUI33();drawCAD33();}return;}if(cad33.tool==='select'){const id=pickCAD33(e);if(id?.startsWith('P:')){messageCAD33('Punto medido '+id.slice(2)+' · referencia de solo lectura. Usa Puntos para incorporarlo al dibujo.');return;}if(!$('cadMulti33').checked&&!e.shiftKey)cad33.selected.clear();if(id){if(cad33.selected.has(id))cad33.selected.delete(id);else cad33.selected.add(id);}if(id)for(const panel of document.querySelectorAll('.cad-panel33'))panel.hidden=panel.id!=='cadEditPanel33';refreshCADUI33();drawCAD33();return;}const p=cursorCAD33(e);require26(p,'No se puede proyectar el cursor: cambia de vista o introduce XYZ.');inputPointCAD33(p);}
 
 function previewCAD33(p){const r=cad33.runtime,a=cad33.draft.at(-1);if(!r||!a||!Number.isFinite(a.x)||['select','window','measure'].includes(cad33.tool))return;const g=new THREE.BufferGeometry().setFromPoints([localCAD33(a),localCAD33(p)]);if(!r.preview){r.preview=new THREE.Line(g,new THREE.LineBasicMaterial({color:'#ffffff',transparent:true,opacity:.6}));r.scene.add(r.preview);}else{r.preview.geometry.dispose();r.preview.geometry=g;}}
@@ -7079,7 +7108,7 @@ function inputPointCAD33(point){const p=xyz33(point);require26(cad33.doc.zone===
 function finishCAD33(closed=false){return guardCAD33(()=>{require26(cad33.tool==='polyline'&&cad33.draft.length>=(closed?3:2),'Añade al menos '+(closed?3:2)+' vértices a una polilínea.');require26(addEntities33([newEntity33('POLYLINE',cad33.draft,{closed})]),'No se guardó la polilínea.');cad33.draft=[];toolCAD33('select');});}
 function inputXYZCAD33(){return guardCAD33(()=>inputPointCAD33({x:numCAD33('cadX33'),y:numCAD33('cadY33'),z:numCAD33('cadZ33')}));}
 function panelCAD33(id){for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=p.id!==id||!p.hidden;refreshCADUI33();}
-function refreshCADUI33(){if(!cad33.ready)return;const d=ensureCAD33(),sel=$('cadActiveLayer33'),old=sel.value;sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;const host=$('cadLayers33');host.replaceChildren();for(const l of d.layers){const row=document.createElement('div');row.className='cad-layer33';const visibility=document.createElement('input');visibility.type='checkbox';visibility.checked=l.visible;visibility.setAttribute('aria-label','Mostrar capa '+l.name);visibility.onchange=()=>guardCAD33(()=>changeCAD33('Visibilidad de capa',doc=>doc.layers.find(a=>a.name===l.name).visible=visibility.checked));const lock=document.createElement('button');lock.className='btn';lock.textContent=l.locked?'🔒':'🔓';lock.setAttribute('aria-label','Bloquear/desbloquear '+l.name);lock.onclick=()=>guardCAD33(()=>changeCAD33('Bloqueo de capa',doc=>doc.layers.find(a=>a.name===l.name).locked=!l.locked));const color=document.createElement('input');color.type='color';color.value=l.color;color.setAttribute('aria-label','Color '+l.name);color.onchange=()=>guardCAD33(()=>changeCAD33('Color de capa',doc=>doc.layers.find(a=>a.name===l.name).color=color.value));const name=document.createElement('span');name.textContent=l.name;row.append(visibility,color,name,lock);host.append(row);}const selected=d.entities.filter(e=>cad33.selected.has(e.id));$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.map(e=>e.type+' / '+e.layer).join(', '):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+m.spatial.toFixed(4)+' m · horizontal '+m.horizontal.toFixed(4)+(m.horizontalApprox?' aprox.':'')+' m · área en planta '+m.area.toFixed(4)+' m² · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
+function refreshCADUI33(){if(!cad33.ready)return;const d=ensureCAD33(),sel=$('cadActiveLayer33'),old=sel.value;sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;const host=$('cadLayers33');host.replaceChildren();for(const l of d.layers){const row=document.createElement('div');row.className='cad-layer33';const visibility=document.createElement('input');visibility.type='checkbox';visibility.checked=l.visible;visibility.setAttribute('aria-label','Mostrar capa '+l.name);visibility.onchange=()=>guardCAD33(()=>changeCADLayer63('Visibilidad de capa',l.name,{visible:visibility.checked}));const lock=document.createElement('button');lock.className='btn';lock.textContent=l.locked?'🔒':'🔓';lock.setAttribute('aria-label','Bloquear/desbloquear '+l.name);lock.onclick=()=>guardCAD33(()=>changeCADLayer63('Bloqueo de capa',l.name,{locked:!l.locked}));const color=document.createElement('input');color.type='color';color.value=l.color;color.setAttribute('aria-label','Color '+l.name);color.onchange=()=>guardCAD33(()=>changeCADLayer63('Color de capa',l.name,{color:color.value}));const name=document.createElement('span');name.textContent=l.name;row.append(visibility,color,name,lock);host.append(row);}const selected=d.entities.filter(e=>cad33.selected.has(e.id));$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.slice(0,8).map(e=>e.type+' / '+e.layer).join(', ')+(selected.length>8?'…':''):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+m.spatial.toFixed(4)+' m · horizontal '+m.horizontal.toFixed(4)+(m.horizontalApprox?' aprox.':'')+' m · área en planta '+m.area.toFixed(4)+' m² · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
 function loadVertexCAD33(){const e=ensureCAD33().entities.find(e=>cad33.selected.has(e.id)),p=e?.points[Number($('cadVertex33').value)];if(!p)return;for(const k of ['x','y','z'])$('cadV'+k.toUpperCase()+'33').value=String(p[k]);}
 function editVertexCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(list.length===1,'Selecciona una entidad.');const i=Number($('cadVertex33').value),p={x:numCAD33('cadVX33'),y:numCAD33('cadVY33'),z:numCAD33('cadVZ33')};changeCAD33('Editar vértice XYZ',d=>{const e=d.entities.find(e=>e.id===list[0].id);require26(i>=0&&i<e.points.length,'Vértice inexistente.');e.points[i]=p;delete e.refs;});});}
 function deleteCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(confirm('¿Borrar '+list.length+' entidades del dibujo? Los puntos medidos no se modifican. Puedes deshacer.'),'Borrado cancelado.');const ids=new Set(list.map(e=>e.id));changeCAD33('Borrar',d=>d.entities=d.entities.filter(e=>!ids.has(e.id)));});}
@@ -7095,9 +7124,9 @@ function startEntityCAD33(e,first=false){require26(cad33.doc?.zone===currentZone
 function toggleLiveCAD33(){if(!needProject15())return;cad33.live={enabled:$('cadLive33').checked,groups:{},undoSaved:false};$('cadLiveStatus33').textContent=cad33.live.enabled?'Dibujo automático activo: una polilínea por código, con XYZ medidas. Los puntos sin Z no se incorporan.':'Dibujo automático detenido.';}
 function liveSurveyCAD33(p){if(!cad33.live.enabled||data15.closed||cad33.restoring)return;if(!finite(p.cotaNAP)||!finite(p.easting)||!finite(p.northing)){if(cad33.ready)$('cadLiveStatus33').textContent='Punto '+p.id+' sin XYZ completas: no se ha dibujado. Se conserva en el levantamiento.';return;}const code=String(p.codigo||'SIN_CODIGO'),name=('LEV_'+code.replace(/[<>/\\":;?*|=\r\n]/g,'_')).slice(0,80),point={x:Number(p.easting),y:Number(p.northing),z:Number(p.cotaNAP)},id=cad33.live.groups[code];changeCAD33('Levantamiento dibujado',d=>{if(!d.layers.some(l=>l.name===name))d.layers.push({name,color:'#57c6b6',visible:true,locked:false});require26(!d.layers.find(l=>l.name===name).locked,'La capa de levantamiento está bloqueada.');let e=d.entities.find(e=>e.id===id);if(e&&(e.source33?.datum||null)!==(p.datum||null)){e=null;if(cad33.ready)$('cadLiveStatus33').textContent='Referencia vertical cambiada: se inicia un tramo nuevo para '+code+'. Revisa las referencias del dibujo.';}if(!e){e=newEntity33('POINT',[point],{layer:name,refs:[String(p.id)],source33:{kind:'survey-live',code,datum:p.datum||null}});d.entities.push(e);cad33.live.groups[code]=e.id;}else{require26(!e.refs?.includes(String(p.id)),'Ese punto ya está dibujado.');e.points.push(point);e.refs.push(String(p.id));e.type='POLYLINE';}},'survey');cad33.live.undoSaved=true;}
 function newLiveLineCAD33(close=false){return guardCAD33(()=>{if(close){const ids=new Set(Object.values(cad33.live.groups));changeCAD33('Cerrar líneas del levantamiento',d=>{for(const e of d.entities)if(ids.has(e.id)&&e.type==='POLYLINE'&&e.points.length>=3)e.closed=true;},'survey');}cad33.live.groups={};cad33.live.undoSaved=false;messageCAD33('Nuevo tramo de dibujo para los siguientes puntos medidos.');if(cad33.ready)$('cadLiveStatus33').textContent='Nuevo tramo: los siguientes puntos iniciarán líneas independientes por código.';});}
-function before36_restoreCAD33(doc){disposeCAD33();validateCAD33(doc);cad33.doc=doc?clone33(doc):null;cad33.undo=[];cad33.redo=[];cad33.selected.clear();cad33.draft=[];cad33.pointOrder=[];cad33.live={enabled:false,groups:{}};if(cad33.ready){$('cadLive33').checked=false;refreshMapCAD33();if(ui58.section==='tabCAD33')openCAD33();}}
+function before36_restoreCAD33(doc){disposeCAD33();const ready=unpackedCAD63.delete(doc);if(!ready)validateCAD33(doc);cad33.doc=doc?(ready?doc:clone33(doc)):null;cad33.undo=[];cad33.redo=[];cad33.selected.clear();cad33.draft=[];cad33.pointOrder=[];cad33.live={enabled:false,groups:{}};if(cad33.ready){$('cadLive33').checked=false;refreshMapCAD33();if(ui58.section==='tabCAD33')openCAD33();}}
 function before39_refreshMapCAD33(){if(!cad33.layer)return;cad33.layer.clearLayers();if(!cad33.doc||cad33.doc.zone!==currentZone())return;for(const e of mapOverviewCAD61(visibleCAD33('model'))){const p=geometry33(e),ll=p.map(v=>utmALatLng(v.x,v.y,cad33.doc.zone)),color=e.style56?.color||layerCAD33(e.layer).color;let layer;if(p.length===1)layer=L.circleMarker(ll[0],{radius:4,color});else if(e.closed||e.type==='FACE')layer=L.polygon(ll,{color,weight:2,fillOpacity:.05});else layer=L.polyline(ll,{color,weight:2});const div=document.createElement('div'),title=document.createElement('p'),open=document.createElement('button');title.textContent='CAD · '+e.type+' · '+e.layer+' · Z '+p[0].z.toFixed(3);open.className='btn';open.textContent='Editar en CAD';open.onclick=()=>{switchTab('tabCAD33');cad33.selected=new Set([e.id]);refreshCADUI33();drawCAD33();};div.append(title,open);if(e.type==='TEXT')layer.bindTooltip(e.text,{permanent:true,direction:'right'});layer.bindPopup(div).addTo(cad33.layer);}}
-function refreshCAD33(){if(cad33.restoring)return;if(cad33.ready&&ui58.section==='tabCAD33'){refreshCADUI33();drawCAD33();}if(cad33.layer)refreshMapCAD33();}
+function refreshCAD33(fit=false){if(cad33.restoring)return;if(cad33.ready&&ui58.section==='tabCAD33'){refreshCADUI33();if(fit)fitCAD33();else drawCAD33();}if(cad33.layer)refreshMapCAD33();}
 function initCAD33(){UI_VIEWS58.tabCAD33=['Cad','Dibujo y edición XYZ del proyecto.','Encuadrar'];cad33.ready=true;cad33.layer=L.featureGroup().addTo(map);const observer=new ResizeObserver(()=>{if(ui58.section==='tabCAD33')resizeCAD33();});observer.observe($('cadCanvas33'));document.addEventListener('keydown',e=>{if(ui58.section!=='tabCAD33'||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='Escape'){toolCAD33('select');for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=true;}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undoCAD33(e.shiftKey);}else if(e.key==='Delete')deleteCAD33();else if(e.key==='Enter'&&cad33.tool==='polyline')finishCAD33();});}
 
 function shapeCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(list.length===1&&['ARC','CIRCLE','TEXT'].includes(list[0].type),'Selecciona un arco, círculo o texto.');changeCAD33('Parámetros de entidad',d=>{const e=d.entities.find(e=>e.id===list[0].id);if(e.type==='TEXT'){e.text=$('cadEditText33').value;e.height=numCAD33('cadEditHeight33');e.rotation=numCAD33('cadEditRotation33');}else{e.radius=numCAD33('cadRadius33');if(e.type==='ARC'){e.start=numCAD33('cadArcStart33')*Math.PI/180;e.sweep=numCAD33('cadArcSweep33')*Math.PI/180;}}});});}
@@ -7112,7 +7141,7 @@ function labelPointsCAD33(){return guardCAD33(()=>{const height=numCAD33('cadLab
 function stakeGeometryCAD33(e){let points;if(['CIRCLE','ARC'].includes(e.type)){require26(Math.abs(unit33(e.normal).z)>1e-8,'Curva vertical: crea puntos XYZ sobre ella para replantearlos individualmente.');const span=e.type==='ARC'?e.sweep:2*Math.PI,from=e.type==='ARC'?e.start:0,n=Math.max(2,Math.ceil(span*Math.sqrt(e.radius/.008)));require26(n<=50000,'Curva demasiado extensa para discretizar con cuerda de 1 mm; divídela en tramos.');points=[];for(let i=0;i<=n;i++)points.push(curvePoint33(e,from+span*i/n));}else points=e.points;for(let i=1;i<points.length;i++)require26(Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y)>1e-9,'El trazado contiene segmentos verticales o nulos en planta. Replantea sus vértices como puntos XYZ.');return points;}
 
 async function before42_loadAsset14(a){if($('importKind14').value!=='importCAD33')return before33_loadAsset14(a);try{const file=await assetFile14(a);return importCAD33({target:{files:[file],value:'',workspace14SkipOriginal:true}});}catch(e){notify(error14(e),true);}}
-function before41_projectSnapshot(){return {...before33_projectSnapshot(),cad33:cad33.doc?clone33(cad33.doc):null};}
+function before41_projectSnapshot(){return {...before33_projectSnapshot(),cad33:cad33.doc?{...cad33.doc}:null};}
 function validateProject(data){validateCAD33(data?.cad33);return before33_validateProject(data);}
 function before34_applyProject(data){cad33.restoring=true;try{const result=before33_applyProject(data);restoreCAD33(data?.cad33||null);return result;}finally{cad33.restoring=false;}}
 function before34_emptyHome15(){const result=before33_emptyHome15();restoreCAD33(null);return result;}
@@ -7120,7 +7149,7 @@ function switchTab(tab,element){if(cad33.ready&&tab!=='tabCAD33')disposeCAD33();
 function storeSurvey59(samples,cfg){const point=before33_storeSurvey59(samples,cfg);try{liveSurveyCAD33(point);}catch(e){cad33.live.enabled=false;if(cad33.ready){$('cadLive33').checked=false;$('cadLiveStatus33').textContent='El punto se ha medido y guardado. Dibujo detenido: '+e.message;}}return point;}
 function before39_refreshLayers24(){const result=before33_refreshLayers24();if(cad33.ready&&cad33.doc){const label=document.createElement('label');label.className='layer-row';const input=document.createElement('input');input.type='checkbox';input.checked=map.hasLayer(cad33.layer);input.onchange=()=>input.checked?cad33.layer.addTo(map):cad33.layer.remove();label.append(input,document.createTextNode('Dibujo CAD del proyecto'));$('topoLayers24').append(label);}return result;}
 function stakeItem25(item,first=false){if(!item.cadEntity33)return before33_stakeItem25(item,first);return guardCAD33(()=>{const e=cad33.doc?.entities.find(e=>e.id===item.cadEntity33);require26(e,'La entidad CAD ha cambiado; vuelve a seleccionarla.');startEntityCAD33(e,first);clearSelection25();});}
-function hitItems25(latlng,tolerance=26){const hits=before33_hitItems25(latlng,tolerance);if(!cad33.doc?.entities.length||!cad33.layer||!map.hasLayer(cad33.layer))return hits;if(cad33.doc?.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)){const screen=map.latLngToContainerPoint(latlng);for(const e of visibleCAD33()){const vertices=geometry33(e),distance=screenGeometry25(vertices,screen,!!e.closed);if(distance<=tolerance)hits.push({kind:'vector',name:'CAD · '+e.type+' · '+e.layer,vertices,closed:!!e.closed,cadEntity33:e.id,distance});}}return hits.sort((a,b)=>a.distance-b.distance).slice(0,12);}
+function hitItems25(latlng,tolerance=26){const hits=before33_hitItems25(latlng,tolerance);if(!cad33.doc?.entities.length||!cad33.layer||!map.hasLayer(cad33.layer))return hits;if(cad33.doc?.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)){const screen=map.latLngToContainerPoint(latlng);for(const e of mapOverviewCAD61(visibleCAD33('model'))){const vertices=geometry33(e),distance=screenGeometry25(vertices,screen,!!e.closed);if(distance<=tolerance)hits.push({kind:'vector',name:'CAD · '+e.type+' · '+e.layer,vertices,closed:!!e.closed,cadEntity33:e.id,distance});}}return hits.sort((a,b)=>a.distance-b.distance).slice(0,12);}
 
 /* Opt-in design copies. Source road remains analytical; CAD contains XYZ polylines. */
 const roadCAD34={ready:false,depth:0,project:null,busy:false,timer:null,force:false};
@@ -7399,7 +7428,7 @@ function initCAD36(){
  document.addEventListener('fullscreenchange',()=>{resizeCAD33();queueLabels36();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui58.section==='tabCAD33'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){closeCommand36();document.body.classList.remove('cad-expanded36');}});
 }
-function before38_drawCAD33(){const result=before36_drawCAD33();if(uiCAD36.ready)rebuildLabels36();return result;}
+function before38_drawCAD33(fit){const result=before36_drawCAD33(fit);if(uiCAD36.ready&&!largeCAD61())rebuildLabels36();return result;}
 function resizeCAD33(){const result=before36_resizeCAD33();if(uiCAD36.ready)queueLabels36();return result;}
 function before38_restoreCAD33(data){const result=before36_restoreCAD33(data);if(uiCAD36.ready){restoreDisplay36();rebuildLabels36();closeCommand36();}return result;}
 function before38_clickCAD33(event){const tool=cad33.tool,result=before36_clickCAD33(event);if(uiCAD36.ready&&tool==='select'&&cad33.selected.size){const key=[...uiCAD36.commands].find(([k,c])=>c.code==='editVertexCAD33()')?.[0];if(key)openCommand36(key);}return result;}
@@ -7550,7 +7579,7 @@ function snapCAD33(screen,radius=18){
  }
  candidates.sort((a,b)=>(a.priority38-b.priority38)||(a.distance38-b.distance38));const best=candidates[0]||null;showSnap38(best);return best;
 }
-function bindRuntime38(){const r=cad33.runtime;if(!r){$('cadAxes38').hidden=true;hideSnap38();return;}if(cad38.controls!==r.controls){cad38.controls=r.controls;r.controls.addEventListener('change',()=>{updateAxes38();hideSnap38();});}if(cad38.boundCanvas!==r.renderer.domElement){cad38.boundCanvas=r.renderer.domElement;const el=r.renderer.domElement;el.addEventListener('pointerdown',e=>{if(cad33.tool!=='select'&&cad33.tool!=='window'&&e.button===0){try{const p=cursorCAD33(e);if(p?.snap)showSnap38(p); }catch{hideSnap38();}}});el.addEventListener('pointerleave',()=>{if(!r.down)hideSnap38();});el.addEventListener('pointercancel',hideSnap38);}updateAxes38();}
+function bindRuntime38(){const r=cad33.runtime;if(!r){$('cadAxes38').hidden=true;hideSnap38();return;}if(cad38.controls!==r.controls){cad38.controls=r.controls;r.controls.addEventListener('change',()=>{r.renderDirty63=true;updateAxes38();hideSnap38();});}if(cad38.boundCanvas!==r.renderer.domElement){cad38.boundCanvas=r.renderer.domElement;const el=r.renderer.domElement;el.addEventListener('pointerdown',e=>{if(cad33.tool!=='select'&&cad33.tool!=='window'&&e.button===0){try{const p=cursorCAD33(e);if(p?.snap)showSnap38(p); }catch{hideSnap38();}}});el.addEventListener('pointerleave',()=>{if(!r.down)hideSnap38();});el.addEventListener('pointercancel',hideSnap38);}updateAxes38();}
 function updateAxes38(){const r=cad33.runtime,el=$('cadAxes38');if(!el)return;el.hidden=!r||cad33.view!=='3d';if(el.hidden)return;r.camera.updateMatrixWorld(true);const inverse=r.camera.quaternion.clone().invert(),defs=[['X',new THREE.Vector3(1,0,0),'#f07875'],['Y',new THREE.Vector3(0,0,-1),'#6bd6a0'],['Z',new THREE.Vector3(0,1,0),'#82b4ff']];const axes=defs.map(([label,v,color])=>({label,v:v.applyQuaternion(inverse),color})).sort((a,b)=>a.v.z-b.v.z);let svg='<circle cx="44" cy="44" r="26" fill="#10212b" fill-opacity=".35" stroke="#a6b9c4" stroke-opacity=".15"/>';
  for(const a of axes){const x=44+a.v.x*28,y=44-a.v.y*28,back=a.v.z<-.1;svg+='<path d="M44 44 '+x.toFixed(2)+' '+y.toFixed(2)+'" stroke="'+a.color+'" stroke-width="1.8" opacity="'+(back?'.5':'.95')+'"'+(back?' stroke-dasharray="2 2"':'')+'/><circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="8" fill="#152733" fill-opacity=".88"/><text x="'+x.toFixed(2)+'" y="'+(y+3.5).toFixed(2)+'" text-anchor="middle" fill="'+a.color+'" font-size="10" font-family="sans-serif" font-weight="600">'+a.label+'</text>';}
  svg+='<circle cx="44" cy="44" r="2.3" fill="#c8d9df"/>' ;el.innerHTML='<svg viewBox="0 0 88 88" aria-hidden="true">'+svg+'</svg>';}
@@ -7565,9 +7594,9 @@ function clickCAD33(e){if(cad33.tool==='window'){const q=rayCAD33(e).screen;if(!
  const r=cad33.runtime,draw=!['select','window'].includes(cad33.tool);let snap=null;if(draw&&r){try{snap=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);}catch{}}
  const result=before38_clickCAD33(e);if(snap)showSnap38(snap,true);return result;
 }
-function cursorCAD33(e){if(!cad33.runtime)return null;if(cad33.tool==='window'){windowPreview38(rayCAD33(e).screen);return null;}if(cad33.runtime.down?.moved){hideSnap38();return null;}const p=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);return p||before38_cursorCAD33(e);}
+function cursorCAD33(e){if(!cad33.runtime)return null;if(cad33.tool==='window'){windowPreview38(rayCAD33(e).screen);return null;}if(cad33.runtime.down?.moved){hideSnap38();return null;}const p=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);return p||before38_cursorCAD33(e,true);}
 function toolCAD33(tool){cad38.windowStart=null;if($('cadWindow38'))$('cadWindow38').hidden=true;hideSnap38();return before38_toolCAD33(tool);}
-function drawCAD33(){cad38.index=null;cad38.projected=null;const result=before38_drawCAD33();if(cad38.ready)bindRuntime38();return result;}
+function drawCAD33(fit){cad38.index=null;cad38.projected=null;const result=before38_drawCAD33(fit===true);if(cad38.ready)bindRuntime38();return result;}
 function openCAD33(){const result=before38_openCAD33();if(cad38.ready){bindRuntime38();applySplit38();}return result;}
 function viewCAD33(view,fit=false){hideSnap38();const result=before38_viewCAD33(view,fit);if(cad38.ready)bindRuntime38();return result;}
 function disposeCAD33(){hideSnap38();cad38.index=null;cad38.boundCanvas=null;cad38.controls=null;if($('cadAxes38'))$('cadAxes38').hidden=true;return before38_disposeCAD33();}
@@ -7643,7 +7672,13 @@ function fitFocus39(){const v=stakeView39.value;if(!v)return;if(topo24.view==='t
 function abrirVisor3D(){const r=before39_abrirVisor3D();if(renderer3D&&scene3D){stakeView39.sceneKey=null;stakeView39.sceneGeometry=null;stakeView39.cameraKey='';syncCAD3D39();renderFocus39();tickView39();}return r;}
 function before24_cerrarVisor3D(){if(stakeView39.ready){stakeView39.sceneKey=null;stakeView39.sceneGeometry=null;stakeView39.cadDoc=null;stakeView39.cameraKey='';$('stakeAxes39').hidden=true;$('stakeFocusMarker39').hidden=true;}return before39_before24_cerrarVisor3D();}
 function updatePK3D28(force=false){const r=before39_updatePK3D28(force);tickView39();return r;}
-function refreshMapCAD33(){const r=before39_refreshMapCAD33();if(stakeView39.ready){syncCAD3D39();queueFocus39();}return r;}
+let mapCADPending63=0;
+function refreshMapCAD33(){
+ const update=()=>{before39_refreshMapCAD33();if(stakeView39.ready){syncCAD3D39();queueFocus39();}};
+ clearTimeout(mapCADPending63);
+ if(largeCAD61()){mapCADPending63=setTimeout(update,250);return;}
+ update();
+}
 function refreshLayers24(){const r=before39_refreshLayers24();const row=[...$('topoLayers24').querySelectorAll('label')].find(e=>e.textContent.includes('Dibujo CAD del proyecto'));if(row){const input=row.querySelector('input');input.id='cadProjectVisible39';input.addEventListener('change',()=>{syncCAD3D39();queueFocus39();});}return r;}
 function renderTargetInfo18(){const r=before39_renderTargetInfo18();if(stakeView39.ready){const id=$('stakeList59').value;if(id!==stakeView39.lastPoint){stakeView39.lastPoint=id;chooseFocus39('point');}else queueFocus39();}return r;}
 function updateVertex56(){const r=before39_updateVertex56();if(stakeView39.ready&&stake56.source)chooseFocus39('axis');return r;}
@@ -8183,7 +8218,7 @@ backCAD33=function(){if(!draw52.active||!draw52.capturing)return before52_backCA
 const before52_clickCAD33=clickCAD33;
 clickCAD33=function(e){const tool=cad33.tool,picked=tool==='select'?pickCAD33(e):null,group=picked&&cad33.doc?.entities.find(v=>v.id===picked)?.source33?.draw52?.group,was=group&&cad33.doc.entities.some(v=>v.source33?.draw52?.group===group&&cad33.selected.has(v.id)),multi=e.shiftKey||$('cadMulti33').checked,result=before52_clickCAD33(e);if(['select','window'].includes(tool)&&$('drawGroupSelect52')?.checked){if(group&&was&&multi){for(const v of cad33.doc.entities)if(v.source33?.draw52?.group===group)cad33.selected.delete(v.id);}else{const groups=new Set(cad33.doc?.entities.filter(v=>cad33.selected.has(v.id)).map(v=>v.source33?.draw52?.group).filter(Boolean));for(const v of cad33.doc?.entities||[])if(groups.has(v.source33?.draw52?.group))cad33.selected.add(v.id);}refreshCADUI33();drawCAD33();}return result;};
 const before52_drawCAD33=drawCAD33;
-drawCAD33=function(){const r=before52_drawCAD33(),runtime=cad33.runtime;if(runtime&&cad33.doc){const byId=new Map(cad33.doc.entities.map(e=>[e.id,e]));const masks=new Set(cad33.doc.entities.filter(e=>e.source33?.draw52?.kind==='wipeout').map(e=>e.id));for(const object of runtime.group.children){const entity=byId.get(object.userData.cad33);if(entity?.source33?.draw52?.kind?.startsWith('solid')&&object.material){object.material.opacity=1;object.material.transparent=false;}if(masks.has(object.userData.cad33)){object.renderOrder=1000;object.material.opacity=1;object.material.transparent=false;object.material.depthTest=false;object.material.depthWrite=false;object.material.color.copy(runtime.scene.background);}}}return r;};
+drawCAD33=function(fit){const r=before52_drawCAD33(fit),runtime=cad33.runtime;if(runtime&&cad33.doc&&!largeCAD61()){const byId=new Map(cad33.doc.entities.map(e=>[e.id,e]));const masks=new Set(cad33.doc.entities.filter(e=>e.source33?.draw52?.kind==='wipeout').map(e=>e.id));for(const object of runtime.group.children){const entity=byId.get(object.userData.cad33);if(entity?.source33?.draw52?.kind?.startsWith('solid')&&object.material){object.material.opacity=1;object.material.transparent=false;}if(masks.has(object.userData.cad33)){object.renderOrder=1000;object.material.opacity=1;object.material.transparent=false;object.material.depthTest=false;object.material.depthWrite=false;object.material.color.copy(runtime.scene.background);}}}return r;};
 function rayDXF52(text){const lines=String(text).split(/\r?\n/),pairs=[];for(let i=0;i<lines.length-1;i+=2)pairs.push([lines[i].trim(),lines[i+1]]);const types=new Map(),used=new Set(pairs.filter(p=>p[0]==='5').map(p=>p[1].trim().toUpperCase()));let serial=0xe000000,section='';for(let i=0;i<pairs.length;i++){if(pairs[i][0]==='0'&&pairs[i][1].trim()==='SECTION')section=pairs[i+1]?.[1].trim()||'';if(section!=='ENTITIES'||pairs[i][0]!=='0'||!['RAY','XLINE'].includes(pairs[i][1].trim()))continue;let end=i+1;while(end<pairs.length&&pairs[end][0]!=='0')end++;const record=pairs.slice(i,end),type=pairs[i][1].trim(),get=(code,def=0)=>Number(record.find(p=>p[0]===String(code))?.[1]??def),anchor=xyz33({x:get(10),y:get(20),z:get(30)}),direction=xyz33({x:get(11),y:get(21),z:get(31)});require26(len33(direction)>1e-12,'DXF con dirección de recta nula.');let handle=record.find(p=>p[0]==='5');if(!handle){while(used.has(serial.toString(16).toUpperCase()))serial++;handle=['5',(serial++).toString(16).toUpperCase()];record.splice(1,0,handle);used.add(handle[1]);}types.set(handle[1].trim().toUpperCase(),type);record[0][1]='LINE';for(const [code,key]of [[11,'x'],[21,'y'],[31,'z']]){let p=record.find(p=>p[0]===String(code));if(p)p[1]=String(anchor[key]+direction[key]);else record.push([String(code),String(anchor[key]+direction[key])]);}pairs.splice(i,end-i,...record);i+=record.length-1;}return {text:pairs.map(p=>p.join('\n')).join('\n')+'\n',types};}
 const before52_parseCADDXF33=parseCADDXF33;
 parseCADDXF33=function(text,...args){const normalized=rayDXF52(text),result=before52_parseCADDXF33(normalized.text,...args);for(const e of result.entities){const type=normalized.types.get(String(e.source33?.handle||'').toUpperCase());if(type){e.type=type;e.source33.type=type;}}return result;};
@@ -10077,7 +10112,7 @@ function confirmPartialDWG62(report){
   document.body.append(dialog);dialog.showModal();
  });
 }
-function runDWGReader60(bytes,options){
+function runDWGReader60(bytes,options,onProgress){
  return new Promise((resolve,reject)=>{
   const script=`
    const read=${readNativeDWG60.toString()};
@@ -10091,12 +10126,15 @@ function runDWGReader60(bytes,options){
       return LibreDwg.createByWasmInstance(module);
      });
      const result=convert(source.database,source.stats,data.options);
-     self.postMessage({result});
+     if(result.choose){self.postMessage({result});return;}
+     source=null;
+     for(let i=0;i<result.entities.length;i+=2048)self.postMessage({entities:result.entities.slice(i,i+2048)});
+     self.postMessage({result:{layers:result.layers,report:result.report}});
     }catch(error){self.postMessage({error:error.message});}
    };
   `;
   const url=URL.createObjectURL(new Blob([script],{type:'text/javascript'}));
-  let worker,timer,finished=false;
+  let worker,timer,finished=false;const entities=[];
   const finish=(error,result)=>{
    if(finished)return;
    finished=true;clearTimeout(timer);worker?.terminate();URL.revokeObjectURL(url);
@@ -10108,7 +10146,12 @@ function runDWGReader60(bytes,options){
    worker.onmessage=async ({data})=>{
     clearTimeout(timer);
     if(data.error){finish(Error(data.error));return;}
-    if(!data.result?.choose){finish(null,data.result);return;}
+    if(data.entities){
+     for(const entity of data.entities)entities.push(entity);
+     if(entities.length%16384===0)onProgress?.(entities.length);
+     arm();return;
+    }
+    if(!data.result?.choose){finish(null,{...data.result,entities});return;}
     try{
      const layers=await selectDWGLayers60(data.result.choose,options);
      if(!layers){finish(null,null);return;}
@@ -10121,7 +10164,7 @@ function runDWGReader60(bytes,options){
   }catch(error){finish(error);}
  });
 }
-async function loadEditableCAD58(file,assumeMeters,allowPartial){
+async function loadEditableCAD58(file,assumeMeters,allowPartial,onProgress){
  if(!/\.dwg$/i.test(file.name))return parseCADDXF33(await readFile(file),file.name,assumeMeters,allowPartial);
  require26(file.size>=6&&file.size<=DWG_MAX58,'DWG: el archivo de origen debe ocupar hasta 32 MiB.');
  require26(typeof Worker==='function'&&typeof WebAssembly==='object','Este navegador no admite el lector DWG.');
@@ -10130,7 +10173,7 @@ async function loadEditableCAD58(file,assumeMeters,allowPartial){
  const current=cad33.doc?.entities||[];
  const entityLimit=CAD_CAPACITY61.entities-current.length,vertexLimit=CAD_CAPACITY61.vertices-current.reduce((total,e)=>total+e.points.length,0);
  require26(entityLimit>0&&vertexLimit>0,'El proyecto alcanzó su capacidad editable. Abre el DWG en un proyecto nuevo.');
- const parsed=await runDWGReader60(bytes,{name:file.name,assumeMeters,entityLimit,vertexLimit,prefix:idCAD33()+'-'});
+ const parsed=await runDWGReader60(bytes,{name:file.name,assumeMeters,entityLimit,vertexLimit,prefix:idCAD33()+'-'},onProgress);
  if(!parsed)return null;
  require26(parsed.entities.length,'No hay geometría editable en las capas elegidas.');
  if(!allowPartial&&Object.keys(parsed.report.skipped).length&&!(await confirmPartialDWG62(parsed.report)))return null;
@@ -10274,60 +10317,316 @@ function initDWGExport59(){
 }
 
 
-function largeCAD61(){return (cad33.doc?.entities.length||0)>75000;}
+const sizeCAD63=new WeakMap();
+function largeCAD61(doc=cad33.doc){
+ const entities=doc?.entities;if(!Array.isArray(entities))return false;
+ if(entities.length>75000)return true;
+ let large=sizeCAD63.get(entities);
+ if(large===undefined){
+  let count=0;large=false;
+  for(const e of entities){count+=e?.points?.length||0;if(count>250000){large=true;break;}}
+  sizeCAD63.set(entities,large);
+ }
+ return large;
+}
 function mapOverviewCAD61(entities){
  if(!largeCAD61())return entities;
- const step=Math.max(1,Math.ceil(entities.length/4000));
+ const step=Math.max(1,Math.ceil(entities.length/1000));
  return entities.filter((e,i)=>i%step===0);
 }
-function batchesCAD61(entities,r,add){
- if(!largeCAD61())return batchesCAD42(entities,r,add);
- const groups=new Map(),rest=[],types=new Set(['LINE','POLYLINE','ARC','CIRCLE','ELLIPSE','SPLINE','RAY','XLINE']);
- const layerColors=new Map(cad33.doc.layers.map(l=>[l.name,l.color]));
- let vertices=0;
- const flush=group=>{
-  if(!group.ids.length)return;
-  const geometry=new THREE.BufferGeometry();
-  geometry.setAttribute('position',new THREE.Float32BufferAttribute(group.xyz,3));
-  const material=group.dashed?new THREE.LineDashedMaterial({color:group.color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color:group.color});
-  const object=new THREE.LineSegments(geometry,material);
-  object.userData.segmentIds61=group.ids;
-  object.userData.vertexIndices61=Uint32Array.from(group.indices);
-  if(group.dashed)object.computeLineDistances();
-  r.group.add(object);group.xyz=[];group.ids=[];group.indices=[];
- };
- for(const e of entities){
-  if(!types.has(e.type)||e.source33?.draw52?.kind==='wipeout'){rest.push(e);continue;}
-  const color=cad33.selected.has(e.id)?'#ffffff':e.style56?.color||layerColors.get(e.layer)||'#e4ad50';
-  const dashed=e.style56?.dash==='DISCONTINUA',key=e.layer+'|'+color+'|'+dashed;
-  if(!groups.has(key))groups.set(key,{color,dashed,xyz:[],ids:[],indices:[]});
-  const group=groups.get(key),p=geometry33(e);
-  vertices+=p.length;
-  for(let i=0;i<p.length-1+(e.closed&&p.length>2?1:0);i++){
-   const a=p[i],b=p[(i+1)%p.length],o=r.origin;
-   group.xyz.push(a.x-o.x,a.z-o.z,o.y-a.y,b.x-o.x,b.z-o.z,o.y-b.y);
-   group.ids.push(e.id);group.indices.push(i);
-   if(group.ids.length>=24000)flush(group);
+const packedCAD63=new WeakMap(),unpackedCAD63=new WeakSet();
+async function packProjectCAD63(data){
+ const doc=data.cad33;
+ if(!largeCAD61(doc))return JSON.parse(JSON.stringify(data));
+ const {entities,...metadata}=doc,copy=JSON.parse(JSON.stringify({...data,cad33:metadata}));
+ let pending=packedCAD63.get(entities);
+ if(!pending){
+  const blocks=[];
+  function* encode(){
+   let parts=['['];
+   for(let offset=0;offset<entities.length;offset+=256){
+    if(parts.length>1)parts.push(',');
+    parts.push(JSON.stringify(entities.slice(offset,offset+256)).slice(1,-1));
+    if(parts.length>=32||offset+256>=entities.length){
+     parts.push(']');blocks.push(new Blob(parts,{type:'application/json'}));parts=['['];
+    }
+    yield true;
+   }
   }
+  pending=runCADSteps63(encode()).then(()=>blocks);
+  packedCAD63.set(entities,pending);
+  pending.catch(()=>packedCAD63.delete(entities));
  }
- for(const group of groups.values())flush(group);
- return vertices+batchesCAD42(rest,r,add);
+ return {...copy,cadBlocks63:await pending};
+}
+async function unpackProjectCAD63(data){
+ if(!data.cadBlocks63)return data;
+ const {cadBlocks63,...project}=data,entities=[];
+ for(const block of cadBlocks63)for(const entity of JSON.parse(await block.text()))entities.push(entity);
+ project.cad33={...project.cad33,entities};
+ return project;
+}
+async function restoreProjectCAD63(data){
+ const project=await unpackProjectCAD63(data),doc=project.cad33;
+ if(!largeCAD61(doc))return validateProject(project);
+ await runCADSteps63(validateCADSteps63(doc));
+ const validated=before33_validateProject(project);
+ unpackedCAD63.add(doc);return validated;
+}
+
+function runCADSteps63(steps,job={}){
+ return new Promise((resolve,reject)=>{
+  const tick=()=>{
+   if(job.cancelled){steps.return();resolve(false);return;}
+   const deadline=performance.now()+8;
+   try{
+    let count=0;
+    while(true){
+     const step=steps.next();
+     if(step.done){resolve(true);return;}
+     if(++count===64||step.value===true){count=0;if(performance.now()>=deadline)break;}
+    }
+    setTimeout(tick,0);
+   }catch(error){reject(error);}
+  };
+  setTimeout(tick,0);
+ });
+}
+function firstVisibleCAD63(){
+ for(const e of visibleStepsCAD63(ensureCAD33(),modifySpace56()))if(e)return e.points[0];
+}
+function* visibleStepsCAD63(doc,space){
+ const layers=new Set(doc.layers.filter(l=>l.visible).map(l=>l.name)),scale=doc.annotationScale56||1;
+ for(const e of doc.entities){
+  if(!inSpace56(e,space)||!layers.has(e.layer)||(e.annotation56?.length&&!e.annotation56.includes(scale))){yield null;continue;}
+  if(e.type==='TEXT'&&e.annotation56?.length)yield {...e,height:e.height*scale/(e.annotationBase56||1)};
+  else if(e.clip56)yield* clipDisplay56(e);
+  else yield e;
+ }
+}
+function removeCADObject63(group,object){
+ group.remove(object);object.geometry?.dispose();object.material?.map?.dispose();object.material?.dispose();
+}
+function addCADTile63(r,batch){
+ if(!batch.ids.length)return;
+ const {type,color,dashed,solid,xyz,ids,indices}=batch,geometry=new THREE.BufferGeometry();
+ geometry.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));
+ geometry.computeBoundingBox();geometry.computeBoundingSphere();
+ let object;
+ if(type==='POINT'){
+  object=new THREE.Points(geometry,new THREE.PointsMaterial({color,size:10,sizeAttenuation:false}));
+  object.userData.pointIds42=ids;
+ }else if(type==='FACE'){
+  object=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:!solid,opacity:solid?1:.3}));
+  object.userData.faceIds42=ids;
+ }else{
+  const material=dashed?new THREE.LineDashedMaterial({color,dashSize:r.span/75,gapSize:r.span/120}):new THREE.LineBasicMaterial({color});
+  object=new THREE.LineSegments(geometry,material);
+  object.userData.segmentIds61=ids;object.userData.vertexIndices61=Uint32Array.from(indices);
+  if(dashed)object.computeLineDistances();
+ }
+ const original=object.raycast,box=new THREE.Box3();
+ object.raycast=function(ray,intersections){
+  const tolerance=type==='POINT'?ray.params.Points.threshold:type==='FACE'?0:ray.params.Line.threshold;
+  if(!ray.ray.intersectsBox(box.copy(geometry.boundingBox).expandByScalar(tolerance)))return;
+  if(type==='LINE')raycastCADTile63(this,ray,tolerance,intersections);
+  else original.call(this,ray,intersections);
+ };
+ r.group.add(object);
+ const now=performance.now();
+ if(now>=(r.nextPaint63||0)){r.nextPaint63=now+220;r.renderDirty63=true;}
+ batch.xyz=[];batch.ids=[];batch.indices=[];
+}
+function raycastCADTile63(object,ray,tolerance,intersections){
+ const positions=object.geometry.attributes.position.array,origin=ray.ray.origin,direction=ray.ray.direction;
+ const topDown=Math.abs(direction.y)>.999999999&&Math.abs(direction.x)+Math.abs(direction.z)<1e-8;
+ const a=new THREE.Vector3(),b=new THREE.Vector3(),onRay=new THREE.Vector3(),onLine=new THREE.Vector3(),hits=[];
+ const threshold=tolerance*tolerance;
+ for(let i=0;i<positions.length;i+=6){
+  let gap,distance;
+  if(topDown){
+   const x=positions[i],z=positions[i+2],x1=positions[i+3],z1=positions[i+5];
+   if(origin.x<Math.min(x,x1)-tolerance||origin.x>Math.max(x,x1)+tolerance||
+      origin.z<Math.min(z,z1)-tolerance||origin.z>Math.max(z,z1)+tolerance)continue;
+   const dx=x1-x,dz=z1-z,length=dx*dx+dz*dz;
+   const t=length?Math.max(0,Math.min(1,((origin.x-x)*dx+(origin.z-z)*dz)/length)):0;
+   onLine.set(x+t*dx,positions[i+1]+t*(positions[i+4]-positions[i+1]),z+t*dz);
+   gap=(onLine.x-origin.x)**2+(onLine.z-origin.z)**2;
+   distance=(onLine.y-origin.y)*direction.y;
+  }else{
+   a.fromArray(positions,i);b.fromArray(positions,i+3);
+   gap=ray.ray.distanceSqToSegment(a,b,onRay,onLine);
+   distance=origin.distanceTo(onRay);
+  }
+  if(gap>threshold||(hits.length===4&&gap>=hits[3].gap)||distance<ray.near||distance>ray.far)continue;
+  const hit={gap,distance,point:onLine.clone(),index:i/3,object};
+  let j=hits.length;while(j>0&&hits[j-1].gap>gap)j--;
+  hits.splice(j,0,hit);if(hits.length>4)hits.pop();
+ }
+ for(const hit of hits)intersections.push(hit);
+}
+function* buildCADTiles63(r,entities,selection,tileSize){
+ const groups=new Map(),layerColors=new Map(cad33.doc.layers.map(l=>[l.name,l.color]));
+ const origin=r.origin,segmentTypes=new Set(['LINE','POLYLINE','CIRCLE','ARC','ELLIPSE','SPLINE','RAY','XLINE']);
+ const batchFor=(p,type,color,dashed,solid)=>{
+  const key=Math.floor((p.x-origin.x)/tileSize)+','+Math.floor((p.y-origin.y)/tileSize)+'|'+type+'|'+color+'|'+dashed+'|'+solid;
+  let batch=groups.get(key);
+  if(!batch){batch={type,color,dashed,solid,xyz:[],ids:[],indices:[]};groups.set(key,batch);}
+  return batch;
+ };
+ const append=(batch,p)=>batch.xyz.push(p.x-origin.x,p.z-origin.z,origin.y-p.y);
+ let vertices=0;
+ for(const e of entities){
+  if(!e){yield;continue;}
+  if(e.type==='TEXT'){r.textEntries63.push(e);vertices++;yield;continue;}
+  if(e.source33?.draw52?.kind==='wipeout'){
+   const object=addObjectCAD63(r,e);
+   object.renderOrder=1000;object.material.transparent=false;object.material.depthTest=false;
+   object.material.depthWrite=false;object.material.color.copy(r.scene.background);
+   vertices+=object.userData.vertexCount63;yield;continue;
+  }
+  const color=selection.has(e.id)?'#ffffff':e.style56?.color||layerColors.get(e.layer)||'#e4ad50';
+  const points=geometry33(e);vertices+=points.length;
+  if(segmentTypes.has(e.type)){
+   const dashed=e.style56?.dash==='DISCONTINUA';
+   for(let i=0;i<points.length-1+(e.closed&&points.length>2?1:0);i++){
+    const a=points[i],b=points[(i+1)%points.length],batch=batchFor(a,'LINE',color,dashed,false);
+    append(batch,a);append(batch,b);batch.ids.push(e.id);batch.indices.push(i);
+    if(batch.ids.length>=2048)addCADTile63(r,batch);
+    yield;
+   }
+  }else{
+   const solid=!!e.source33?.draw52?.kind?.startsWith('solid'),batch=batchFor(points[0],e.type,color,false,solid);
+   if(e.type==='POINT'){append(batch,points[0]);batch.ids.push(e.id);}
+   else for(const face of points.length===4?[[0,1,2],[0,2,3]]:[[0,1,2]]){
+    for(const i of face)append(batch,points[i]);batch.ids.push(e.id);
+   }
+   if(batch.ids.length>=2048)addCADTile63(r,batch);
+  }
+  yield;
+ }
+ for(const batch of groups.values()){addCADTile63(r,batch);yield;}
+ r.vertices63=vertices;
+}
+function updateTextCAD63(r,moved){
+ if(moved)r.textDirty63=true;
+ if(!r.textEntries63?.length||r.build63)return;
+ const now=performance.now();
+ if(r.textDirty63&&now>=(r.textNext63||0)){
+  r.textNext63=now+100;r.textDirty63=false;
+  const camera=r.camera,rect=r.renderer.domElement.getBoundingClientRect(),point=new THREE.Vector3(),world=new THREE.Vector3();
+  const size=rect.height*camera.projectionMatrix.elements[5]*.5,list=[];
+  // Update once for this viewport. Existing labels remain in GPU memory while visible.
+  camera.updateMatrixWorld(true);
+  for(const e of r.textEntries63){
+   const p=e.points[0],o=r.origin;point.set(p.x-o.x,p.z-o.z,o.y-p.y);
+   const factor=camera.isOrthographicCamera?size:size/Math.max(.01,-world.copy(point).applyMatrix4(camera.matrixWorldInverse).z);
+   const height=e.height*factor;
+   if(height<3&&!cad33.selected.has(e.id))continue;
+   point.project(camera);
+   const width=Math.min(2,Math.max(0,height*14*2/Math.max(1,rect.width)));
+   if(Math.abs(point.x)>1.05+width||Math.abs(point.y)>1.1+height*2/Math.max(1,rect.height)||Math.abs(point.z)>1)continue;
+   list.push({e,height:cad33.selected.has(e.id)?Infinity:height});
+  }
+  list.sort((a,b)=>b.height-a.height);
+  const visible=new Map(list.slice(0,240).map(({e})=>[e.id,e]));
+  for(const [id,object] of r.textObjects63)if(!visible.has(id)||object.userData.selected63!==cad33.selected.has(id)){
+   removeCADObject63(r.group,object);r.textObjects63.delete(id);r.renderDirty63=true;
+  }
+  r.textQueue63=[...visible.values()].filter(e=>!r.textObjects63.has(e.id));
+ }
+ if(!r.textQueue63?.length)return;
+ const deadline=performance.now()+4;
+ do{
+  const e=r.textQueue63.shift(),object=addObjectCAD63(r,e);
+  object.userData.selected63=cad33.selected.has(e.id);object.updateMatrixWorld(true);r.textObjects63.set(e.id,object);
+ }while(r.textQueue63.length&&performance.now()<deadline);
+ r.renderDirty63=true;
+}
+function redrawCADExtras63(r,byId,selection,survey){
+ for(const object of r.extras63||[])removeCADObject63(r.group,object);
+ const objects=[];
+ if(survey.length){
+  const g=new THREE.BufferGeometry().setFromPoints(survey.map(localCAD33)),object=new THREE.Points(g,new THREE.PointsMaterial({color:'#53d1c5',size:7,sizeAttenuation:false}));
+  object.userData.referencePoints33=survey.map(p=>'P:'+p.id);r.group.add(object);objects.push(object);
+ }
+ for(const id of selection){
+  const entry=byId.get(id);if(!entry)continue;
+  for(const e of Array.isArray(entry)?entry:[entry])if(e.type!=='TEXT'&&e.source33?.draw52?.kind!=='wipeout')objects.push(addObjectCAD63(r,e));
+ }
+ const points=cad33.draft.filter(p=>p.x!==undefined);
+ if(points.length)objects.push(addObjectCAD63(r,{id:'DRAFT',type:points.length===1?'POINT':'POLYLINE',layer:cad33.doc.activeLayer,points}));
+ for(const object of objects)object.updateMatrixWorld(true);
+ r.extras63=objects;r.renderDirty63=true;r.textDirty63=true;
+}
+function drawLargeCAD63(r,fit){
+ if(r.build63)r.build63.cancelled=true;
+ const doc=cad33.doc,space=modifySpace56(),showSurvey=$('cadSurveyVisible33').checked&&space==='model';
+ const selection=cad33.selected,survey=showSurvey?surveyPointsCAD33():[];
+ if(r.preview){r.scene.remove(r.preview);r.preview.geometry.dispose();r.preview.material.dispose();r.preview=null;}
+ if(r.cached63?.doc===doc&&r.cached63.space===space&&!r.cached63.baked&&selection.size<=200){
+  r.build63=null;
+  if(fit){const box=r.cached63.box.clone();for(const p of survey)box.expandByPoint(localCAD33(p));frameCAD63(r,box);}
+  redrawCADExtras63(r,r.cached63.byId,selection,survey);return;
+ }
+ const job={fitPending:fit,cancelled:false};
+ r.build63=job;r.cached63=null;r.textEntries63=[];r.textObjects63=new Map();r.textQueue63=[];
+ for(const object of [...r.group.children])removeCADObject63(r.group,object);
+ r.extras63=[];r.renderDirty63=true;
+ $('cadEntityCount33').textContent=doc.entities.length.toLocaleString('es-ES')+' entidades · preparando vista…';
+ const prepare=function*(){
+  const entities=[],box=new THREE.Box3(),point=new THREE.Vector3(),byId=new Map(),cadBox=new THREE.Box3();
+  let origin=fit?null:r.origin;
+  for(const e of visibleStepsCAD63(doc,space)){
+   if(e){
+    origin??=e.points[0];entities.push(e);
+    const entry=byId.get(e.id);
+    if(Array.isArray(entry))entry.push(e);else byId.set(e.id,entry?[entry,e]:e);
+    const points=['RAY','XLINE'].includes(e.type)?e.points:geometry33(e);
+    for(const p of points){box.expandByPoint(point.set(p.x-origin.x,p.z-origin.z,origin.y-p.y));yield;}
+   }
+   yield;
+  }
+  origin??=survey[0]||{x:0,y:0,z:doc.planeZ};r.origin=origin;cadBox.copy(box);
+  for(const p of survey){box.expandByPoint(point.set(p.x-origin.x,p.z-origin.z,origin.y-p.y));yield;}
+  const size=box.getSize(new THREE.Vector3()),tileSize=Math.max(10,Math.max(size.x,size.z)/32);
+  if(fit){frameCAD63(r,box);job.fitPending=false;}
+  const baked=selection.size>200;
+  yield* buildCADTiles63(r,entities,baked?selection:new Set(),tileSize);
+  redrawCADExtras63(r,byId,baked?new Set():cad33.selected,survey);
+  r.cached63={doc,space,baked,byId,box:cadBox};
+  r.pickDocument61=doc;r.byId61=byId;
+ };
+ runCADSteps63(prepare(),job).then(done=>{
+  if(!done||cad33.runtime!==r||r.build63!==job)return;
+  r.build63=null;r.renderDirty63=true;r.textDirty63=true;
+  r.group.updateMatrixWorld(true);
+  $('cadEntityCount33').textContent=doc.entities.length.toLocaleString('es-ES')+' entidades · '+r.vertices63.toLocaleString('es-ES')+' vértices en vista · textos según el zoom';
+  if(uiCAD36.ready)rebuildLabels36();
+ }).catch(error=>{
+  if(r.build63!==job||cad33.runtime!==r)return;
+  r.build63=null;r.cached63=null;
+  $('cadEntityCount33').textContent='No se pudo preparar la vista. '+error.message;
+ });
+}
+
+function rankCADHits63(hits,ray){
+ for(const hit of hits)hit.gap??=hit.distanceToRay===undefined?ray.ray.distanceSqToPoint(hit.point):hit.distanceToRay**2;
+ return hits.sort((a,b)=>a.gap-b.gap||a.distance-b.distance);
 }
 // Large drawings use the actual cursor hit for endpoint snaps.
 function snapLargeCAD61(screen,radius){
  const r=cad33.runtime;
- if(!r||!$('cadSnap33').checked){hideSnap38();return null;}
+ if(!r||r.build63||!$('cadSnap33').checked){hideSnap38();return null;}
  const rect=r.renderer.domElement.getBoundingClientRect();
  const {ray}=rayCAD33({clientX:rect.left+screen.x,clientY:rect.top+screen.y});
- if(r.pickDocument61!==cad33.doc){
-  r.pickDocument61=cad33.doc;r.byId61=new Map(cad33.doc.entities.map(e=>[e.id,e]));
- }
- const hits=ray.intersectObjects(r.group.children,false).slice(0,12);
+ if(r.pickDocument61!==cad33.doc||!r.byId61)return null;
+ const hits=rankCADHits63(ray.intersectObjects(r.group.children,false),ray).slice(0,12);
  let best=null,distance=radius;
  for(const hit of hits){
   const object=hit.object,user=object.userData,segment=user.segmentIds61?.[Math.floor(hit.index/2)];
   const id=segment||user.pointIds42?.[hit.index]||user.faceIds42?.[hit.faceIndex]||user.cad33;
-  const e=r.byId61.get(id);
+  const entry=r.byId61.get(id),e=Array.isArray(entry)?entry[0]:entry;
   if(!e)continue;
   const index=user.vertexIndices61?.[Math.floor(hit.index/2)];
   let candidates=segment&&e.clip56?[]:segment?[e.points[index],e.points[(index+1)%e.points.length]].filter(Boolean):e.points.slice(0,4);

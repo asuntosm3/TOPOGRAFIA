@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.63.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.64.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.63 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.64 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3562,7 +3562,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.63 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.64 RC1</span>
       </div>
     </div>
 
@@ -4604,7 +4604,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.63.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.64.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -7031,9 +7031,10 @@ async function importCAD33(event){
    require26(project===workspace14.id&&!data15.closed&&base===cad33.doc,'El proyecto o el dibujo cambió durante la lectura. Repite la importación.');
    commitCAD63('Importar '+file.name,before,doc,true,true);
    const omitted=Object.entries(parsed.report.skipped).map(([kind,count])=>kind+' ('+count+')').join(', ');
+   const warnings=parsed.report.readWarnings?.length?' Avisos de lectura: '+parsed.report.readWarnings.join('; ')+'. El dibujo importado puede estar incompleto.':'';
    const unit=parsed.report.unitScale&&parsed.report.unitScale!==1?' Coordenadas del modelo convertidas a metros.':'';
    report.textContent=(parsed.report.dwgVersion?'DWG '+parsed.report.dwgVersion+' · ':'')+
-    parsed.report.imported+' entidades editables incorporadas.'+(parsed.report.layerSelection?' Solo capas elegidas.':'') +(omitted?' Omitidas: '+omitted+'.':'')+unit+(largeCAD61()?' Dibujo grande: vista simplificada en mapa y referencias básicas en Cad.':'');
+    parsed.report.imported+' entidades editables incorporadas.'+(parsed.report.layerSelection?' Solo capas elegidas.':'') +(omitted?' Omitidas: '+omitted+'.':'')+warnings+unit+(largeCAD61()?' Dibujo grande: vista simplificada en mapa y referencias básicas en Cad.':'');
   }catch(error){
    report.textContent=error.message;
    throw error;
@@ -10057,8 +10058,23 @@ async function readNativeDWG60(bytes,urls,load){
   reader.FS.writeFile(path,new Uint8Array(bytes));
   const result=reader.dwg_read_file(path);
   data=result.data;
-  if(result.error||!data)throw Error('No se pudo leer el DWG (código '+result.error+').');
-  return reader.convertEx(data);
+  const error=result.error;
+  // LibreDWG returns a bitmask. Bit 128 and higher indicate a critical error.
+  if(!data||!Number.isInteger(error)||error<0||error>=128){
+   const reason=error&8192?'El lector se quedó sin memoria.':error&2048?'El lector no reconoce el archivo como un DWG válido.':'El lector no pudo recuperar el dibujo.';
+   throw Error('No se pudo leer el DWG (código '+error+'). '+reason);
+  }
+  const decoded=reader.convertEx(data);
+  const warnings=[
+   [1,'Comprobación de integridad del archivo'],
+   [2,'Funciones del formato que el lector no admite'],
+   [4,'Clases de objetos que el lector no admite'],
+   [8,'Tipos de objeto inválidos'],
+   [16,'Referencias de objetos inválidas'],
+   [32,'Datos extendidos de objetos inválidos'],
+   [64,'Valores fuera del intervalo que admite el lector']
+  ].filter(([flag])=>error&flag).map(([,message])=>message);
+  return {...decoded,readWarnings:warnings};
  }finally{
   if(reader.FS.analyzePath(path).exists)reader.FS.unlink(path);
   if(data)reader.dwg_free(data);
@@ -10098,9 +10114,15 @@ function confirmPartialDWG62(report){
   dialog.className='dwg-layers60';
   dialog.setAttribute('aria-label','Importar el DWG parcialmente');
   dialog.innerHTML='<form method="dialog"><h3>Importar el DWG parcialmente</h3><p data-summary></p><ul class="dwg-layer-list60"></ul><footer><button class="btn" value="cancel" autofocus>Cancelar</button> <button class="btn btn-primary" value="import">Importar compatibles</button></footer></form>';
-  dialog.querySelector('[data-summary]').textContent='Puedes añadir '+report.imported.toLocaleString('es-ES')+' entidades editables. La importación omitirá estas entidades del DWG:';
+  const warnings=report.readWarnings||[],omitted=Object.entries(report.skipped);
+  dialog.querySelector('[data-summary]').textContent='Puedes añadir '+report.imported.toLocaleString('es-ES')+' entidades editables.'+
+   (warnings.length?' El lector encontró problemas y el dibujo puede quedar incompleto.':'')+
+   (omitted.length?' Se indican las entidades que se omitirán.':'');
   const list=dialog.querySelector('ul');
-  for(const [kind,count] of Object.entries(report.skipped)){
+  for(const warning of warnings){
+   const item=document.createElement('li');item.textContent='Aviso de lectura · '+warning;list.append(item);
+  }
+  for(const [kind,count] of omitted){
    const item=document.createElement('li');
    item.textContent=(kind==='HATCH'?'Sombreados (HATCH)':kind)+' · '+count.toLocaleString('es-ES');
    list.append(item);
@@ -10127,6 +10149,7 @@ function runDWGReader60(bytes,options,onProgress){
      });
      const result=convert(source.database,source.stats,data.options);
      if(result.choose){self.postMessage({result});return;}
+     result.report.readWarnings=source.readWarnings;
      source=null;
      for(let i=0;i<result.entities.length;i+=2048)self.postMessage({entities:result.entities.slice(i,i+2048)});
      self.postMessage({result:{layers:result.layers,report:result.report}});
@@ -10176,7 +10199,7 @@ async function loadEditableCAD58(file,assumeMeters,allowPartial,onProgress){
  const parsed=await runDWGReader60(bytes,{name:file.name,assumeMeters,entityLimit,vertexLimit,prefix:idCAD33()+'-'},onProgress);
  if(!parsed)return null;
  require26(parsed.entities.length,'No hay geometría editable en las capas elegidas.');
- if(!allowPartial&&Object.keys(parsed.report.skipped).length&&!(await confirmPartialDWG62(parsed.report)))return null;
+ if(!allowPartial&&(parsed.report.readWarnings?.length||Object.keys(parsed.report.skipped).length)&&!(await confirmPartialDWG62(parsed.report)))return null;
  parsed.report.dwgVersion=version;
  return parsed;
 }

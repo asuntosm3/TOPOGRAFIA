@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.53.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.54.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.53 RC1 · 2026-11-17</title>
+  <title>SiteSCad · v5.54 RC1 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3512,6 +3512,7 @@ body.cad-full33 .workspace-head58{display:none}
 #cadDynamic53{position:absolute;left:12px;top:105px;width:min(290px,calc(100% - 88px));z-index:12;padding:9px;border-radius:10px;border:1px solid #73cdb9;background:var(--bg-surface-solid);box-shadow:0 6px 20px #0005;pointer-events:auto}
 #cadDynamic53>strong{display:block;font-size:.73rem;line-height:1.3;margin-bottom:5px}#cadDynamicPrompt53{font-size:.75rem;line-height:1.35;margin-bottom:6px;color:var(--text-main)}#cadDynamicInput53{font:12px var(--font-mono,monospace);width:100%;min-height:33px;resize:vertical;box-sizing:border-box;padding:6px}#cadDynamicValue53{font:10px var(--font-mono,monospace);color:var(--accent-primary);margin:5px 0;overflow-wrap:anywhere}#cadDynamicCount53{font-size:.6rem;color:var(--text-muted)}
 .dynamic-actions53{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.dynamic-actions53 .btn{font-size:.64rem;min-height:31px;padding:5px 7px}.dynamic-actions53 #cadDynamicAccept53{border-color:var(--accent-primary)}#cadDynamicError53{font-size:.7rem;color:var(--accent-danger,#e49789);margin-top:6px;line-height:1.3}
+#cadFloating53.expanded53.guided54{z-index:13}
 #cadDynamic53[hidden],#cadFloating53[hidden],#cadFloatingBody53[hidden]{display:none!important}
 @media(max-width:600px){#cadFloating53{top:51px;left:6px;max-width:calc(100% - 78px)}#cadFloating53.expanded53{width:320px;max-height:calc(100% - 60px)}#cadFloatingBody53{padding:7px}#cadDynamic53{left:7px;top:90px;width:min(250px,calc(100% - 80px));padding:7px}.dynamic-actions53 .btn{min-height:32px;font-size:.6rem}#cadDynamicPrompt53{font-size:.69rem}#cadDynamic53>strong{font-size:.67rem}}
 @media(orientation:landscape) and (max-height:550px){#cadDynamic53{padding:6px;max-height:calc(100% - 14px);overflow:auto;width:260px}#cadDynamic53>strong{font-size:.65rem}#cadDynamicPrompt53{font-size:.65rem;margin-bottom:3px}#cadDynamicValue53{margin:2px 0}.dynamic-actions53 .btn{min-height:26px;padding:3px 6px}#cadFloating53{top:43px}#cadFloating53.expanded53{max-height:calc(100% - 49px)}}
@@ -3526,7 +3527,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.53 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.54 RC1</span>
       </div>
     </div>
 
@@ -4562,7 +4563,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.53.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.54.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -6945,7 +6946,7 @@ function surveyPointsCAD33(){return listaPuntos.filter(p=>finite(p.easting)&&fin
 function localCAD33(p){const o=cad33.runtime.origin;return new THREE.Vector3(p.x-o.x,p.z-o.z,-(p.y-o.y));}
 function worldCAD33(p){const o=cad33.runtime.origin;return {x:p.x+o.x,y:o.y-p.z,z:p.y+o.z};}
 function before38_disposeCAD33(){const r=cad33.runtime;if(!r)return;cancelAnimationFrame(r.frame);r.controls?.dispose();r.observer?.disconnect();r.scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose?.();}}});r.renderer.dispose();r.renderer.domElement.remove();cad33.runtime=null;}
-function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const all=[...visibleCAD33().flatMap(e=>e.points),...surveyPointsCAD33()],p=all[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r||r.moveQueued)return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(e);if(p){previewCAD33(p);$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;drawCAD33();viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;r.controls.update();r.renderer.render(r.scene,r.camera);r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
+function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const all=[...visibleCAD33().flatMap(e=>e.points),...surveyPointsCAD33()],p=all[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r)return;r.moveEvent33=e;if(r.moveQueued)return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(r.moveEvent33);if(p){previewCAD33(p);$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;drawCAD33();viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;r.controls.update();r.renderer.render(r.scene,r.camera);r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
 function before36_resizeCAD33(){const r=cad33.runtime;if(!r)return;const host=$('cadCanvas33'),w=host.clientWidth,h=host.clientHeight;if(w<=0||h<=0)return;r.renderer.setSize(w,h);const aspect=w/h;if(r.camera.isOrthographicCamera){r.camera.left=-r.span*aspect/2;r.camera.right=r.span*aspect/2;r.camera.top=r.span/2;r.camera.bottom=-r.span/2;}else r.camera.aspect=aspect;r.camera.updateProjectionMatrix();}
 function before38_viewCAD33(view,fit=false){require26(['2d','3d'].includes(view),'Vista no válida.');cad33.view=view;const r=cad33.runtime;if(r){const old=r.controls,center=old.target.clone(),distance=Math.max(10,r.camera.position.distanceTo(center));old.dispose();const aspect=($('cadCanvas33').clientWidth||800)/($('cadCanvas33').clientHeight||500);r.camera=view==='2d'?new THREE.OrthographicCamera(-r.span*aspect/2,r.span*aspect/2,r.span/2,-r.span/2,.01,1e8):new THREE.PerspectiveCamera(45,aspect,.01,1e8);r.camera.up.set(0,view==='2d'?0:1,view==='2d'?-1:0);r.camera.position.copy(center).add(view==='2d'?new THREE.Vector3(0,distance,0):new THREE.Vector3(distance*.6,distance*.7,distance*.6));r.camera.lookAt(center);r.controls=new THREE.OrbitControls(r.camera,r.renderer.domElement);r.controls.enableDamping=true;r.controls.enableRotate=view==='3d';r.controls.touches.ONE=view==='2d'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;r.controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;r.controls.target.copy(center);r.controls.update();resizeCAD33();if(fit)fitCAD33();}for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===view));}
 function fitCAD33(){const r=cad33.runtime;if(!r)return;const p=[...visibleCAD33().flatMap(e=>['RAY','XLINE'].includes(e.type)?e.points:geometry33(e)),...($('cadSurveyVisible33').checked?surveyPointsCAD33():[])];const box=new THREE.Box3();for(const v of p)box.expandByPoint(localCAD33(v));if(!p.length)box.setFromCenterAndSize(new THREE.Vector3(),new THREE.Vector3(10,10,10));const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(10,size.x,size.y,size.z)*1.4;r.span=span;r.controls.target.copy(center);r.camera.position.copy(center).add(cad33.view==='2d'?new THREE.Vector3(0,span*2,0):new THREE.Vector3(span,span,span));r.camera.lookAt(center);if(r.camera.isOrthographicCamera)r.camera.zoom=1;resizeCAD33();r.controls.update();}
@@ -8077,7 +8078,8 @@ function recipe53(id){
  if(['xlineH','xlineV','point1'].includes(id))return [P('Punto de paso')];
  if(id==='xlineBis')return points(3,'Vértice y lados');
  if(id==='xlineOffset')return [S(1,1,'Selecciona la recta',['LINE','RAY','XLINE']),V('offset','Desfase firmado · elige el lado','offset')];
- if(['linechain','pl2','pl3','plarc','pointMulti','splineFit','splineControl','splineClosed','cloudPolygon','meshTIN'].includes(id))return [variable(id==='pointMulti'?1:id==='splineControl'?4:['splineFit','splineClosed','cloudPolygon','meshTIN'].includes(id)?3:2)];
+ if(['linechain','pl2','pl3','plarc','pointMulti','splineFit','splineControl','splineClosed','meshTIN'].includes(id))return [variable(id==='pointMulti'?1:id==='splineControl'?4:['splineFit','splineClosed','cloudPolygon','meshTIN'].includes(id)?3:2)];
+ if(id==='cloudPolygon')return [variable(3),V('spacing','Longitud de arco')];
  if(id==='mline')return [variable(2),V('offsets','Desplazamientos con ; o mide la separación total','multiline')];
  if(['rectsize','rectarea','rectchamfer','rectfillet'].includes(id))return [P('Esquina inicial'),...(id==='rectarea'?[{kind:'vector',label:'Longitud y dirección'},V('area','Área del rectángulo (m²)')]:dims()),...(id==='rectchamfer'?[D('chamfer','Distancia de chaflán')]:id==='rectfillet'?[R('radius','Radio de redondeo')]:[])];
  if(id==='helix')return [P('Centro de base'),R(),H(),R('topRadius','Radio superior'),V('turns','Número de vueltas')];
@@ -8115,23 +8117,54 @@ function recipe53(id){
 function params53(){return dynamic53.session?.kind==='legacy'?legacyParams53():valuesDraw52();}
 function putParams53(params){if(dynamic53.session?.kind==='legacy')return putLegacy53(params);for(const [key,value]of Object.entries(params)){const input=$('drawField52_'+key);if(input){if(input.type==='checkbox')input.checked=!!value;else input.value=String(value);}}}
 function step53(){const s=dynamic53.session;return s?.steps[s.index]||{kind:'finish',label:'Enter para ejecutar · Atrás para corregir'};}
-function snapshot53(){const s=dynamic53.session;return {index:s.index,points:s.points.map(xyz33),params:params53(),selected:[...cad33.selected],modifiers:{...s.modifiers},arcMid:s.arcMid?xyz33(s.arcMid):null};}
+function snapshot53(){const s=dynamic53.session;return {index:s.index,pointCount:s.points.length,step:s.steps[s.index],params:params53(),selected:[...cad33.selected],modifiers:{...s.modifiers},arcMid:s.arcMid?xyz33(s.arcMid):null};}
 function syncPoints53(){const s=dynamic53.session;if(s.kind!=='legacy'){writeDrawPoints52(s.points);draw52.capturing=true;}cad33.draft=s.points.map(xyz33);}
 function previewDispose53(){const r=cad33.runtime,g=r?.drawPreview53;if(!g)return;r.scene.remove(g);for(const o of g.children){o.geometry?.dispose();o.material?.dispose();}r.drawPreview53=null;}
-function stop53(){dynamic53.session=null;dynamic53.hover=null;previewDispose53();if($('cadDynamic53'))$('cadDynamic53').hidden=true;}
-function float53(expanded=false){if(!dynamic53.ready)return;const active=!!draw52.active||!$('cadOperation36').hidden;const panel=$('cadFloating53');panel.hidden=!active;$('cadFloatingBody53').hidden=!expanded;$('cadFloatingToggle53').textContent=expanded?'Ocultar parámetros':'Parámetros / teclado';panel.classList.toggle('expanded53',expanded);}
+function resetSelectionBox54(){
+ const session=dynamic53.session;
+ if(!session?.selectionBox)return;
+ delete session.selectionBox;
+ cad38.windowStart=null;
+ $('cadWindow38').hidden=true;
+}
+function stop53(restoreSelection=false){
+ const session=dynamic53.session;
+ resetSelectionBox54();
+ dynamic53.session=null;
+ dynamic53.lastEvent=null;
+ dynamic53.lastPreview=-Infinity;
+ dynamic53.hover=null;
+ previewDispose53();
+ const hud=$('cadDynamic53');
+ if(hud){if(hud.contains(document.activeElement))document.activeElement.blur();hud.hidden=true;}
+ if(restoreSelection&&session?.document===cad33.doc){
+  cad33.selected=new Set(session.initialSelection);
+  cad33.draft=[];
+  refreshCADUI33();
+  drawCAD33();
+ }
+}
+function float53(expanded=false){if(!dynamic53.ready)return;const active=!!draw52.active||!$('cadOperation36').hidden;const panel=$('cadFloating53');panel.hidden=!active;$('cadFloatingBody53').hidden=!expanded;$('cadFloatingToggle53').textContent=expanded?'Ocultar parámetros':'Parámetros / teclado';panel.classList.toggle('expanded53',expanded);panel.classList.toggle('guided54',!!dynamic53.session);}
 function start53(id){
- stop53();const steps=recipe53(id),s={id,steps,index:0,points:[],history:[],modifiers:{},arcMode:false,arcMid:null};dynamic53.session=s;
+ stop53();const steps=recipe53(id),s={id,steps,index:0,points:[],history:[],modifiers:{},arcMode:false,arcMid:null};s.document=cad33.doc;s.initialSelection=[...cad33.selected];dynamic53.session=s;
  const selected=selectedDraw52();while(steps[s.index]?.kind==='selection'){const step=steps[s.index],valid=selected.filter(e=>step.types.includes(e.type));if(Number.isFinite(step.max)&&valid.length===step.max){cad33.selected=new Set(valid.map(e=>e.id));s.index++;}else{cad33.selected=new Set(valid.map(e=>e.id));break;}}
  // Reuse a selected, closed boundary without asking the user to type its vertices.
  if(steps[s.index]?.kind==='boundary'&&selected.length){try{boundary52(selected);steps[s.index]={...steps[s.index],kind:'selection',boundary:true,min:1,max:Infinity,types:['LINE','POLYLINE','CIRCLE','ARC','FACE'],label:'Contorno seleccionado · Enter para aceptar'};}catch{}}
- draw52.keeping=true;try{toolCAD33('polyline');}finally{draw52.keeping=false;}draw52.capturing=true;syncPoints53();document.querySelector('.cad-coordinate33').hidden=true;float53(false);updateHud53();
+ draw52.keeping=true;try{toolCAD33('polyline');}finally{draw52.keeping=false;}draw52.capturing=true;if(id==='plarc')putParams53({bulges:''});syncPoints53();document.querySelector('.cad-coordinate33').hidden=true;float53(false);updateHud53();
 }
 function updateHud53(){const s=dynamic53.session;if(!s)return;const step=step53(),hud=$('cadDynamic53');hud.hidden=false;$('cadDynamicTitle53').textContent=s.kind==='legacy'?s.label:draw52.methods.get(s.id).family+' · '+draw52.methods.get(s.id).name;$('cadDynamicPrompt53').textContent=s.arcMid?'Indica el final del tramo de arco':step.label;
- const input=$('cadDynamicInput53'),field=step.key&&(s.kind==='legacy'?$(legacyFields53[step.key]):$('drawField52_'+step.key));input.value='';input.rows=field?.tagName==='TEXTAREA'?3:1;input.placeholder=step.kind==='value'?String(s.kind==='legacy'&&step.key in legacyFields53?String(legacyParams53()[step.key]):field?.value||''):step.kind==='vector'?'longitud;ángulo;ΔZ':step.kind==='selection'?'Enter para aceptar selección':'X Y [Z] · @ΔX ΔY ΔZ · @distancia<ángulo';
- $('cadDynamicClose53').hidden=!['points','boundary'].includes(step.kind)||!['pl2','pl3','plarc'].includes(s.id);$('cadDynamicArc53').hidden=s.id!=='plarc'||step.kind!=='points';$('cadDynamicArc53').textContent=s.arcMode?'Tramo: arco':'Tramo: recto';$('cadDynamicSelection53').hidden=step.kind!=='boundary'&&!step.boundary;$('cadDynamicSelection53').textContent=step.boundary?'Dibujar contorno':'Usar selección';$('cadDynamicBack53').disabled=!s.history.length&&!s.arcMid;$('cadDynamicCount53').textContent=step.kind==='selection'?cad33.selected.size+' seleccionadas':s.points.length+' puntos';$('cadDynamicValue53').textContent='';messageCAD33((s.index+1)+'/'+s.steps.length+' · '+(s.arcMid?'Final del tramo de arco':step.label));
+ $('cadDynamicError53').textContent='';
+ const canBox=canSelectBox54(step);
+ const box=$('cadDynamicBox54');
+ box.hidden=!canBox;
+ box.textContent=s.selectionBox?'Cancelar cuadro':'Por cuadro';
+ box.setAttribute('aria-pressed',String(!!s.selectionBox));
+ if(s.selectionBox)$('cadDynamicPrompt53').textContent=s.selectionBox.anchor?'Indica la esquina opuesta. Izquierda: cruce. Derecha: ventana.':'Indica la primera esquina del cuadro.';
+ const input=$('cadDynamicInput53'),field=step.key&&(s.kind==='legacy'?$(legacyFields53[step.key]):$('drawField52_'+step.key));input.value='';input.hidden=['selection','finish'].includes(step.kind);input.rows=field?.tagName==='TEXTAREA'?3:1;input.placeholder=step.kind==='value'?String(s.kind==='legacy'&&step.key in legacyFields53?String(legacyParams53()[step.key]):field?.value||''):step.kind==='vector'?'longitud;ángulo;ΔZ':step.kind==='selection'?'Enter para aceptar selección':'X Y [Z] · @ΔX ΔY ΔZ · @distancia<ángulo';
+ $('cadDynamicClose53').hidden=!['points','boundary'].includes(step.kind)||!['pl2','pl3','plarc'].includes(s.id);$('cadDynamicArc53').hidden=s.id!=='plarc'||step.kind!=='points';$('cadDynamicArc53').textContent=s.arcMode?'Tramo: arco':'Tramo: recto';$('cadDynamicSelection53').hidden=step.kind!=='boundary'&&!step.boundary;$('cadDynamicSelection53').textContent=step.boundary?'Dibujar contorno':'Usar selección';$('cadDynamicBack53').disabled=!s.history.length&&!s.arcMid;$('cadDynamicCount53').textContent=step.kind==='selection'?cad33.selected.size+' seleccionadas':s.points.length+' puntos';$('cadDynamicValue53').textContent='';messageCAD33(Math.min(s.index+1,s.steps.length)+'/'+s.steps.length+' · '+(s.arcMid?'Final del tramo de arco':step.label));
 }
-function coordinate53(text,base){const t=text.trim();if(t.startsWith('@')&&t.includes('<')){require26(base,'Indica primero un punto base.');const [distance,angle]=t.slice(1).split('<').map(Number);require26([distance,angle].every(Number.isFinite),'Usa @distancia<ángulo.');const a=angle*Math.PI/180;return add33(base,{x:distance*Math.cos(a),y:distance*Math.sin(a),z:0});}const relative=t.startsWith('@'),v=(relative?t.slice(1):t).split(/[;\s]+/).map(Number);require26((v.length===2||v.length===3)&&v.every(Number.isFinite),'Escribe X Y [Z], @ΔX ΔY ΔZ o @distancia<ángulo.');if(relative){require26(base,'Indica primero un punto base.');return add33(base,{x:v[0],y:v[1],z:v[2]||0});}return xyz33({x:v[0],y:v[1],z:v.length===3?v[2]:ensureCAD33().planeZ});}
+const number54=value=>Number(value.trim().replace(',','.'));
+function coordinate53(text,base){const t=text.trim();if(t.startsWith('@')&&t.includes('<')){require26(base,'Indica primero un punto base.');const values=t.slice(1).split('<');const [distance,angle]=values.map(number54);require26(values.length===2&&values.every(v=>v.trim())&&[distance,angle].every(Number.isFinite),'Usa @distancia<ángulo.');const a=angle*Math.PI/180;return add33(base,{x:distance*Math.cos(a),y:distance*Math.sin(a),z:0});}const relative=t.startsWith('@'),v=(relative?t.slice(1):t).trim().split(/[;\s]+/).map(number54);require26((v.length===2||v.length===3)&&v.every(Number.isFinite),'Escribe X Y [Z], @ΔX ΔY ΔZ o @distancia<ángulo.');if(relative){require26(base,'Indica primero un punto base.');return add33(base,{x:v[0],y:v[1],z:v[2]||0});}return xyz33({x:v[0],y:v[1],z:v.length===3?v[2]:ensureCAD33().planeZ});}
 function base53(step,s,p){if(step.measure==='minor'&&['ellipseAxis','ellipseRotate'].includes(s.id))return mul33(add33(s.points[0],s.points[1]),.5);if(step.measure==='chord')return s.points[s.id==='arcSCL'?0:1];if(step.measure==='tangentRadius'||step.measure==='offset')return selectedDraw52()[0]?.points[0];if(step.key==='minor'&&s.id.endsWith('Torus'))return add33(s.points[0],{x:Number(p.radius),y:0,z:0});return s.points[0]||s.points.at(-1)||selectedDraw52()[0]?.points[0];}
 function measured53(step,q,event=null){
  if(step.measure?.startsWith('legacy'))return legacyMeasured53(step,q);const s=dynamic53.session,p=params53(),base=base53(step,s,p),result={params:{},modifiers:{}};require26(base,'Falta un punto o entidad de referencia.');
@@ -8158,24 +8191,99 @@ function acceptPoint53(p,event=null){const s=dynamic53.session;if(!s)return fals
  }
  if(step.kind==='vector'||step.kind==='value'&&step.measure){commitStep53(measured53(step,p,event));return true;}return false;
 }
-function acceptText53(text=null){try{const s=dynamic53.session;if(!s)return;const step=step53(),value=(text===null?$('cadDynamicInput53').value:text).trim();$('cadDynamicError53').textContent='';if(/^(c|cerrar)$/i.test(value)&&['points','boundary'].includes(step.kind)){closeDynamic53();return;}if(/^(u|atras|atrás)$/i.test(value)){backDynamic53();return;}
+function acceptText53(text=null){try{const s=dynamic53.session;if(!s)return;const step=step53(),value=(text===null?$('cadDynamicInput53').value:text).trim();$('cadDynamicError53').textContent='';if(/^(c|cerrar)$/i.test(value)&&step.kind==='points'&&['pl2','pl3','plarc'].includes(s.id)){closeDynamic53();return;}if(/^(u|atras|atrás)$/i.test(value)&&['point','points','boundary'].includes(step.kind)){backDynamic53();return;}
  if(['point','points','boundary'].includes(step.kind)){if(value){acceptPoint53(coordinate53(value,s.points.at(-1)));return;}if(step.kind==='point')throw Error('Indica el punto en la gráfica o escribe sus coordenadas.');require26(!s.arcMid,'Falta el final del arco.');require26(s.points.length>=step.min,'Añade al menos '+step.min+' puntos.');commitStep53({});}
- else if(step.kind==='selection'){require26(cad33.selected.size>=step.min&&cad33.selected.size<=step.max,'Selecciona entre '+step.min+' y '+(Number.isFinite(step.max)?step.max:'las necesarias')+' entidades.');commitStep53({});}
+ else if(step.kind==='selection'){require26(!s.selectionBox,'Termina el cuadro o pulsa Cancelar cuadro.');require26(cad33.selected.size>=step.min&&cad33.selected.size<=step.max,'Selecciona entre '+step.min+' y '+(Number.isFinite(step.max)?step.max:'las necesarias')+' entidades.');commitStep53({});}
  else if(step.kind==='value'){if(s.kind==='legacy'&&step.key==='cut'){const v=value.split(/[;\s]+/).map(Number);require26(v.length===2&&Number.isInteger(v[0])&&v[0]>=1&&v[1]>0&&v[1]<1,'Escribe segmento;fracción, o toca un punto dentro del trazado.');commitStep53({params:{segment:v[0],fraction:v[1]}});return;}const field=s.kind==='legacy'?$(legacyFields53[step.key]):$('drawField52_'+step.key);let v=value||(s.kind==='legacy'?String(legacyParams53()[step.key]??''):field?.value||'');if(field?.type==='number'||s.kind==='legacy')v=number52(String(v).replace(',','.'),step.label);const modifiers=step.measure==='width'?{widthSign:1}:{};commitStep53({params:{[step.key]:v},modifiers});}
- else if(step.kind==='vector'){const v=value?value.split(/[;\s]+/).map(Number):[Number(params53().length),Number(params53().angle||0),Number(params53().dz||0)];require26(v.length>=1&&v.length<=3&&v.every(Number.isFinite)&&v[0]>0,'Escribe longitud [;ángulo;ΔZ].');commitStep53({params:{length:v[0],angle:v[1]??params53().angle??0,...($('drawField52_dz')?{dz:v[2]||0}:{})}});}
+ else if(step.kind==='vector'){const v=value?value.split(/[;\s]+/).map(number54):[Number(params53().length),Number(params53().angle||0),Number(params53().dz||0)];require26(v.length>=1&&v.length<=3&&v.every(Number.isFinite)&&v[0]>0,'Escribe longitud [;ángulo;ΔZ].');commitStep53({params:{length:v[0],angle:v[1]??params53().angle??0,...($('drawField52_dz')?{dz:v[2]||0}:{})}});}
  else executeDynamic53();
  }catch(e){dynamicError53(e);}}
 function dynamicError53(error){const text=error?.message||String(error);if($('cadDynamicError53'))$('cadDynamicError53').textContent=text;messageCAD33(text);}
-function backDynamic53(){const s=dynamic53.session;if(!s)return;if(s.arcMid){s.arcMid=null;updateHud53();return;}const h=s.history.pop();if(!h)return;s.index=h.index;s.points=h.points;s.modifiers=h.modifiers;putParams53(h.params);cad33.selected=new Set(h.selected);s.arcMid=h.arcMid;syncPoints53();previewDispose53();updateHud53();drawCAD33();}
-function closeDynamic53(){const s=dynamic53.session;if(!s||s.kind==='legacy')return;try{require26(s.points.length>=3,'Se requieren al menos tres vértices para cerrar.');putParams53({closed:true});s.index=s.steps.length;executeDynamic53();}catch(e){dynamicError53(e);}}
-function selectBoundary53(){const s=dynamic53.session;if(!s)return;if(step53().boundary){s.steps[s.index]={kind:'boundary',min:3,label:'Dibuja el contorno · Enter para terminar'};cad33.selected.clear();updateHud53();return;}s.steps[s.index]={kind:'selection',boundary:true,min:1,max:Infinity,types:['LINE','POLYLINE','CIRCLE','ARC','FACE'],label:'Selecciona el contorno · Enter para aceptar'};cad33.selected.clear();updateHud53();}
-function pickDynamic53(event){const s=dynamic53.session;if(!s)return false;const step=step53();try{if(step.kind==='selection'){const id=pickCAD33(event),e=cad33.doc.entities.find(e=>e.id===id);require26(e&&step.types.includes(e.type),'Selecciona una entidad compatible con este método.');s.history.push(snapshot53());if(cad33.selected.has(id))cad33.selected.delete(id);else{if(step.max===1)cad33.selected.clear();cad33.selected.add(id);}refreshCADUI33();drawCAD33();updateHud53();if(Number.isFinite(step.max)&&cad33.selected.size===step.max){s.index++;updateHud53();if(s.index>=s.steps.length)executeDynamic53();}return true;}
- if(step.kind==='finish')return true;const point=cursorCAD33(event);require26(point,'No se puede tomar ese punto. Usa la entrada por teclado.');if(!acceptPoint53(point,event))dynamicError53(Error('Escribe este parámetro en la entrada dinámica y pulsa Enter.'));return true;
- }catch(e){dynamicError53(e);return true;}}
-function previewDynamic53(p,event=null){const s=dynamic53.session,r=cad33.runtime;if(!s||!r)return;dynamic53.hover=p;const now=performance.now();if(now-dynamic53.lastPreview<75)return;dynamic53.lastPreview=now;const step=step53();let points=s.points.map(xyz33),params=params53(),modifiers={...s.modifiers},description='';try{if(step.kind==='point'||['points','boundary'].includes(step.kind)){points.push(p);description='X '+p.x.toFixed(3)+' · Y '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3);}else if(step.kind==='vector'||step.kind==='value'&&step.measure){const q=measured53(step,p,event);Object.assign(params,q.params);Object.assign(modifiers,q.modifiers);description=Object.entries(q.params).filter(([k,v])=>typeof v==='number').map(([k,v])=>(k==='angle'?'Ángulo':k==='length'?'Longitud':k)+' '+v.toFixed(3)).join(' · ');}else return;$('cadDynamicValue53').textContent=description;
+function backDynamic53(){const s=dynamic53.session;if(!s)return;if(s.selectionBox){resetSelectionBox54();updateHud53();return;}if(s.arcMid){s.arcMid=null;previewDispose53();updateHud53();return;}const h=s.history.pop();if(!h)return;s.index=h.index;s.steps[s.index]=h.step;s.points.length=h.pointCount;s.modifiers=h.modifiers;putParams53(h.params);cad33.selected=new Set(h.selected);s.arcMid=h.arcMid;syncPoints53();previewDispose53();updateHud53();drawCAD33();}
+function closeDynamic53(){const s=dynamic53.session;if(!s||!['pl2','pl3','plarc'].includes(s.id)||step53().kind!=='points')return;try{require26(s.points.length>=3,'Se requieren al menos tres vértices para cerrar.');require26(!s.arcMid,'Indica primero el final del tramo de arco.');s.history.push(snapshot53());putParams53({closed:true});s.index=s.steps.length;executeDynamic53();}catch(e){dynamicError53(e);}}
+function selectBoundary53(){const s=dynamic53.session;if(!s)return;resetSelectionBox54();s.history.push(snapshot53());if(step53().boundary){s.steps[s.index]={kind:'boundary',min:3,label:'Dibuja el contorno · Enter para terminar'};cad33.selected.clear();drawCAD33();updateHud53();return;}s.steps[s.index]={kind:'selection',boundary:true,min:1,max:Infinity,types:['LINE','POLYLINE','CIRCLE','ARC','FACE'],label:'Selecciona el contorno · Enter para aceptar'};cad33.selected.clear();drawCAD33();updateHud53();}
+function canSelectBox54(step){
+ const session=dynamic53.session;
+ return !!session&&step.kind==='selection'&&step.max===Infinity;
+}
+function toggleSelectionBox54(){
+ const session=dynamic53.session;
+ if(!session||!canSelectBox54(step53()))return;
+ if(session.selectionBox)resetSelectionBox54();
+ else if(cad33.runtime)session.selectionBox={anchor:null};
+ else return dynamicError53(Error('Abre la vista gráfica para seleccionar por cuadro.'));
+ updateHud53();
+}
+function selectionMembers54(entity,step){
+ const session=dynamic53.session,group=entity.source33?.draw52?.group;
+ if(!group||step.max!==Infinity||step.boundary||!$('drawGroupSelect52')?.checked)return [entity];
+ return cad33.doc.entities.filter(item=>item.source33?.draw52?.group===group&&step.types.includes(item.type));
+}
+function updateSelection54(entities,step,toggle=false){
+ const session=dynamic53.session;
+ session.history.push(snapshot53());
+ const ids=new Set(entities.flatMap(entity=>selectionMembers54(entity,step).map(item=>item.id)));
+ if(toggle&&[...ids].every(id=>cad33.selected.has(id))){
+  for(const id of ids)cad33.selected.delete(id);
+ }else{
+  if(step.max===1)cad33.selected.clear();
+  for(const id of ids)cad33.selected.add(id);
+ }
+ refreshCADUI33();
+ drawCAD33();
+ if(Number.isFinite(step.max)&&cad33.selected.size===step.max){
+  session.index++;
+  if(session.index>=session.steps.length){updateHud53();executeDynamic53();return;}
+ }
+ updateHud53();
+}
+function pickDynamic53(event){
+ const session=dynamic53.session;
+ if(!session)return false;
+ const step=step53();
+ try{
+  if(step.kind==='selection'){
+   if(session.selectionBox){
+    const point=rayCAD33(event).screen,anchor=session.selectionBox.anchor;
+    if(!anchor){
+     session.selectionBox.anchor=point;
+     cad38.windowStart=point;
+     updateHud53();
+     return true;
+    }
+    const rect={x0:Math.min(anchor.x,point.x),y0:Math.min(anchor.y,point.y),
+      x1:Math.max(anchor.x,point.x),y1:Math.max(anchor.y,point.y)};
+    const entities=visibleCAD33().filter(entity=>step.types.includes(entity.type)&&entityInRect38(entity,rect,point.x>=anchor.x));
+    resetSelectionBox54();
+    updateHud53();
+    require26(entities.length,'El cuadro no contiene entidades compatibles.');
+    updateSelection54(entities,step);
+   }else{
+    const id=pickCAD33(event),entity=cad33.doc.entities.find(item=>item.id===id);
+    require26(entity&&step.types.includes(entity.type),'Selecciona una entidad compatible con este método.');
+    updateSelection54([entity],step,true);
+   }
+   return true;
+  }
+  if(step.kind==='finish')return true;
+  const point=cursorCAD33(event);
+  require26(point,'No se puede tomar ese punto. Usa la entrada por teclado.');
+  if(!acceptPoint53(point,event))dynamicError53(Error('Escribe este parámetro y pulsa Enter.'));
+ }catch(error){dynamicError53(error);}
+ return true;
+}
+function previewDynamic53(p,event=null){const s=dynamic53.session,r=cad33.runtime;if(!s||!r)return;dynamic53.hover=p;const now=performance.now();if(now-dynamic53.lastPreview<75)return;dynamic53.lastPreview=now;const step=step53();let points=s.points.map(xyz33),params=params53(),modifiers={...s.modifiers},description='';try{if(step.kind==='point'||['points','boundary'].includes(step.kind)){points.push(p);
+ if(s.id==='plarc'&&s.arcMid){
+  const arc=arc3_52(s.points.at(-1),s.arcMid,p);
+  const bulges=String(params.bulges||'').split(/[;,\s]+/).filter(Boolean).map(Number);
+  while(bulges.length<s.points.length-1)bulges.push(0);
+  bulges[s.points.length-1]=Math.tan((arc.normal.z<0?-1:1)*arc.sweep/4);
+  params.bulges=bulges.join(';');
+ }
+ description='X '+p.x.toFixed(3)+' · Y '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3);}else if(step.kind==='vector'||step.kind==='value'&&step.measure){const q=measured53(step,p,event);Object.assign(params,q.params);Object.assign(modifiers,q.modifiers);description=Object.entries(q.params).filter(([k,v])=>typeof v==='number').map(([k,v])=>(k==='angle'?'Ángulo':k==='length'?'Longitud':k)+' '+v.toFixed(3)).join(' · ');}else return;$('cadDynamicValue53').textContent=description;
   previewDispose53();const group=new THREE.Group();r.scene.add(group);r.drawPreview53=group;let entities=[];try{if(s.kind==='legacy')entities=previewLegacy53(points,params);else if(points.length<=200)entities=buildDraw52(s.id,points,{...params,segments:16,...(modifiers.widthSign?{widthSign53:modifiers.widthSign}:{})},selectedDraw52(),ensureCAD33().blocks52||[]).entities;}catch{}if(!entities.length&&points.length>=2)entities=[{type:'POLYLINE',points}];let used=0;for(const e of entities.slice(0,250)){const q=geometry33(e);if((used+=q.length)>8000)break;const coords=q.map(localCAD33);if(e.closed&&q.length>2)coords.push(coords[0]);if(coords.length<2)continue;const geometry=new THREE.BufferGeometry().setFromPoints(coords),material=new THREE.LineBasicMaterial({color:'#7cdec9',transparent:true,opacity:.8,depthTest:false});const object=new THREE.Line(geometry,material);object.renderOrder=500;group.add(object);}
- }catch(e){$('cadDynamicValue53').textContent=e.message;}}
-function positionHud53(event){if(!dynamic53.session)return;const hud=$('cadDynamic53'),stage=$('cadStage33'),rect=stage.getBoundingClientRect();dynamic53.lastScreen={x:event.clientX-rect.left,y:event.clientY-rect.top};if(hud.contains(document.activeElement))return;const width=hud.offsetWidth||265,height=hud.offsetHeight||170;hud.style.left=Math.max(7,Math.min(rect.width-width-78,dynamic53.lastScreen.x+18))+'px';hud.style.top=Math.max(7,Math.min(rect.height-height-8,dynamic53.lastScreen.y+18))+'px';}
+ }catch(e){previewDispose53();$('cadDynamicValue53').textContent=e.message;}}
+function positionHud53(event){if(!dynamic53.session)return;const hud=$('cadDynamic53'),stage=$('cadStage33'),rect=stage.getBoundingClientRect();dynamic53.lastScreen={x:event.clientX-rect.left,y:event.clientY-rect.top};if(event.pointerType==='touch'||!$('cadFloatingBody53').hidden||hud.contains(document.activeElement))return;const width=hud.offsetWidth||265,height=hud.offsetHeight||170;hud.style.left=Math.max(7,Math.min(rect.width-width-78,dynamic53.lastScreen.x+18))+'px';hud.style.top=Math.max(7,Math.min(rect.height-height-8,dynamic53.lastScreen.y+18))+'px';}
 const legacyFields53={dx:'cadDX33',dy:'cadDY33',dz:'cadDZ33',angle:'cadAngle33',factor:'cadScale33',offset:'cadOffset33',segment:'cadSegment33',fraction:'cadFraction33',end:'cadEnd33',vertex:'cadVertex33'};
 function legacyParams53(){const p={};for(const [k,id]of Object.entries(legacyFields53)){const n=$(id);if(n)p[k]=Number(n.value||0)+(k==='vertex'?1:0);}return p;}
 function putLegacy53(params){for(const [k,v]of Object.entries(params)){const id=legacyFields53[k];if(id&&$(id))$(id).value=String(v-(k==='vertex'?1:0));}}
@@ -8186,7 +8294,7 @@ function legacyRecipe53(command){const code=command.code||'',action=code.match(/
  if(action==='trim'||action==='extend')return {action,steps:[stepSelect53(2,2,'Primero línea a modificar y después límite',['LINE']),stepValue53('end','Extremo: inicial 0 o final 1 · puedes tocarlo','legacyEnd')]};
  if(code==='editVertexCAD33()')return {action:'vertex',steps:[stepSelect53(1,1,'Selecciona una entidad',all),stepValue53('vertex','Número de vértice (desde 1)'),stepPoint53('Nueva posición XYZ')]};return null;
 }
-function startLegacy53(key,command,recipe){stop53();const steps=recipe.steps,s={kind:'legacy',key,id:'legacy-'+recipe.action,action:recipe.action,label:command.label,steps,index:0,points:[],history:[],modifiers:{},arcMid:null};const existing=selectedDraw52(),first=steps[0];if(first.kind==='selection'&&existing.length>=first.min&&existing.length<=first.max&&existing.every(e=>first.types.includes(e.type)))s.index=1;else cad33.selected.clear();dynamic53.starting=true;try{toolCAD33('polyline');}finally{dynamic53.starting=false;}dynamic53.session=s;cad33.draft=[];document.querySelector('.cad-coordinate33').hidden=true;float53(false);updateHud53();}
+function startLegacy53(key,command,recipe){stop53();const steps=recipe.steps,s={kind:'legacy',key,id:'legacy-'+recipe.action,action:recipe.action,label:command.label,steps,index:0,points:[],history:[],modifiers:{},arcMid:null,document:cad33.doc,initialSelection:[...cad33.selected]};const existing=selectedDraw52(),first=steps[0];if(first.kind==='selection'&&existing.length>=first.min&&existing.length<=first.max&&existing.every(e=>first.types.includes(e.type)))s.index=1;else cad33.selected.clear();dynamic53.starting=true;try{toolCAD33('polyline');}finally{dynamic53.starting=false;}dynamic53.session=s;cad33.draft=[];document.querySelector('.cad-coordinate33').hidden=true;float53(false);updateHud53();}
 function legacyMeasured53(step,q){const s=dynamic53.session,selected=selectedDraw52(),p=legacyParams53(),a=s.points[0];if(step.measure==='legacyRotate'){const u=sub33(s.points[1],a),v=sub33(q,a);require26(Math.hypot(u.x,u.y)>1e-8&&Math.hypot(v.x,v.y)>1e-8,'Rayos de giro no nulos requeridos.');return {params:{angle:Math.atan2(u.x*v.y-u.y*v.x,u.x*v.x+u.y*v.y)*180/Math.PI}};}
  if(step.measure==='legacyScale'){const from=len33(sub33(s.points[1],a)),to=len33(sub33(q,a));require26(from>1e-8&&to>1e-8,'Referencia y tamaño no nulos.');return {params:{factor:to/from}};}
  const e=selected[0];require26(e,'Selecciona la entidad.');if(step.measure==='legacyEnd')return {params:{end:len33(sub33(q,e.points[0]))<len33(sub33(q,e.points[1]))?0:1}};
@@ -8200,15 +8308,21 @@ function executeLegacy53(){const s=dynamic53.session,p=legacyParams53(),points=s
 function executeDynamic53(){if(dynamic53.session?.kind==='legacy')return executeLegacy53();return createDraw52();}
 function previewLegacy53(points,p){const s=dynamic53.session,selected=selectedDraw52(),base=points[0];if(!base)return [];let fn,scale=1;if(['move','copy'].includes(s.action)&&points.length>=2){const d=sub33(points[1],base);fn=v=>add33(v,d);}else if(s.action==='rotate'){const a=p.angle*Math.PI/180;fn=v=>rotateAxis52(v,base,{x:0,y:0,z:1},a);}else if(s.action==='scale'){scale=p.factor;fn=v=>add33(base,mul33(sub33(v,base),scale));}else if(s.action==='mirror'&&points.length>=2){const u=unit33({...sub33(points[1],base),z:0});fn=v=>{const d=sub33(v,base),t=dot33(d,u);return add33(base,{x:2*u.x*t-d.x,y:2*u.y*t-d.y,z:d.z});};}return fn?selected.slice(0,100).map(e=>transformEntity33(e,fn,scale)):[];}
 const before53_cancelDraw52=cancelDraw52;
-cancelDraw52=function(){if(!dynamic53.starting)stop53();const r=before53_cancelDraw52();if(dynamic53.ready)float53(false);return r;};
+cancelDraw52=function(){if(!dynamic53.starting)stop53(true);const r=before53_cancelDraw52();if(dynamic53.ready)float53(false);return r;};
 const before53_openDraw52=openDraw52;
-openDraw52=function(id){const r=before53_openDraw52(id);if(draw52.active===id&&dynamic53.ready)start53(id);return r;};
+openDraw52=function(id){
+ if(!draw52.methods.has(id))return;
+ if(dynamic53.session)closeCommand36();
+ const result=before53_openDraw52(id);
+ if(draw52.active===id&&dynamic53.ready)start53(id);
+ return result;
+};
 const before53_createDraw52=createDraw52;
-createDraw52=function(){const before=cad33.doc;const r=before53_createDraw52();if(cad33.doc!==before){stop53();float53(false);return true;}if(dynamic53.session){$('cadDynamicError53').textContent=$('drawError52').textContent;updateHud53();$('cadDynamicError53').textContent=$('drawError52').textContent;}return false;};
+createDraw52=function(){const before=cad33.doc;const r=before53_createDraw52();if(cad33.doc!==before){stop53();cancelDraw52();float53(false);return true;}if(dynamic53.session){updateHud53();dynamicError53(Error($('drawError52').textContent));}return false;};
 const before53_runCommand36=runCommand36;
 runCommand36=function(){const before=cad33.doc,r=before53_runCommand36();if(cad33.doc!==before){stop53();toolCAD33('select');$('cadOperation36').hidden=true;float53(false);}else if(dynamic53.session?.kind==='legacy')dynamicError53(Error($('cadMessage33').textContent));return r;};
 const before53_openCommand36=openCommand36;
-openCommand36=function(key){const r=before53_openCommand36(key);if(dynamic53.ready){const command=uiCAD36.commands.get(key),recipe=command&&legacyRecipe53(command);if(recipe&&!dynamic53.automaticSelection)startLegacy53(key,command,recipe);else float53(true);}return r;};
+openCommand36=function(key){const r=before53_openCommand36(key);if(dynamic53.ready){const command=uiCAD36.commands.get(key),recipe=command&&legacyRecipe53(command);if(recipe&&!dynamic53.automaticSelection)startLegacy53(key,command,recipe);else float53(!dynamic53.automaticSelection);}return r;};
 const before53_inputPointCAD33=inputPointCAD33;
 inputPointCAD33=function(point){if(dynamic53.session){try{acceptPoint53(xyz33(point));}catch(e){dynamicError53(e);}return;}return before53_inputPointCAD33(point);};
 const before53_clickCAD33=clickCAD33;
@@ -8218,19 +8332,47 @@ finishCAD33=function(closed=false){if(dynamic53.session)return closed?closeDynam
 const before53_backCAD33=backCAD33;
 backCAD33=function(){if(dynamic53.session)return backDynamic53();return before53_backCAD33();};
 const before53_previewCAD33=previewCAD33;
-previewCAD33=function(point){if(dynamic53.session)return previewDynamic53(point,dynamic53.lastEvent);return before53_previewCAD33(point);};
+previewCAD33=function(point){if(dynamic53.session){if(step53().kind==='selection')return;return previewDynamic53(point,dynamic53.lastEvent);}return before53_previewCAD33(point);};
 const before53_buildDraw52=buildDraw52;
 buildDraw52=function(id,points,p={},...args){const normalized={...p};let flipZ=1;if(['solidBox','solidWedge','meshBox'].includes(id)&&Number(p.height)<0){normalized.height=-p.height;flipZ=-1;}const result=before53_buildDraw52(id,points,normalized,...args);if((p.widthSign53===-1||flipZ===-1)&&points[0]){const origin=points[0],angle=Number(p.angle||0)*Math.PI/180,u={x:Math.cos(angle),y:Math.sin(angle),z:0};for(let i=0;i<result.entities.length;i++){const e=result.entities[i],fn=q=>{const v=sub33(q,origin),t=dot33(v,u);return add33(origin,{x:p.widthSign53===-1?2*u.x*t-v.x:v.x,y:p.widthSign53===-1?2*u.y*t-v.y:v.y,z:v.z*flipZ});};result.entities[i]=transformEntity33(e,fn);if((p.widthSign53===-1)!==(flipZ===-1)&&e.type==='FACE')result.entities[i].points.reverse();}}return result;};
 const before53_valuesDraw52=valuesDraw52;
 valuesDraw52=function(){const p=before53_valuesDraw52();if(dynamic53.session?.modifiers.widthSign)p.widthSign53=dynamic53.session.modifiers.widthSign;return p;};
+const before54_undoCAD33=undoCAD33;
+undoCAD33=function(redo=false){
+ if(dynamic53.session)closeCommand36();
+ return before54_undoCAD33(redo);
+};
 function initDynamic53(){
  const stage=$('cadStage33'),floating=document.createElement('section');floating.id='cadFloating53';floating.hidden=true;floating.innerHTML='<header><button type="button" class="btn" id="cadFloatingToggle53">Parámetros / teclado</button><button type="button" class="btn" id="cadFloatingCancel53" aria-label="Cancelar comando">×</button></header><div id="cadFloatingBody53" hidden></div>';stage.append(floating);$('cadFloatingBody53').append($('cadOperation36'),$('drawOperation52'),document.querySelector('.cad-coordinate33'));$('cadFloatingToggle53').onclick=()=>float53($('cadFloatingBody53').hidden);$('cadFloatingCancel53').onclick=()=>{closeCommand36();stop53();float53(false);};
- const hud=document.createElement('section');hud.id='cadDynamic53';hud.hidden=true;hud.setAttribute('aria-label','Entrada dinámica del comando');hud.innerHTML='<strong id="cadDynamicTitle53"></strong><div id="cadDynamicPrompt53" role="status" aria-live="polite"></div><textarea id="cadDynamicInput53" class="input-field" rows="1" aria-label="Valor o coordenadas del paso actual" spellcheck="false"></textarea><div id="cadDynamicValue53"></div><small id="cadDynamicCount53"></small><div class="dynamic-actions53"><button type="button" class="btn" id="cadDynamicAccept53">Aceptar / Enter</button><button type="button" class="btn" id="cadDynamicClose53">Cerrar</button><button type="button" class="btn" id="cadDynamicArc53">Tramo: recto</button><button type="button" class="btn" id="cadDynamicSelection53">Usar selección</button><button type="button" class="btn" id="cadDynamicBack53">Atrás</button><button type="button" class="btn" id="cadDynamicCancel53">Cancelar</button></div><div id="cadDynamicError53" role="alert"></div>';stage.append(hud);
- $('cadDynamicAccept53').onclick=()=>acceptText53();$('cadDynamicClose53').onclick=closeDynamic53;$('cadDynamicBack53').onclick=backDynamic53;$('cadDynamicCancel53').onclick=()=>{closeCommand36();stop53();float53(false);};$('cadDynamicArc53').onclick=()=>{const s=dynamic53.session;if(s){s.arcMode=!s.arcMode;s.arcMid=null;updateHud53();}};$('cadDynamicSelection53').onclick=selectBoundary53;
- $('cadDynamicInput53').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.shiftKey)return;if(e.key==='Enter'){const step=step53(),field=step.key&&$('drawField52_'+step.key);if(field?.tagName==='TEXTAREA'&&!e.ctrlKey&&!e.metaKey)return;e.preventDefault();e.stopImmediatePropagation();acceptText53();}else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closeCommand36();stop53();}});
+ const hud=document.createElement('section');hud.id='cadDynamic53';hud.hidden=true;hud.setAttribute('aria-label','Entrada dinámica del comando');hud.innerHTML='<strong id="cadDynamicTitle53"></strong><div id="cadDynamicPrompt53" role="status" aria-live="polite"></div><textarea id="cadDynamicInput53" class="input-field" rows="1" aria-label="Valor o coordenadas del paso actual" spellcheck="false"></textarea><div id="cadDynamicValue53"></div><small id="cadDynamicCount53"></small><div class="dynamic-actions53"><button type="button" class="btn" id="cadDynamicAccept53">Aceptar / Enter</button><button type="button" class="btn" id="cadDynamicClose53">Cerrar</button><button type="button" class="btn" id="cadDynamicArc53">Tramo: recto</button><button type="button" class="btn" id="cadDynamicSelection53">Usar selección</button><button type="button" class="btn" id="cadDynamicBox54" aria-pressed="false" hidden>Por cuadro</button><button type="button" class="btn" id="cadDynamicBack53">Atrás</button><button type="button" class="btn" id="cadDynamicCancel53">Cancelar</button></div><div id="cadDynamicError53" role="alert"></div>';stage.append(hud);
+ $('cadDynamicAccept53').onclick=()=>acceptText53();$('cadDynamicClose53').onclick=closeDynamic53;$('cadDynamicBack53').onclick=backDynamic53;$('cadDynamicCancel53').onclick=()=>{closeCommand36();stop53();float53(false);};$('cadDynamicArc53').onclick=()=>{const s=dynamic53.session;if(s){s.arcMode=!s.arcMode;s.arcMid=null;updateHud53();}};$('cadDynamicSelection53').onclick=selectBoundary53;$('cadDynamicBox54').onclick=toggleSelectionBox54;
+ $('cadDynamicInput53').addEventListener('keydown',e=>{if(e.isComposing||e.key==='Enter'&&e.shiftKey)return;if(e.key==='Enter'){if(e.repeat){e.preventDefault();return;}const step=step53(),field=step.key&&$('drawField52_'+step.key);if(field?.tagName==='TEXTAREA'&&!e.ctrlKey&&!e.metaKey)return;e.preventDefault();e.stopImmediatePropagation();acceptText53();}else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closeCommand36();stop53();}});
  $('drawFields52').addEventListener('keydown',e=>{if(e.key!=='Enter'||e.target.tagName==='TEXTAREA'&&!e.ctrlKey)return;const s=dynamic53.session,step=step53();if(s&&e.target.id==='drawField52_'+step.key){e.preventDefault();e.stopImmediatePropagation();acceptText53(e.target.value);}});
- for(const name of ['pointermove','pointerdown'])stage.addEventListener(name,e=>{if(!dynamic53.session||e.target.closest('button,input,textarea,select,.cad-panel33,#cadFloating53,#cadDynamic53'))return;dynamic53.lastEvent=e;positionHud53(e);},{passive:true});stage.addEventListener('contextmenu',e=>{if(!dynamic53.session||e.target.closest('#cadFloating53,#cadDynamic53,.cad-panel33'))return;e.preventDefault();acceptText53('');});
- document.addEventListener('keydown',e=>{if(ui58.section!=='tabCAD33'||!dynamic53.session||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();acceptText53('');}else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closeCommand36();stop53();}else if(e.key==='Backspace'){e.preventDefault();e.stopImmediatePropagation();backDynamic53();}else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();$('cadDynamicInput53').focus();$('cadDynamicInput53').value=e.key;}},true);
+ for(const name of ['pointermove','pointerdown'])stage.addEventListener(name,e=>{if(!dynamic53.session||e.target.closest('button,input,textarea,select,.cad-panel33,#cadFloating53,#cadDynamic53'))return;dynamic53.lastEvent=e;
+ if(dynamic53.session.selectionBox?.anchor&&cad33.runtime&&e.type==='pointermove'){
+  const point=rayCAD33(e).screen;
+  const previous=cad38.selection;
+  cad38.selection=point.x<cad38.windowStart.x?'crossing':'window';
+  windowPreview38(point);
+  cad38.selection=previous;
+ }
+ positionHud53(e);},{passive:true});stage.addEventListener('contextmenu',e=>{if(!dynamic53.session||e.target.closest('#cadFloating53,#cadDynamic53,.cad-panel33'))return;e.preventDefault();acceptText53('');});
+ document.addEventListener('keydown',event=>{
+  if(ui58.section!=='tabCAD33'||!dynamic53.session||event.isComposing)return;
+  const typing=event.target.matches('input,textarea,select,[contenteditable="true"]');
+  const undo=(event.ctrlKey||event.metaKey)&&!event.shiftKey&&event.key.toLowerCase()==='z';
+  const handle=action=>{event.preventDefault();event.stopImmediatePropagation();action();};
+  if(event.key==='Escape')handle(()=>closeCommand36());
+  else if(typing)return;
+  else if(event.key==='Enter'&&event.target.closest('#cadDynamic53 button,#cadFloating53 button'))return;
+  else if(event.key==='Enter'&&!event.repeat)handle(()=>acceptText53());
+  else if(event.key==='Enter'||event.key==='Delete'||((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'&&!undo))handle(()=>{});
+  else if(event.key==='Backspace'||undo)handle(backDynamic53);
+  else if(event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!$('cadDynamicInput53').hidden){
+   if(event.key===' '&&event.target.closest('button'))return;
+   handle(()=>{const input=$('cadDynamicInput53');input.focus();input.value=event.key;});
+  }
+ },true);
  // Point lists remain available, but the normal interaction now starts immediately in the graphic.
  for(const b of $('drawOperation52').querySelectorAll('button'))if(b.getAttribute('onclick')==='captureDraw52()')b.hidden=true;
  dynamic53.ready=true;

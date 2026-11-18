@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="topografia-version" content="5.68.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.68 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.69 RC2 · 2026-11-18</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3566,6 +3566,28 @@ body.cad-full33 .workspace-head58{display:none}
 #cadPreviewFrame65{width:100%;height:60vh;border:0;background:#fff}
 
 </style>
+<style id="cadViewCSS69">
+#cadViewPanel69{position:absolute;z-index:14;top:64px;left:12px;width:min(334px,calc(100% - 24px));max-height:calc(100% - 112px);overflow:auto;color:var(--text);background:#1b2632;border:1px solid #4a647b;border-radius:12px;box-shadow:0 8px 24px #0005;line-height:1.4}
+#tabCAD33 #cadViewPanel69{left:auto;right:80px;width:334px;padding:0}
+#cadViewPanel69>h3{margin:0;padding:8px 12px;position:sticky;top:0;z-index:1;background:#253746;color:#e7f3fb}
+#cadViewPanel69>h3 .btn{min-height:34px}
+#cadViewControls69{padding:4px 10px 8px}
+#cadViewControls69>details{border-bottom:1px solid #3a4d60;padding:4px 0}
+#cadViewControls69>details>summary{padding:7px 4px;cursor:pointer;color:#e7f3fb;font-weight:650}
+.cad-view-options69{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:1px 0 5px}
+.cad-view-options69 .btn{min-height:34px;white-space:normal;line-height:1.15;margin:0;padding:5px;font-size:.77rem}
+.cad-view-options69 label{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:.72rem;color:#d9e7f1}
+.cad-view-options69 input:not([type=checkbox]),.cad-view-options69 select{box-sizing:border-box;min-width:0;width:100%;padding:5px;color:#f5f9fc;background:#151f29;border:1px solid #617789;border-radius:5px}
+.cad-view-options69 input[type=color]{min-height:34px}
+#cadViewStatus69{margin:0;padding:8px 12px;font-size:.77rem;color:#d4e5f4}
+#cadViewPanel69[hidden],#cadZoomBox69[hidden],#cadInset69[hidden]{display:none!important}
+#cadZoomBox69{position:absolute;pointer-events:none;z-index:9;background:#64b9fb28;border:1px dashed #91d4ff}
+#cadInset69{position:absolute;z-index:8;right:12px;bottom:12px;width:32%;height:32%;box-sizing:border-box;border:1px solid #8babc5;pointer-events:auto;color:white;background:transparent}
+#cadInset69 span{font-size:.72rem;padding:2px 6px;background:#172333}
+#cadStage33.cad-clean69 .cad-top33,#cadStage33.cad-clean69 #cadCursor33,#cadStage33.cad-no-axes69 #cadAxes38,#cadStage33.cad-no-labels69 #cadLabels36{display:none!important}
+@media(max-width:600px){#tabCAD33 #cadViewPanel69{right:73px;width:308px}.cad-view-options69 .btn{min-height:40px}}
+</style>
+
 </head>
 <body>
 
@@ -3576,7 +3598,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.68 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.69 RC2</span>
       </div>
     </div>
 
@@ -3638,7 +3660,7 @@ Del dato de campo a la entrega.</div></nav>
 <div class="prepare-nav58 cad-subtabs49" role="tablist" aria-label="Apartados de Cad"><button id="cadTab49" class="subtab58 active" type="button" role="tab" aria-selected="true" aria-controls="cadStage33" onclick="setCadMode49('cad')">Cad</button><button id="cadTopoTab49" class="subtab58" type="button" role="tab" aria-selected="false" aria-controls="cadStage33" tabindex="-1" onclick="setCadMode49('topography')">Topografía</button></div>
 <nav id="cadDrawingTabs65" aria-label="Dibujos abiertos"></nav>
 <div class="cad-top33"><div class="button-row topo-views24" id="cadViews49"><button id="cadView2d33" class="btn" onclick="guardCAD33(()=>viewCAD33('2d'))" aria-pressed="true">2D</button><button id="cadView3d33" class="btn" onclick="guardCAD33(()=>viewCAD33('3d'))" aria-pressed="false">3D</button><button class="btn" onclick="fitCAD33()">Encuadrar</button><button id="cadUndo33" class="btn" onclick="undoCAD33()" aria-label="Deshacer">↶</button><button id="cadRedo33" class="btn" onclick="undoCAD33(true)" aria-label="Rehacer">↷</button></div><span id="cadEntityCount33" class="field-note">Dibujo del proyecto</span></div>
-<div id="cadStage33"><div id="cadCanvas33" aria-label="Espacio de dibujo XYZ"></div><canvas id="cadGrips68" aria-hidden="true"></canvas><div id="cadCursor33" class="cad-cursor33" role="status"></div><nav class="cad-tools33" aria-label="Herramientas CAD">
+<div id="cadStage33"><div id="cadCanvas33" aria-label="Espacio de dibujo XYZ"></div><section id="cadViewPanel69" aria-labelledby="cadViewTitle69" hidden><h3 id="cadViewTitle69">Vista <button id="cadViewClose69" type="button" class="btn" aria-label="Cerrar Vista">Cerrar</button></h3><div id="cadViewControls69"></div><p id="cadViewStatus69" role="status"></p></section><div id="cadZoomBox69" hidden aria-hidden="true"></div><div id="cadInset69" hidden aria-hidden="true"><span>Planta auxiliar</span></div><canvas id="cadGrips68" aria-hidden="true"></canvas><div id="cadCursor33" class="cad-cursor33" role="status"></div><nav class="cad-tools33" aria-label="Herramientas CAD">
 <button onclick="toolCAD33('select')" aria-label="Seleccionar entidades"><span>↖</span><small>Seleccionar</small></button><button onclick="toolCAD33('window')" aria-label="Selección por ventana"><span>▧</span><small>Ventana</small></button><button onclick="panelCAD33('cadDrawPanel33')" aria-controls="cadDrawPanel33"><span>⌁</span><small>Dibujar</small></button><button onclick="panelCAD33('cadEditPanel33')" aria-controls="cadEditPanel33"><span>✎</span><small>Modificar</small></button><button onclick="panelCAD33('cadLayerPanel33')" aria-controls="cadLayerPanel33"><span>▱</span><small>Capas</small></button><button onclick="panelCAD33('cadPointsPanel33')" aria-controls="cadPointsPanel33"><span>⁙</span><small>Puntos</small></button><button onclick="panelCAD33('cadFilesPanel33')" aria-controls="cadFilesPanel33"><span>⇅</span><small>Archivos</small></button><button onclick="panelCAD33('cadPrecisionPanel33')" aria-controls="cadPrecisionPanel33"><span>⌖</span><small>Precisión</small></button><button onclick="toolCAD33('measure')"><span>↔</span><small>Medir</small></button></nav>
 <section id="cadDrawPanel33" class="cad-panel33" hidden=""><h3>Dibujar <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><div class="cad-buttons33"><button class="btn" onclick="toolCAD33('point')">Punto XYZ</button><button class="btn" onclick="toolCAD33('line')">Línea 3D</button><button class="btn" onclick="toolCAD33('polyline')">Polilínea 3D</button><button class="btn" onclick="toolCAD33('rectangle')">Rectángulo</button><button class="btn" onclick="toolCAD33('circle')">Círculo</button><button class="btn" onclick="toolCAD33('arc')">Arco · centro/inicio/final</button><button class="btn" onclick="toolCAD33('text')">Texto</button></div><label for="cadText33">Texto a insertar</label><input id="cadText33" class="input-field" value="Cota"><div class="cad-grid33"><label>Altura del texto (m)<input id="cadTextHeight33" class="input-field" type="number" step="any" value="1"></label><label>Giro del texto (°)<input id="cadTextAngle33" class="input-field" type="number" step="any" value="0"></label></div><p class="field-note">Líneas y polilíneas admiten XYZ distintas por vértice. Las nuevas curvas y rectángulos se construyen en un plano horizontal; no se altera la Z de un punto para forzarlo a ese plano. El arco se dibuja en sentido antihorario.</p></section>
 <section id="cadEditPanel33" class="cad-panel33" hidden=""><h3>Modificar <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><label><input id="cadMulti33" type="checkbox"> Selección múltiple</label><p id="cadSelection33" role="status"></p><p id="cadMeasure33" class="field-note"></p><details class="fold17" open=""><summary>Propiedades · vértices XYZ</summary><label for="cadVertex33">Vértice / centro / inserción</label><select id="cadVertex33" class="input-field" onchange="loadVertexCAD33()"></select><div class="cad-grid33"><label>X / Este<input id="cadVX33" class="input-field" type="number" step="any"></label><label>Y / Norte<input id="cadVY33" class="input-field" type="number" step="any"></label><label>Z / Cota<input id="cadVZ33" class="input-field" type="number" step="any"></label></div><button class="btn" onclick="editVertexCAD33()">Aplicar XYZ al vértice</button><button class="btn" onclick="editActionCAD33('layer')">Pasar a capa activa</button><button class="btn" onclick="refreshRefsCAD33()">Actualizar copias desde puntos</button></details>
@@ -6380,7 +6402,7 @@ function resize3D24(){if(!renderer3D||!camera3D)return;const host=$('canvas3DCon
 function centerUser24(){if(topo24.view==='guide'){field18.radius=null;renderGuide18();return;}if(topo24.view==='three'){return notify('La vista 3D permite orbitar los datos. Cambia a Plano 2D para centrar el receptor.');}centrarEnPosicionGPS();}
 function windowZoom24(){if(topo24.view!=='map')return;activarZoomVentana();$('topoZoom24').setAttribute('aria-pressed',String(modoBoxZoom));}
 function viewTarget24(){const t=window.targetReplanteoActivo,r=stake56.last;if(!t)return notify('Selecciona un objetivo.',true);const p=t.tipo==='PUNTO'?t.datos:r&&finite(r.targetX)?{x:r.targetX,y:r.targetY}:null;if(!p)return notify('Se necesita una posición válida para localizar el objetivo sobre el eje.',true);map.setView(utmALatLng(p.x,p.y,currentZone()),21);}
-function fitWorkspace24(){if(topo24.view==='guide'){zoomGuide18(null);return;}if(topo24.view==='three'){setView24('three');return;}const points=[];if(cad33.doc&&cad33.doc.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)&&topo24.block!=='cogo')for(const e of visibleCAD33('model'))for(const p of geometry33(e))points.push(utmALatLng(p.x,p.y,currentZone()));if(topo24.block==='cogo'&&field59.report){for(const p of field59.report.inputs||[])points.push(utmALatLng(p.x,p.y,currentZone()));const p=field59.result?.point;if(p)points.push(utmALatLng(p.x,p.y,currentZone()));}else{for(const p of listaPuntos)if(finite(p.easting)&&finite(p.northing)&&(!p.huso||Number(p.huso)===currentZone()))points.push(utmALatLng(p.easting,p.northing,currentZone()));for(const i of dxfEntidadesRenderizadas)if(dxfLayerGroup.hasLayer(i.group))points.push(...i.latLngs);if(landxmlTinSurface){const b=landxmlTinSurface.bounds;points.push(utmALatLng(b.minX,b.minY,currentZone()),utmALatLng(b.maxX,b.maxY,currentZone()));}}if(!points.length)return notify('Todavía no hay datos que encuadrar.');map.fitBounds(L.latLngBounds(points),{padding:[55,65],maxZoom:23});}
+function fitWorkspace24(){if(topo24.view==='guide'){zoomGuide18(null);return;}if(topo24.view==='three'){setView24('three');return;}const points=[];if(cad33.doc&&cad33.doc.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)&&topo24.block!=='cogo')for(const e of visibleCAD33('model',false))for(const p of geometry33(e))points.push(utmALatLng(p.x,p.y,currentZone()));if(topo24.block==='cogo'&&field59.report){for(const p of field59.report.inputs||[])points.push(utmALatLng(p.x,p.y,currentZone()));const p=field59.result?.point;if(p)points.push(utmALatLng(p.x,p.y,currentZone()));}else{for(const p of listaPuntos)if(finite(p.easting)&&finite(p.northing)&&(!p.huso||Number(p.huso)===currentZone()))points.push(utmALatLng(p.easting,p.northing,currentZone()));for(const i of dxfEntidadesRenderizadas)if(dxfLayerGroup.hasLayer(i.group))points.push(...i.latLngs);if(landxmlTinSurface){const b=landxmlTinSurface.bounds;points.push(utmALatLng(b.minX,b.minY,currentZone()),utmALatLng(b.maxX,b.maxY,currentZone()));}}if(!points.length)return notify('Todavía no hay datos que encuadrar.');map.fitBounds(L.latLngBounds(points),{padding:[55,65],maxZoom:23});}
 function before33_refreshLayers24(){if(!topo24.ready)return;const host=$('topoLayers24');host.replaceChildren();function row(text,checked,change){const label=document.createElement('label');label.className='layer-row';const c=document.createElement('input');c.type='checkbox';c.checked=checked;c.onchange=()=>change(c.checked);label.append(c,document.createTextNode(text));host.append(label);}for(const [name,layer]of [['Puntos del proyecto',puntos55Layer],['Superficie TIN seleccionada',tin55Layer],['Vectores GIS',vectorImportLayerGroup],['Imágenes importadas',raster55Layer]])row(name,map.hasLayer(layer),on=>on?layer.addTo(map):layer.remove());for(const name of Object.keys(dxfCapasMap))row('CAD · '+name,dxfLayerGroup.hasLayer(dxfCapasMap[name][0]),on=>toggleCapaDXF(name,on));if(app55.surfaces.length){const label=document.createElement('label');label.textContent='Superficie activa';const sel=document.createElement('select');sel.className='input-field';for(const [i,s]of app55.surfaces.entries())sel.add(new Option(s.nombre,String(i)));sel.value=String(app55.surfaces.indexOf(landxmlTinSurface));sel.onchange=()=>{$('surfaceSelect').value=sel.value;selectSurface();refreshLayers24();};host.append(label,sel);const b=document.createElement('button');b.className='btn';b.textContent='Replantear superficie activa';b.onclick=activarReplanteoTINDirectoHUD;host.append(b);}}
 function renderSelection24(){const host=$('topoPointList24'),q=$('topoPointSearch24').value.trim().toLocaleLowerCase('es');host.replaceChildren();const pts=listaPuntos.filter(p=>(String(p.id)+' '+(p.codigo||'')).toLocaleLowerCase('es').includes(q)&&(!p.huso||Number(p.huso)===currentZone()));for(const p of pts.slice(0,80)){const b=document.createElement('button');b.type='button';b.className='topo-point-row24';b.textContent=String(p.id)+' · '+(p.codigo||'Sin código')+' · Z '+metric(p.cotaNAP);b.onclick=()=>{if(topo24.view!=='map')setView24('map');closePanel24();const ll=utmALatLng(p.easting,p.northing,currentZone());map.setView(ll,Math.max(map.getZoom(),20));L.popup().setLatLng(ll).setContent(pointPopup(p)).openOn(map);};host.append(b);}if(!pts.length)host.textContent='No hay puntos con este filtro.';if(pts.length>80){const info=document.createElement('p');info.textContent='Mostrando 80 de '+pts.length+'. Afina la búsqueda.';host.append(info);}}
 function pickCogoPoint24(p,slot){if(slot==='lista'){$('orderPoint59').value=String(p.id);addOrdered59();}else{$('cogo'+slot+'59').value=String(p.id);invalidateCogo59();}map.closePopup();openPanel24('prepareCogo58');queueTopo17();}
@@ -7304,16 +7326,16 @@ function dxfCAD33(doc=cad33.doc){validateCAD33(doc);require26(doc?.entities.leng
 function exportCAD33(){try{if(!needProject15())return;return downloadText('SiteSCad_CAD_H'+cad33.doc.zone+'.dxf',dxfCAD33(),'application/dxf');}catch(e){messageCAD33(e.message);}}
 
 function messageCAD33(text){if($('cadMessage33'))$('cadMessage33').textContent=text;}
-function visibleCAD33(space=modifySpace56()){
+function visibleCAD33(space=modifySpace56(),filtered=true){
  const out=[];
- for(const e of visibleStepsCAD63(ensureCAD33(),space))if(e)out.push(e);
+ for(const e of visibleStepsCAD63(ensureCAD33(),space,filtered?hiddenView69(space):null))if(e)out.push(e);
  return out;
 }
 function surveyPointsCAD33(){return listaPuntos.filter(p=>finite(p.easting)&&finite(p.northing)&&finite(p.cotaNAP)&&(!p.huso||Number(p.huso)===currentZone())).map(p=>({x:Number(p.easting),y:Number(p.northing),z:Number(p.cotaNAP),id:String(p.id),code:p.codigo||'',datum:p.datum||null}));}
 function localCAD33(p){const o=cad33.runtime.origin;return new THREE.Vector3(p.x-o.x,p.z-o.z,-(p.y-o.y));}
 function worldCAD33(p){const o=cad33.runtime.origin;return {x:p.x+o.x,y:o.y-p.z,z:p.y+o.z};}
 function before38_disposeCAD33(){const r=cad33.runtime;if(!r)return;if(r.build63)r.build63.cancelled=true;cancelAnimationFrame(r.frame);r.controls?.dispose();r.observer?.disconnect();r.scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose?.();}}});r.renderer.dispose();r.renderer.domElement.remove();cad33.runtime=null;}
-function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const p=firstVisibleCAD63()||surveyPointsCAD33()[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r)return;r.moveEvent33=e;if(r.moveQueued||largeCAD61()&&cad33.tool==='select')return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(r.moveEvent33);if(p){previewCAD33(p);r.renderDirty63=true;$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;bindGrips68(cad33.runtime);viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;const moved=r.controls.update();if(largeCAD61())updateTextCAD63(r,moved);if(!largeCAD61()||moved||r.renderDirty63){const dirty=r.renderDirty63;r.renderDirty63=false;r.renderer.render(r.scene,r.camera);if(moved||dirty)renderGrips68(r);if(r.performance67)r.performance67.frames++;}r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
+function before38_openCAD33(){if(!cad33.ready)return;ensureCAD33();refreshCADUI33();if(cad33.doc.zone!==currentZone()){messageCAD33('El dibujo pertenece al huso '+cad33.doc.zone+'. Cambia al huso correcto antes de usarlo.');return;}if(cad33.runtime){resizeCAD33();return;}try{const host=$('cadCanvas33'),width=host.clientWidth||800,height=host.clientHeight||500,scene=new THREE.Scene();scene.background=new THREE.Color('#171e27');const p=firstVisibleCAD63()||surveyPointsCAD33()[0]||{x:0,y:0,z:ensureCAD33().planeZ},origin={x:p.x,y:p.y,z:p.z},renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(width,height);host.append(renderer.domElement);const camera=new THREE.OrthographicCamera(-50,50,50,-50,.01,1e8),controls=new THREE.OrbitControls(camera,renderer.domElement),group=new THREE.Group();scene.add(group);cad33.runtime={scene,renderer,camera,controls,group,origin,span:100,frame:0,down:null};controls.enableDamping=true;controls.addEventListener('change',()=>{});renderer.domElement.addEventListener('pointerdown',e=>tapPointerCAD33('down',e));renderer.domElement.addEventListener('pointerup',e=>{if(!tapPointerCAD33('up',e))return;try{clickCAD33(e);}catch(error){messageCAD33(error.message);}});renderer.domElement.addEventListener('pointercancel',e=>tapPointerCAD33('cancel',e));renderer.domElement.addEventListener('pointermove',e=>{tapPointerCAD33('move',e);const r=cad33.runtime;if(!r)return;r.moveEvent33=e;if(r.moveQueued||largeCAD61()&&cad33.tool==='select')return;r.moveQueued=true;requestAnimationFrame(()=>{if(cad33.runtime!==r)return;r.moveQueued=false;try{const p=cursorCAD33(r.moveEvent33);if(p){previewCAD33(p);r.renderDirty63=true;$('cadCursor33').textContent='E '+p.x.toFixed(3)+' · N '+p.y.toFixed(3)+' · Z '+p.z.toFixed(3)+(p.snap?' · '+p.snap:' · plano de trabajo');}}catch{}});});const observer=new ResizeObserver(resizeCAD33);observer.observe(host);cad33.runtime.observer=observer;bindGrips68(cad33.runtime);viewCAD33(cad33.view,true);const loop=()=>{const r=cad33.runtime;if(!r)return;const moved=r.controls.update();if(largeCAD61())updateTextCAD63(r,moved);if(!largeCAD61()||moved||r.renderDirty63){const dirty=r.renderDirty63;r.renderDirty63=false;updateGrid69(r);renderCADView69(r);if(moved||dirty)renderGrips68(r);if(r.performance67)r.performance67.frames++;}r.frame=requestAnimationFrame(loop);};loop();messageCAD33('CAD listo · coordenadas en metros. '+(listaPuntos.length-surveyPointsCAD33().length?'Hay puntos sin Z o de otro huso que no se representan en 3D.':''));}catch(error){disposeCAD33();messageCAD33('No se pudo iniciar el motor 3D: '+error.message+'. Los datos siguen guardados y puedes exportarlos.');}}
 function before36_resizeCAD33(){const r=cad33.runtime;if(!r)return;const host=$('cadCanvas33'),w=host.clientWidth,h=host.clientHeight;if(w<=0||h<=0)return;r.renderDirty63=true;r.textDirty63=true;r.renderer.setSize(w,h);const aspect=w/h;if(r.camera.isOrthographicCamera){r.camera.left=-r.span*aspect/2;r.camera.right=r.span*aspect/2;r.camera.top=r.span/2;r.camera.bottom=-r.span/2;}else r.camera.aspect=aspect;r.camera.updateProjectionMatrix();}
 function before38_viewCAD33(view,fit=false){require26(['2d','3d'].includes(view),'Vista no válida.');cad33.view=view;const r=cad33.runtime;if(r){const old=r.controls,center=old.target.clone(),distance=Math.max(10,r.camera.position.distanceTo(center));old.dispose();const aspect=($('cadCanvas33').clientWidth||800)/($('cadCanvas33').clientHeight||500);r.camera=view==='2d'?new THREE.OrthographicCamera(-r.span*aspect/2,r.span*aspect/2,r.span/2,-r.span/2,.01,1e8):new THREE.PerspectiveCamera(45,aspect,.01,1e8);r.camera.up.set(0,view==='2d'?0:1,view==='2d'?-1:0);r.camera.position.copy(center).add(view==='2d'?new THREE.Vector3(0,distance,0):new THREE.Vector3(distance*.6,distance*.7,distance*.6));r.camera.lookAt(center);r.renderDirty63=true;r.textDirty63=true;r.controls=new THREE.OrbitControls(r.camera,r.renderer.domElement);r.controls.enableDamping=true;r.controls.enableRotate=view==='3d';r.controls.touches.ONE=view==='2d'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;r.controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;r.controls.target.copy(center);r.controls.update();resizeCAD33();if(fit)fitCAD33();}for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===view));}
 function fitCAD33(){
@@ -7357,7 +7379,7 @@ function before36_toolCAD33(tool){const allowed=['select','window','point','line
 function inputPointCAD33(point){const p=xyz33(point);require26(cad33.doc.zone===currentZone(),'Huso distinto al dibujo.');if(cad33.tool==='select')toolCAD33('point');if(cad33.draft.length&&len33(sub33(p,cad33.draft.at(-1)))<1e-9)return;cad33.draft.push(p);const t=cad33.tool,n=cad33.draft.length,a=cad33.draft[0],b=cad33.draft[1];if(t==='point'){require26(addEntities33([newEntity33('POINT',[p])]),'No se guardó la entidad.');cad33.draft=[];}else if(t==='line'&&n===2){require26(addEntities33([newEntity33('LINE',[a,b])]),'No se guardó la línea.');cad33.draft=[];}else if(t==='polyline'){messageCAD33(n+' vértices. Último Z '+p.z.toFixed(3)+' m. Termina o cierra la polilínea.');}else if(t==='rectangle'&&n===2){require26(Math.abs(a.z-b.z)<1e-6,'Rectángulo: las dos esquinas deben estar en el mismo plano Z. Cancela o corrige las coordenadas.');require26(Math.abs(a.x-b.x)>1e-9&&Math.abs(a.y-b.y)>1e-9,'Rectángulo degenerado.');require26(addEntities33([newEntity33('POLYLINE',[a,{x:b.x,y:a.y,z:a.z},b,{x:a.x,y:b.y,z:a.z}],{closed:true})]),'No se guardó el rectángulo.');cad33.draft=[];}else if((t==='circle'&&n===2)||(t==='arc'&&n===3)){require26(cad33.draft.every(v=>Math.abs(v.z-a.z)<1e-6),'Curva: los puntos deben pertenecer al mismo plano horizontal Z.');const radius=Math.hypot(b.x-a.x,b.y-a.y);require26(radius>1e-8,'Radio nulo.');const extra={normal:{x:0,y:0,z:1},u:{x:1,y:0,z:0},radius};if(t==='arc'){extra.start=Math.atan2(b.y-a.y,b.x-a.x);const c=cad33.draft[2];extra.sweep=((Math.atan2(c.y-a.y,c.x-a.x)-extra.start)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);require26(extra.sweep>1e-9,'Arco nulo.');}require26(addEntities33([newEntity33(t.toUpperCase(),[a],extra)]),'No se guardó la curva.');cad33.draft=[];}else if(t==='text'){const text=$('cadText33').value.trim(),height=numCAD33('cadTextHeight33');require26(text&&height>0,'Introduce texto y altura positiva.');require26(addEntities33([newEntity33('TEXT',[a],{text,height,rotation:numCAD33('cadTextAngle33')})]),'No se guardó el texto.');cad33.draft=[];}else if(t==='measure'&&n===2){const v=sub33(b,a);messageCAD33('Horizontal '+Math.hypot(v.x,v.y).toFixed(4)+' m · 3D '+len33(v).toFixed(4)+' m · ΔZ '+v.z.toFixed(4)+' m · pendiente '+(Math.hypot(v.x,v.y)>0?(100*v.z/Math.hypot(v.x,v.y)).toFixed(3)+' %':'vertical'));cad33.draft=[];}drawCAD33();}
 function finishCAD33(closed=false){return guardCAD33(()=>{require26(cad33.tool==='polyline'&&cad33.draft.length>=(closed?3:2),'Añade al menos '+(closed?3:2)+' vértices a una polilínea.');require26(addEntities33([newEntity33('POLYLINE',cad33.draft,{closed})]),'No se guardó la polilínea.');cad33.draft=[];toolCAD33('select');});}
 function inputXYZCAD33(){return guardCAD33(()=>inputPointCAD33({x:numCAD33('cadX33'),y:numCAD33('cadY33'),z:numCAD33('cadZ33')}));}
-function panelCAD33(id){for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=p.id!==id||!p.hidden;refreshCADUI33();}
+function panelCAD33(id){closeView69();for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=p.id!==id||!p.hidden;refreshCADUI33();}
 function refreshCADUI33(){if(!cad33.ready)return;const d=ensureCAD33(),sel=$('cadActiveLayer33'),old=sel.value;sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;const host=$('cadLayers33');host.replaceChildren();for(const l of d.layers){const row=document.createElement('div');row.className='cad-layer33';const visibility=document.createElement('input');visibility.type='checkbox';visibility.checked=l.visible;visibility.setAttribute('aria-label','Mostrar capa '+l.name);visibility.onchange=()=>guardCAD33(()=>changeCADLayer63('Visibilidad de capa',l.name,{visible:visibility.checked}));const lock=document.createElement('button');lock.className='btn';lock.textContent=l.locked?'🔒':'🔓';lock.setAttribute('aria-label','Bloquear/desbloquear '+l.name);lock.onclick=()=>guardCAD33(()=>changeCADLayer63('Bloqueo de capa',l.name,{locked:!l.locked}));const color=document.createElement('input');color.type='color';color.value=l.color;color.setAttribute('aria-label','Color '+l.name);color.onchange=()=>guardCAD33(()=>changeCADLayer63('Color de capa',l.name,{color:color.value}));const name=document.createElement('span');name.textContent=l.name;row.append(visibility,color,name,lock);host.append(row);}const selected=[...cad33.selected].map(id=>getEntity67(d,id)).filter(Boolean);$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.slice(0,8).map(e=>e.type+' / '+e.layer).join(', ')+(selected.length>8?'…':''):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+m.spatial.toFixed(4)+' m · horizontal '+m.horizontal.toFixed(4)+(m.horizontalApprox?' aprox.':'')+' m · área en planta '+m.area.toFixed(4)+' m² · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
 function loadVertexCAD33(){const e=ensureCAD33().entities.find(e=>cad33.selected.has(e.id)),p=e?.points[Number($('cadVertex33').value)];if(!p)return;for(const k of ['x','y','z'])$('cadV'+k.toUpperCase()+'33').value=String(p[k]);}
 function editVertexCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(list.length===1,'Selecciona una entidad.');const i=Number($('cadVertex33').value),p={x:numCAD33('cadVX33'),y:numCAD33('cadVY33'),z:numCAD33('cadVZ33')};changeCAD33('Editar vértice XYZ',d=>{const e=editEntity67(d,list[0].id);require26(i>=0&&i<e.points.length,'Vértice inexistente.');e.points[i]=p;delete e.refs;});});}
@@ -7375,7 +7397,7 @@ function toggleLiveCAD33(){if(!needProject15())return;cad33.live={enabled:$('cad
 function liveSurveyCAD33(p){if(!cad33.live.enabled||data15.closed||cad33.restoring)return;if(!finite(p.cotaNAP)||!finite(p.easting)||!finite(p.northing)){if(cad33.ready)$('cadLiveStatus33').textContent='Punto '+p.id+' sin XYZ completas: no se ha dibujado. Se conserva en el levantamiento.';return;}const code=String(p.codigo||'SIN_CODIGO'),name=('LEV_'+code.replace(/[<>/\\":;?*|=\r\n]/g,'_')).slice(0,80),point={x:Number(p.easting),y:Number(p.northing),z:Number(p.cotaNAP)},id=cad33.live.groups[code];changeCAD33('Levantamiento dibujado',d=>{if(!d.layers.some(l=>l.name===name))d.layers.push({name,color:'#57c6b6',visible:true,locked:false});require26(!d.layers.find(l=>l.name===name).locked,'La capa de levantamiento está bloqueada.');let e=id?editEntity67(d,id):null;if(e&&(e.source33?.datum||null)!==(p.datum||null)){e=null;if(cad33.ready)$('cadLiveStatus33').textContent='Referencia vertical cambiada: se inicia un tramo nuevo para '+code+'. Revisa las referencias del dibujo.';}if(!e){e=newEntity33('POINT',[point],{layer:name,refs:[String(p.id)],source33:{kind:'survey-live',code,datum:p.datum||null}});d.entities.push(e);cad33.live.groups[code]=e.id;}else{require26(!e.refs?.includes(String(p.id)),'Ese punto ya está dibujado.');e.points.push(point);e.refs.push(String(p.id));e.type='POLYLINE';}},'survey');cad33.live.undoSaved=true;}
 function newLiveLineCAD33(close=false){return guardCAD33(()=>{if(close){const ids=new Set(Object.values(cad33.live.groups));changeCAD33('Cerrar líneas del levantamiento',d=>{for(const e of editEntities67(d,ids).values())if(e.type==='POLYLINE'&&e.points.length>=3)e.closed=true;},'survey');}cad33.live.groups={};cad33.live.undoSaved=false;messageCAD33('Nuevo tramo de dibujo para los siguientes puntos medidos.');if(cad33.ready)$('cadLiveStatus33').textContent='Nuevo tramo: los siguientes puntos iniciarán líneas independientes por código.';});}
 function before36_restoreCAD33(doc){disposeCAD33();const ready=unpackedCAD63.delete(doc);if(!ready)validateCAD33(doc);cad33.doc=doc?(ready?doc:clone33(doc)):null;cad33.undo=[];cad33.redo=[];cad33.selected.clear();cad33.draft=[];cad33.pointOrder=[];cad33.live={enabled:false,groups:{}};if(cad33.ready){$('cadLive33').checked=false;refreshMapCAD33();if(ui58.section==='tabCAD33')openCAD33();}}
-function before39_refreshMapCAD33(){if(!cad33.layer)return;cad33.layer.clearLayers();if(!cad33.doc||cad33.doc.zone!==currentZone())return;for(const e of mapOverviewCAD61(visibleCAD33('model'))){const p=geometry33(e),ll=p.map(v=>utmALatLng(v.x,v.y,cad33.doc.zone)),color=e.style56?.color||layerCAD33(e.layer).color;let layer;if(p.length===1)layer=L.circleMarker(ll[0],{radius:4,color});else if(e.closed||e.type==='FACE')layer=L.polygon(ll,{color,weight:2,fillOpacity:.05});else layer=L.polyline(ll,{color,weight:2});const div=document.createElement('div'),title=document.createElement('p'),open=document.createElement('button');title.textContent='CAD · '+e.type+' · '+e.layer+' · Z '+p[0].z.toFixed(3);open.className='btn';open.textContent='Editar en CAD';open.onclick=()=>{switchTab('tabCAD33');cad33.selected=new Set([e.id]);refreshCADUI33();drawCAD33();};div.append(title,open);if(e.type==='TEXT')layer.bindTooltip(e.text,{permanent:true,direction:'right'});layer.bindPopup(div).addTo(cad33.layer);}}
+function before39_refreshMapCAD33(){if(!cad33.layer)return;cad33.layer.clearLayers();if(!cad33.doc||cad33.doc.zone!==currentZone())return;for(const e of mapOverviewCAD61(visibleCAD33('model',false))){const p=geometry33(e),ll=p.map(v=>utmALatLng(v.x,v.y,cad33.doc.zone)),color=e.style56?.color||layerCAD33(e.layer).color;let layer;if(p.length===1)layer=L.circleMarker(ll[0],{radius:4,color});else if(e.closed||e.type==='FACE')layer=L.polygon(ll,{color,weight:2,fillOpacity:.05});else layer=L.polyline(ll,{color,weight:2});const div=document.createElement('div'),title=document.createElement('p'),open=document.createElement('button');title.textContent='CAD · '+e.type+' · '+e.layer+' · Z '+p[0].z.toFixed(3);open.className='btn';open.textContent='Editar en CAD';open.onclick=()=>{switchTab('tabCAD33');cad33.selected=new Set([e.id]);refreshCADUI33();drawCAD33();};div.append(title,open);if(e.type==='TEXT')layer.bindTooltip(e.text,{permanent:true,direction:'right'});layer.bindPopup(div).addTo(cad33.layer);}}
 function refreshCAD33(fit=false){if(cad33.restoring)return;if(cad33.ready&&ui58.section==='tabCAD33'){refreshCADUI33();if(fit)fitCAD33();else drawCAD33();}if(cad33.layer)refreshMapCAD33();}
 function initCAD33(){UI_VIEWS58.tabCAD33=['Cad','Dibujo y edición XYZ del proyecto.','Encuadrar'];cad33.ready=true;cad33.layer=L.featureGroup().addTo(map);const observer=new ResizeObserver(()=>{if(ui58.section==='tabCAD33')resizeCAD33();});observer.observe($('cadCanvas33'));document.addEventListener('keydown',e=>{if(ui58.section!=='tabCAD33'||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='Escape'){toolCAD33('select');for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=true;}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undoCAD33(e.shiftKey);}else if(e.key==='Delete')deleteCAD33();else if(e.key==='Enter'&&cad33.tool==='polyline')finishCAD33();});}
 
@@ -7399,7 +7421,7 @@ function switchTab(tab,element){if(cad33.ready&&tab!=='tabCAD33')disposeCAD33();
 function storeSurvey59(samples,cfg){const point=before33_storeSurvey59(samples,cfg);try{liveSurveyCAD33(point);}catch(e){cad33.live.enabled=false;if(cad33.ready){$('cadLive33').checked=false;$('cadLiveStatus33').textContent='El punto se ha medido y guardado. Dibujo detenido: '+e.message;}}return point;}
 function before39_refreshLayers24(){const result=before33_refreshLayers24();if(cad33.ready&&cad33.doc){const label=document.createElement('label');label.className='layer-row';const input=document.createElement('input');input.type='checkbox';input.checked=map.hasLayer(cad33.layer);input.onchange=()=>input.checked?cad33.layer.addTo(map):cad33.layer.remove();label.append(input,document.createTextNode('Dibujo CAD del proyecto'));$('topoLayers24').append(label);}return result;}
 function stakeItem25(item,first=false){if(!item.cadEntity33)return before33_stakeItem25(item,first);return guardCAD33(()=>{const e=cad33.doc?.entities.find(e=>e.id===item.cadEntity33);require26(e,'La entidad CAD ha cambiado; vuelve a seleccionarla.');startEntityCAD33(e,first);clearSelection25();});}
-function hitItems25(latlng,tolerance=26){const hits=before33_hitItems25(latlng,tolerance);if(!cad33.doc?.entities.length||!cad33.layer||!map.hasLayer(cad33.layer))return hits;if(cad33.doc?.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)){const screen=map.latLngToContainerPoint(latlng);for(const e of mapOverviewCAD61(visibleCAD33('model'))){const vertices=geometry33(e),distance=screenGeometry25(vertices,screen,!!e.closed);if(distance<=tolerance)hits.push({kind:'vector',name:'CAD · '+e.type+' · '+e.layer,vertices,closed:!!e.closed,cadEntity33:e.id,distance});}}return hits.sort((a,b)=>a.distance-b.distance).slice(0,12);}
+function hitItems25(latlng,tolerance=26){const hits=before33_hitItems25(latlng,tolerance);if(!cad33.doc?.entities.length||!cad33.layer||!map.hasLayer(cad33.layer))return hits;if(cad33.doc?.zone===currentZone()&&cad33.layer&&map.hasLayer(cad33.layer)){const screen=map.latLngToContainerPoint(latlng);for(const e of mapOverviewCAD61(visibleCAD33('model',false))){const vertices=geometry33(e),distance=screenGeometry25(vertices,screen,!!e.closed);if(distance<=tolerance)hits.push({kind:'vector',name:'CAD · '+e.type+' · '+e.layer,vertices,closed:!!e.closed,cadEntity33:e.id,distance});}}return hits.sort((a,b)=>a.distance-b.distance).slice(0,12);}
 
 /* Opt-in design copies. Source road remains analytical; CAD contains XYZ polylines. */
 const roadCAD34={ready:false,depth:0,project:null,busy:false,request:null};
@@ -7544,6 +7566,7 @@ const art35={
  save:'<path d="M5 4h19l4 4v21H5Z" fill="#345a70" stroke="#87badd"/><path d="M10 4h12v9H10Z" fill="#80d7c1"/><path d="M10 20h13v9H10Z" fill="#d8eef5"/><path d="M19 6v5" stroke="#315a65"/>',
  calculate:'<rect x="6" y="3" width="21" height="27" rx="3" fill="#364f68" stroke="#8ebfe0"/><path d="M10 7h13v6H10Z" fill="#8ce4c6"/><path d="M10 18h4m-2-2v4m6-2h5m-13 7h4m4-2 4 4m0-4-4 4" stroke="#f1cb76" stroke-width="2"/>',
  close:'<circle cx="16" cy="16" r="12" fill="#354a5f" stroke="#88a5bc"/><path d="m11 11 10 10m0-10L11 21" stroke="#d7ecf6" stroke-width="2"/>',
+ view:'<path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16Z" fill="#345a70" stroke="#9ad4ee"/><circle cx="16" cy="16" r="4" fill="#80d7c1" stroke="#d7fff5"/>',
  undo:'<path d="M6 12h13a9 9 0 0 1 0 18M6 12l7-7m-7 7 7 7" transform="translate(0 -2)" fill="none" stroke="#edc26b" stroke-width="2.5"/>',
  redo:'<path d="M26 12H13a9 9 0 0 0 0 18m13-18-7-7m7 7-7 7" transform="translate(0 -2)" fill="none" stroke="#78dec6" stroke-width="2.5"/>'
 };
@@ -7917,12 +7940,16 @@ function clickCAD33(e){if(cad33.tool==='select'&&placeArmedGrip68(e))return;if(c
  const r=cad33.runtime,draw=!['select','window'].includes(cad33.tool);let snap=null;if(draw&&r){try{snap=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);}catch{}}
  const result=before38_clickCAD33(e);if(snap)showSnap38(snap,true);return result;
 }
-function cursorCAD33(e){if(!cad33.runtime)return null;if(cad33.tool==='window'){windowPreview38(rayCAD33(e).screen);return null;}if(cad33.runtime.down?.moved){hideSnap38();return null;}const p=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);return p||before38_cursorCAD33(e,true);}
-function toolCAD33(tool){cancelGrips68();cad38.windowStart=null;if($('cadWindow38'))$('cadWindow38').hidden=true;hideSnap38();return before38_toolCAD33(tool);}
+function cursorCAD33(e){if(!cad33.runtime)return null;if(cad33.runtime.viewGesture69){previewZoom69(cad33.runtime,e);return null;}if(cad33.tool==='window'){windowPreview38(rayCAD33(e).screen);return null;}if(cad33.runtime.down?.moved){hideSnap38();return null;}const p=snapCAD33(rayCAD33(e).screen,e.pointerType==='touch'?25:18);return p||before38_cursorCAD33(e,true);}
+function toolCAD33(tool){closeView69();cancelGrips68();cad38.windowStart=null;if($('cadWindow38'))$('cadWindow38').hidden=true;hideSnap38();return before38_toolCAD33(tool);}
 function drawCAD33(fit){if(cad33.runtime?.grips68)cad33.runtime.grips68.doc=null;cad38.index=null;cad38.projected=null;const result=before38_drawCAD33(fit===true);if(cad38.ready)bindRuntime38();return result;}
-function openCAD33(){const result=before38_openCAD33();if(cad38.ready){bindRuntime38();applySplit38();}return result;}
+function openCAD33(){const existing=cad33.runtime,result=before38_openCAD33();if(cad38.ready){bindRuntime38();applySplit38();}
+ if(cad33.runtime&&cadTabs49.ready&&!existing){
+  if(cadViewStates69.has(cadFiles65.active))displayView69(cad33.runtime);
+  else{$('cadInset69').hidden=true;$('cadStage33').classList.remove('cad-no-labels69','cad-no-axes69');}
+ }return result;}
 function viewCAD33(view,fit=false){cancelGrips68();hideSnap38();const result=before38_viewCAD33(view,fit);if(cad38.ready)bindRuntime38();return result;}
-function disposeCAD33(){cancelGrips68();const overlay=$('cadGrips68');if(overlay)overlay.width=overlay.width;hideSnap38();cad38.index=null;cad38.boundCanvas=null;cad38.controls=null;if($('cadAxes38'))$('cadAxes38').hidden=true;return before38_disposeCAD33();}
+function disposeCAD33(){closeView69();cancelGrips68();const overlay=$('cadGrips68');if(overlay)overlay.width=overlay.width;hideSnap38();cad38.index=null;cad38.boundCanvas=null;cad38.controls=null;if($('cadAxes38'))$('cadAxes38').hidden=true;return before38_disposeCAD33();}
 function openCommand36(key){const result=before38_openCommand36(key);const cmd=uiCAD36.commands.get(key);if(cmd&&['select','window'].includes(cmd.tool))document.querySelector('.cad-coordinate33').hidden=true;if(cad38.ready)applySplit38();return result;}
 function restoreCAD33(data){const result=before38_restoreCAD33(data);if(cad38.ready)restoreSettings38();return result;}
 function undoCAD33(redo=false){const ui=cad33.doc?.ui38?clone33(cad33.doc.ui38):null,result=before38_undoCAD33(redo);if(ui&&cad33.doc)cad33.doc.ui38=ui;return result;}
@@ -7952,7 +7979,7 @@ function validXY39(p){return !!p&&finite(p.x)&&finite(p.y);}
 function validXYZ39(p){return validXY39(p)&&finite(p.z);}
 function geometry39(e){let points=stakeView39.geometryCache.get(e);if(!points){points=geometry33(e);if(e.closed&&points.length>2)points=[...points,points[0]];stakeView39.geometryCache.set(e,points);}return points;}
 function cadVisible39(){return !!cad33.ready&&!!cad33.doc&&cad33.doc.zone===currentZone()&&!!cad33.layer&&map.hasLayer(cad33.layer);}
-function cadItems39(){if(!cadVisible39())return [];return mapOverviewCAD61(visibleCAD33('model')).map(e=>({cad39:true,entityId:e.id,project39:workspace14.id,verticesUTM:geometry39(e),colorHex:e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',layerName:'Dibujo CAD · '+e.layer,entidad:{type:e.type},entity39:e}));}
+function cadItems39(){if(!cadVisible39())return [];return mapOverviewCAD61(visibleCAD33('model',false)).map(e=>({cad39:true,entityId:e.id,project39:workspace14.id,verticesUTM:geometry39(e),colorHex:e.style56?.color||layerCAD33(e.layer)?.color||'#e4ad50',layerName:'Dibujo CAD · '+e.layer,entidad:{type:e.type},entity39:e}));}
 function zonePoint39(p){return !p?.huso||Number(p.huso)===currentZone();}
 function axisFocus39(){const source=stake56.source;if(!source)return null;let p,label;if(ui58.method==='PK'){try{p=makePlanPoint56(source,parsePK56($('stakePK56').value),planSettings56());label='PK '+metric(p.pk)+' · O '+metric(p.offset)+' · '+source.title;}catch{return null;}}else{const n=Number($('stakeVertex56').value);if(!Number.isInteger(n)||n<1||n>source.vertices.length)return null;p={...source.vertices[n-1]};if(source.road)try{p.z=designZ56(source,p.pk,0,p,{mode:'AUTO',slope:0,dz:0});}catch{p.z=null;}label='V'+n+' · '+source.title;}
  return validXY39(p)?{point:p,geometry:source.vertices,key:source,kind:'preview',label}:null;}
@@ -8071,7 +8098,7 @@ async function readGeoTerrain41(buffer,a,name,meta){const tiff=await GeoTIFF.fro
 function pointsSurface41(points,name,meta={},area=terrain41.area){const unique=new Map();for(const p of points){require26(validXYZ39(p),'Punto sin XYZ válidas.');if(!insideTerrain41(p,area))continue;const k=p.x.toFixed(6)+','+p.y.toFixed(6),prior=unique.get(k);require26(!prior||Math.abs(prior.z-p.z)<.001,'Hay puntos con las mismas XY y cotas distintas; no se puede crear un terreno 2,5D.');unique.set(k,p);}const p=[...unique.values()];require26(p.length>=3&&p.length<=budget42(),'Se requieren entre 3 y la capacidad elegida de puntos XYZ dentro de la zona.');const max=Number($('terrainEdge41').value);require26(Number.isFinite(max)&&max>0&&max<=10000,'Arista máxima: entre 0 y 10.000 m.');const d=Delaunator.from(p,a=>a.x,a=>a.y),faces=[];for(let i=0;i<d.triangles.length;i+=3){const v=[p[d.triangles[i]],p[d.triangles[i+1]],p[d.triangles[i+2]]];if(v.every((a,j)=>Math.hypot(a.x-v[(j+1)%3].x,a.y-v[(j+1)%3].y)<=max))faces.push({p1:v[0],p2:v[1],p3:v[2]});}const tin=buildSurface(name,faces,'Triangulación XYZ');tin.terrain41={...meta,maxEdge:max,method:'Delaunay libre en planta; sin restricciones de rotura ni huecos',derived:true,area};return tin;}
 async function before42_importTerrain41(event){const file=event.target.files?.[0];if(!file||!needProject15())return;event.target.value='';let j;try{require26(file.size<=180*1024*1024,'Archivo demasiado grande (180 MB máximo).');stepTerrain41();j=jobTerrain41();const ext=file.name.split('.').at(-1).toLowerCase(),a=terrain41.area,meta={originalFile:file.name,provider:$('terrainOrigin41').value.trim()||'Archivo aportado por el usuario',flightDate:$('terrainDate41').value||null,verticalDatum:$('terrainDatum41').value,license:'Consultar licencia del archivo de origen'},buffer=await readFile(file,'buffer');checkTerrain41(j);if(['las','laz'].includes(ext)){await saveTerrain41(j,'LiDAR/'+file.name,new Uint8Array(buffer),'application/octet-stream');terrainStatus41('LiDAR original guardado. Para crear un terreno, convierte la clase 2 (suelo) a MDT GeoTIFF/ASC o XYZ; esta versión no descomprime LAZ.');return;}let tins=[];if(['tif','tiff'].includes(ext))tins=[await readGeoTerrain41(buffer,a,file.name,meta)];else{const text=new TextDecoder().decode(buffer);if(ext==='asc')tins=[parseGridASC41(text,a,file.name,{...meta,sourceEPSG:25800+currentZone()})];else if(['xml','landxml'].includes(ext))tins=parseLandXML(text,file.name);else if(ext==='dxf'){const doc=parseCADDXF33(text,file.name,true,false),faces=doc.entities.filter(e=>e.type==='FACE').flatMap(e=>[{p1:e.points[0],p2:e.points[1],p3:e.points[2]},...(e.points.length===4?[{p1:e.points[0],p2:e.points[2],p3:e.points[3]}]:[])]);require26(faces.length,'DXF sin caras 3D. Importa el dibujo en CAD para triangular puntos o curvas.');tins=[buildSurface(file.name,faces,'DXF 3DFACE')];}else{require26(['xyz','csv','txt'].includes(ext),'Formato de terreno no admitido.');const rows=parseNumericRows(text,3);tins=[pointsSurface41(rows.map(v=>({x:v[0],y:v[1],z:v[2]})),file.name,meta)];}}checkTerrain41(j);for(const tin of tins){require26(tin.tri.length<=24000,'Superficie demasiado grande: reduce el archivo (24.000 caras máximo).');tin.terrain41={...meta,...tin.terrain41};}await saveTerrain41(j,'Originales/'+file.name,new Uint8Array(buffer),file.type||'application/octet-stream');checkTerrain41(j);for(const t of tins)commitTerrain41(t);terrainStatus41('Cargado: '+tins.length+' superficie(s). '+(meta.flightDate?'Fecha indicada: '+meta.flightDate:'Fecha de vuelo sin verificar.')+' ASC, XYZ, DXF y LandXML deben estar en metros y en el huso activo.');}catch(e){terrainStatus41(e.message);notify(e.message,true);}finally{if(j&&terrain41.job===j)terrain41.job=null;renderTerrain41();}}
 function before42_surfaceToCAD41(){try{require26(canChange15(),'No se puede editar el CAD ahora.');const tin=landxmlTinSurface;require26(tin&&tin.huso===currentZone(),'Selecciona una superficie del huso actual.');const layer='TERRENO_'+Date.now().toString(36);const result=changeCAD33('Caras de terreno',d=>{d.layers.push({name:layer,color:'#57bd9b',visible:true,locked:false});for(const t of tin.tri)d.entities.push(newEntity33('FACE',[t.p1,t.p2,t.p3],{layer}));});if(result){switchTab('tabCAD33');fitCAD33();notify(tin.tri.length+' caras 3D añadidas a '+layer+'.');}}catch(e){notify(e.message,true);}}
-function surfaceFromCAD41(){try{require26(canChange15(),'Espera a que termine la operación.');const d=ensureCAD33();require26(d.zone===currentZone(),'Dibujo CAD en otro huso.');const es=cad33.selected.size?d.entities.filter(e=>cad33.selected.has(e.id)):visibleCAD33(),faces=es.filter(e=>e.type==='FACE').flatMap(e=>[{p1:e.points[0],p2:e.points[1],p3:e.points[2]},...(e.points.length===4?[{p1:e.points[0],p2:e.points[2],p3:e.points[3]}]:[])]);let tin;if(faces.length){require26(es.every(e=>e.type==='FACE'),'Selecciona solo caras o solo puntos/líneas: no se mezclan topologías.');tin=buildSurface('Superficie CAD',faces,'Caras CAD');tin.terrain41={method:'Caras CAD: topología original conservada',derived:true};}else{require26(es.every(e=>['POINT','LINE','POLYLINE'].includes(e.type)),'Selecciona puntos, líneas o polilíneas XYZ para la triangulación libre.');tin=pointsSurface41(es.flatMap(e=>e.points),'Triangulación CAD',{provider:'Dibujo CAD del proyecto'},null);}commitTerrain41(tin);notify('Superficie creada: '+tin.tri.length+' caras. Puedes guardar LandXML.');}catch(e){notify(e.message,true);}}
+function surfaceFromCAD41(){try{require26(canChange15(),'Espera a que termine la operación.');const d=ensureCAD33();require26(d.zone===currentZone(),'Dibujo CAD en otro huso.');const es=cad33.selected.size?d.entities.filter(e=>cad33.selected.has(e.id)):visibleCAD33(modifySpace56(),false),faces=es.filter(e=>e.type==='FACE').flatMap(e=>[{p1:e.points[0],p2:e.points[1],p3:e.points[2]},...(e.points.length===4?[{p1:e.points[0],p2:e.points[2],p3:e.points[3]}]:[])]);let tin;if(faces.length){require26(es.every(e=>e.type==='FACE'),'Selecciona solo caras o solo puntos/líneas: no se mezclan topologías.');tin=buildSurface('Superficie CAD',faces,'Caras CAD');tin.terrain41={method:'Caras CAD: topología original conservada',derived:true};}else{require26(es.every(e=>['POINT','LINE','POLYLINE'].includes(e.type)),'Selecciona puntos, líneas o polilíneas XYZ para la triangulación libre.');tin=pointsSurface41(es.flatMap(e=>e.points),'Triangulación CAD',{provider:'Dibujo CAD del proyecto'},null);}commitTerrain41(tin);notify('Superficie creada: '+tin.tri.length+' caras. Puedes guardar LandXML.');}catch(e){notify(e.message,true);}}
 const escapeXML41=s=>String(s).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]));
 function landXML41(tin){require26(tin?.tri.length,'No hay superficie.');const points=[],ids=new Map(),faces=[];for(const t of tin.tri){const row=[];for(const p of [t.p1,t.p2,t.p3]){const k=[p.x,p.y,p.z].map(n=>n.toFixed(6)).join(',');if(!ids.has(k)){ids.set(k,points.length+1);points.push(p);}row.push(ids.get(k));}faces.push(row);}return '<?xml version="1.0" encoding="UTF-8"?>\n<LandXML xmlns="http://www.landxml.org/schema/LandXML-1.2" version="1.2" date="'+new Date().toISOString().slice(0,10)+'"><Units><Metric linearUnit="meter" areaUnit="squareMeter" volumeUnit="cubicMeter" angularUnit="decimal degrees" directionUnit="decimal degrees"/></Units><Application name="SiteSCad" version="'+app55.version+'"/><Surfaces><Surface name="'+escapeXML41(tin.nombre)+'" desc="'+escapeXML41('ETRS89 UTM '+tin.huso+'; '+(tin.terrain41?.verticalDatum||'Referencia vertical sin verificar'))+'"><Definition surfType="TIN"><Pnts>'+points.map((p,i)=>'<P id="'+(i+1)+'">'+[p.y,p.x,p.z].map(n=>n.toFixed(6)).join(' ')+'</P>').join('')+'</Pnts><Faces>'+faces.map(v=>'<F>'+v.join(' ')+'</F>').join('')+'</Faces></Definition></Surface></Surfaces></LandXML>';}
 async function exportTerrainXML41(){try{const tin=landxmlTinSurface;require26(tin&&tin.huso===currentZone(),'Selecciona una superficie del huso activo.');await exportFile37('Terreno_'+safeName14(tin.nombre)+'.xml',landXML41(tin),'application/xml');await exportFile37('Terreno_'+safeName14(tin.nombre)+'_origen.json',JSON.stringify({surface:tin.nombre,zone:tin.huso,triangles:tin.tri.length,provenance:tin.terrain41||{provider:tin.source,flightDate:null},generatedBy:app55.version},null,2),'application/json');}catch(e){notify(e.message,true);}}
@@ -8216,15 +8243,15 @@ async function openMyProjects46(){$('myProjectsDialog46').hidden=false;await rec
 
 /* Cad and Topografía share one document and renderer; only the tool palette changes. */
 const cadTabs49={mode:'cad',ready:false};
+const cadSubtabs49={cad:'cadTab49',topography:'cadTopoTab49'};
 function setCadMode49(mode){
- if(!['cad','topography'].includes(mode)||!cadTabs49.ready)return;
+ if(!Object.hasOwn(cadSubtabs49,mode)||!cadTabs49.ready)return;
  if(mode!==cadTabs49.mode){if(cad33.draft?.length){notify('Termina o cancela el trazado antes de cambiar de subpestaña.',true);return;}closeCommand36();for(const p of document.querySelectorAll('#cadStage33 .cad-panel33'))p.hidden=true;}
  cadTabs49.mode=mode;$('tabCAD33').dataset.mode49=mode;
- for(const [id,active]of [['cadTab49',mode==='cad'],['cadTopoTab49',mode==='topography']]){const b=$(id);b.setAttribute('aria-selected',String(active));b.classList.toggle('active',active);b.tabIndex=active?0:-1;}
+ for(const [key,id]of Object.entries(cadSubtabs49)){const active=mode===key,b=$(id);b.setAttribute('aria-selected',String(active));b.classList.toggle('active',active);b.tabIndex=active?0:-1;}
  document.querySelector('#cadStage33 .cad-tools33:not(#cadSurveyTools49)').hidden=mode!=='cad';$('cadSurveyTools49').hidden=mode!=='topography';
- $('cadStage33').setAttribute('aria-label',mode==='cad'?'Dibujo Cad del proyecto':'Dibujo topográfico del proyecto');
  $('cadStage33').setAttribute('role','tabpanel');
- $('cadStage33').setAttribute('aria-labelledby',mode==='cad'?'cadTab49':'cadTopoTab49');
+ $('cadStage33').setAttribute('aria-labelledby',cadSubtabs49[mode]);
  syncTools35();resizeCAD33();queueLabels36();
 }
 function surveyTool49(key,label,run,panel){const b=document.createElement('button');b.type='button';b.className='icon-tool35';b.title=label;b.setAttribute('aria-label',label);b.innerHTML='<span>'+icon35(key)+'</span><small>'+label+'</small>';b.onclick=run;if(panel){b.setAttribute('aria-controls',panel);b.setAttribute('aria-expanded','false');}return b;}
@@ -8243,7 +8270,7 @@ function initCadTabs49(){
   nav.append(surveyTool49(key,label,run,panel));
  }
  stage.append(nav);
- document.querySelector('.cad-subtabs49').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const mode=e.key==='Home'?'cad':e.key==='End'?'topography':cadTabs49.mode==='cad'?'topography':'cad';setCadMode49(mode);$(cadTabs49.mode==='cad'?'cadTab49':'cadTopoTab49').focus();});
+ document.querySelector('.cad-subtabs49').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const modes=Object.keys(cadSubtabs49),i=modes.indexOf(cadTabs49.mode);const next=e.key==='Home'?0:e.key==='End'?modes.length-1:(i+(e.key==='ArrowRight'?1:modes.length-1))%modes.length;setCadMode49(modes[next]);$(cadSubtabs49[cadTabs49.mode]).focus();});
  cadTabs49.ready=true;setCadMode49('cad');
 }
 
@@ -8271,7 +8298,12 @@ function cancelIconSystems51(){for(const sys of Object.values(iconSystems51))sys
 function createIconSystem51(opts){
  const state={defs:opts.defs,modes:opts.modes,defaults:opts.defaults,layout:null,armed:null,press:null,click:null,ghost:null,suppress:0,renderedMode:null,ready:false};
  const id=name=>opts.scope+'Icons51_'+name,$i=name=>$(id(name));
- function read(){try{return normalizeIconLayout51(JSON.parse(localStorage.getItem(opts.storage)),opts.defaults,opts.defs,opts.modes);}catch{return JSON.parse(JSON.stringify(opts.defaults));}}
+ function read(){
+  let stored=null;
+  try{stored=JSON.parse(localStorage.getItem(opts.storage));}catch{}
+  const layout=normalizeIconLayout51(stored,opts.defaults,opts.defs,opts.modes);
+  return opts.upgrade?opts.upgrade(stored,layout):layout;
+ }
  function save(){try{localStorage.setItem(opts.storage,JSON.stringify(state.layout));return true;}catch{notify('Iconos cambiados para esta sesión. El navegador no ha permitido conservar la configuración.',true);return false;}}
  function clearClick(){if(state.click)clearTimeout(state.click.timer);state.click=null;}
  function clearPress(){if(state.press)clearTimeout(state.press.timer);state.press=null;}
@@ -8361,9 +8393,13 @@ function createIconSystem51(opts){
 }
 function iconDefinition51(button){const attrs={};for(const name of ['aria-controls','aria-expanded','aria-pressed','data-panel24'])if(button.hasAttribute(name))attrs[name]=button.getAttribute(name);return {label:button.querySelector('small')?.textContent.trim()||button.getAttribute('aria-label'),html:button.innerHTML,className:button.className,attrs,tool:button.dataset.tool36,source:button,run:button.onclick};}
 function initCadIcons50(){
- const drawing=document.querySelector('#cadStage33 .cad-tools33:not(#cadSurveyTools49)');drawing.id='cadDrawingTools50';const bars=new Map([['cad',drawing],['topography',$('cadSurveyTools49')]]),defs=new Map(),tabs={cad:[],topography:[]};
+ const drawing=document.querySelector('#cadStage33 .cad-tools33:not(#cadSurveyTools49)');drawing.id='cadDrawingTools50';
+ const vista=surveyTool49('view','Vista',toggleView69,'cadViewPanel69');
+ const measure=drawing.querySelector('[data-tool36="measure"]')||drawing.querySelector('[aria-label="Medir"]');
+ if(measure)measure.after(vista);else drawing.append(vista);
+ const bars=new Map([['cad',drawing],['topography',$('cadSurveyTools49')]]),defs=new Map(),tabs={cad:[],topography:[]};
  for(const [mode,nav]of bars)for(const b of nav.querySelectorAll('button')){const def=iconDefinition51(b),panel=b.getAttribute('aria-controls'),key=panel?'panel:'+panel:def.tool?'tool:'+def.tool:def.label==='Medir'?'tool:measure':def.label==='Replantear'?'action:stake':'label:'+def.label;if(!defs.has(key))defs.set(key,def);if(!tabs[mode].some(x=>x.key===key))tabs[mode].push({key,visible:true});}
- const opts={scope:'cad',title:'Cad',modes:['cad','topography'],names:{cad:'Cad',topography:'Topografía'},storage:'sitescad.cad-icons.v1',defs,defaults:{version:1,tabs},root:$('tabCAD33'),stage:$('cadStage33'),tabs:new Map([['cad',$('cadTab49')],['topography',$('cadTopoTab49')]]),bars:()=>bars,mode:()=>cadTabs49.mode,switchMode:setCadMode49,canMove:()=>!cad33.draft?.length,blockedMessage:'Termina o cancela el trazado antes de mover los iconos.',run:(def,b,e)=>def.run.call(b,e)};
+ const opts={scope:'cad',title:'Cad',modes:['cad','topography'],names:{cad:'Cad',topography:'Topografía'},storage:'sitescad.cad-icons.v1',upgrade:upgradeViewIcon69,defs,defaults:{version:1,tabs},root:$('tabCAD33'),stage:$('cadStage33'),tabs:new Map([['cad',$('cadTab49')],['topography',$('cadTopoTab49')]]),bars:()=>bars,mode:()=>cadTabs49.mode,switchMode:setCadMode49,canMove:()=>!cad33.draft?.length,blockedMessage:'Termina o cancela el trazado antes de mover los iconos.',run:(def,b,e)=>def.run.call(b,e)};
  iconSystems51.cad=createIconSystem51(opts);iconSystems51.cad.init();
 }
 function initSiteIcons51(){
@@ -8812,7 +8848,7 @@ openCommand36=function(key){const r=before53_openCommand36(key);if(dynamic53.rea
 const before53_inputPointCAD33=inputPointCAD33;
 inputPointCAD33=function(point){if(dynamic53.session){try{acceptPoint53(xyz33(point));}catch(e){dynamicError53(e);}return;}return before53_inputPointCAD33(point);};
 const before53_clickCAD33=clickCAD33;
-clickCAD33=function(event){if(dynamic53.session&&pickDynamic53(event))return;dynamic53.automaticSelection=cad33.tool==='select';try{return before53_clickCAD33(event);}finally{dynamic53.automaticSelection=false;}};
+clickCAD33=function(event){const r=cad33.runtime;if(r&&(zoomPoint69(r,event)||viewNavigation69(r)))return;if(dynamic53.session&&pickDynamic53(event))return;dynamic53.automaticSelection=cad33.tool==='select';try{return before53_clickCAD33(event);}finally{dynamic53.automaticSelection=false;}};
 const before53_finishCAD33=finishCAD33;
 finishCAD33=function(closed=false){if(dynamic53.session)return closed?closeDynamic53():acceptText53('');return before53_finishCAD33(closed);};
 const before53_backCAD33=backCAD33;
@@ -10753,10 +10789,10 @@ function runCADSteps63(steps,job={}){
 function firstVisibleCAD63(){
  for(const e of visibleStepsCAD63(ensureCAD33(),modifySpace56()))if(e)return e.points[0];
 }
-function* visibleStepsCAD63(doc,space){
+function* visibleStepsCAD63(doc,space,hidden=null){
  const layers=new Set(doc.layers.filter(l=>l.visible).map(l=>l.name)),scale=doc.annotationScale56||1;
  for(const e of doc.entities){
-  if(!inSpace56(e,space)||!layers.has(e.layer)||(e.annotation56?.length&&!e.annotation56.includes(scale))){yield null;continue;}
+  if((hidden&&hidden.ids.has(e.id)!==hidden.isolate)||!inSpace56(e,space)||!layers.has(e.layer)||(e.annotation56?.length&&!e.annotation56.includes(scale))){yield null;continue;}
   if(e.type==='TEXT'&&e.annotation56?.length)yield {...e,height:e.height*scale/(e.annotationBase56||1)};
   else if(e.clip56)yield* clipDisplay56(e);
   else yield e;
@@ -10987,7 +11023,7 @@ function drawLargeCAD63(r,fit){
  const prepare=function*(){
   const entities=[],box=new THREE.Box3(),point=new THREE.Vector3(),byId=new Map(),cadBox=new THREE.Box3();
   let origin=fit?null:r.origin;
-  for(const e of visibleStepsCAD63(doc,space)){
+  for(const e of visibleStepsCAD63(doc,space,hiddenView69(space))){
    if(e){
     origin??=e.points[0];entities.push(e);
     const entry=byId.get(e.id);
@@ -11654,7 +11690,7 @@ function bindGrips68(r){
  const canvas=r.renderer.domElement,state=gripState68(r),stop=e=>{e.preventDefault();e.stopImmediatePropagation();};
  canvas.addEventListener('pointerdown',e=>{
   if(state.drag){stop(e);return;}
-  if(e.button!==0||cad33.tool!=='select'||dynamic53.session||r.build63)return;
+  if(e.button!==0||cad33.tool!=='select'||dynamic53.session||r.build63||r.viewGesture69||r.navigation69||r.orbitLimited69||r.panView69)return;
   const {left,top}=canvas.getBoundingClientRect(),x=e.clientX-left,y=e.clientY-top;
   const radius=e.pointerType==='touch'?19:10;
   let best=null,distance=radius;
@@ -11717,6 +11753,481 @@ function initCADFiles65(){
  renderCADFiles65();
 }
 
+const cadViewStates69=new WeakMap();
+const cadViewIconKey69='panel:cadViewPanel69';
+
+function upgradeViewIcon69(stored,layout){
+ if(!stored?.viewIcon69&&!Object.values(layout.tabs).some(rows=>rows.some(row=>row.key===cadViewIconKey69))){
+  const rows=layout.tabs.cad,measure=rows.findIndex(row=>row.key==='tool:measure');
+  rows.splice(measure<0?rows.length:measure+1,0,{key:cadViewIconKey69,visible:true});
+ }
+ layout.viewIcon69=true;return layout;
+}
+function viewNavigation69(r){return r.navigation69||r.panView69||r.orbitLimited69;}
+function closeView69(){
+ const panel=$('cadViewPanel69'),r=cad33.runtime;
+ if(panel&&!panel.hidden){panel.hidden=true;syncTools35();}
+ if(r&&(r.viewGesture69||viewNavigation69(r)))cancelViewGesture69(r);
+ const stage=$('cadStage33');stage?.classList.remove('cad-clean69');
+}
+function toggleView69(){
+ const panel=$('cadViewPanel69');
+ if(!panel.hidden){closeView69();return;}
+ if(cad33.draft?.length){notify('Termina o cancela el trazado antes de abrir Vista.',true);return;}
+ closeView69();cancelGrips68();
+ if(cad33.tool!=='select'||uiCAD36.current||dynamic53.session)closeCommand36();
+ for(const other of document.querySelectorAll('#cadStage33 .cad-panel33'))other.hidden=other!==panel;
+ refreshViews69();displayView69(cad33.runtime);syncTools35();
+}
+
+
+function viewState69(){
+ const drawing=activeCAD65();
+ if(!cadViewStates69.has(drawing))cadViewStates69.set(drawing,{
+  previous:[],display:{grid:false,axes:true,labels:true,background:'#171e27',layout:'single',style:'original',quality:1},hidden:null
+ });
+ return cadViewStates69.get(drawing);
+}
+function viewStatus69(message){$('cadViewStatus69').textContent=message;messageCAD33(message);}
+function viewDirty69(r){
+ r.renderDirty63=true;r.textDirty63=true;queueLabels36();
+}
+function cameraRecord69(r){
+ return {mode:cad33.view,projection:r.camera.isOrthographicCamera?'orthographic':'perspective',
+  position:worldCAD33(r.camera.position),target:worldCAD33(r.controls.target),up:r.camera.up.toArray(),
+  span:r.span,zoom:r.camera.zoom,fov:r.camera.fov||45};
+}
+function rememberView69(r){
+ const history=viewState69().previous;
+ history.push(cameraRecord69(r));if(history.length>24)history.shift();
+}
+function applyCamera69(r,record){
+ const validPoint=p=>p&&[p.x,p.y,p.z].every(Number.isFinite);
+ require26(record&&['2d','3d'].includes(record.mode)&&['orthographic','perspective'].includes(record.projection)&&
+  validPoint(record.position)&&validPoint(record.target)&&Array.isArray(record.up)&&record.up.length===3&&
+  record.up.every(Number.isFinite)&&record.up.some(Boolean)&&Number.isFinite(record.span)&&record.span>0&&
+  Number.isFinite(record.zoom)&&record.zoom>0&&Number.isFinite(record.fov)&&record.fov>=5&&record.fov<=150&&
+  len33(sub33(record.position,record.target))>.0001,'La vista guardada contiene parámetros de cámara inválidos.');
+ // Rebuild controls with the saved up vector, which OrbitControls uses for its local rotation axes.
+ r.controls.dispose();
+ const ortho=record.projection==='orthographic';
+ const camera=ortho?new THREE.OrthographicCamera(-1,1,1,-1,.001,1e8):new THREE.PerspectiveCamera(record.fov,1,.001,1e8);
+ r.camera=camera;r.span=record.span;cad33.view=record.mode;
+ camera.up.fromArray(record.up).normalize();camera.position.copy(localCAD33(record.position));camera.zoom=record.zoom;
+ const controls=new THREE.OrbitControls(camera,r.renderer.domElement);
+ r.controls=controls;controls.target.copy(localCAD33(record.target));controls.enableDamping=true;
+ controls.enableRotate=record.mode==='3d';controls.touches.ONE=controls.enableRotate?THREE.TOUCH.ROTATE:THREE.TOUCH.PAN;
+ controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;
+ r.navigation69=null;controls.update();resizeCAD33();bindRuntime38();
+ for(const key of ['2d','3d'])$('cadView'+key+'33').setAttribute('aria-pressed',String(key===record.mode));
+ viewDirty69(r);
+}
+function viewHeight69(r){
+ const c=r.camera;
+ return (c.isOrthographicCamera?r.span:2*c.position.distanceTo(r.controls.target)*Math.tan(c.fov*Math.PI/360))/c.zoom;
+}
+function zoomView69(r,factor){
+ const c=r.camera;
+ if(c.isOrthographicCamera){c.zoom=Math.max(1e-6,Math.min(1e6,c.zoom*factor));c.updateProjectionMatrix();}
+ else{
+  const offset=c.position.clone().sub(r.controls.target);
+  c.position.copy(r.controls.target).add(offset.setLength(Math.max(.002,Math.min(5e7,offset.length()/factor))));
+ }
+ r.controls.update();viewDirty69(r);
+}
+function moveView69(r,delta){
+ r.controls.target.add(delta);r.camera.position.add(delta);r.controls.update();viewDirty69(r);
+}
+function fitSelection69(r){
+ const selected=selectionCAD33(),box=new THREE.Box3();
+ const center=new THREE.Vector3(),right=new THREE.Vector3(),up=new THREE.Vector3(),back=new THREE.Vector3();
+ r.camera.updateMatrixWorld(true);r.camera.matrixWorld.extractBasis(right,up,back);
+ for(const e of selected)for(const p of ['RAY','XLINE'].includes(e.type)?e.points:geometry33(e)){
+  const v=localCAD33(p);box.expandByPoint(center.set(v.dot(right),v.dot(up),v.dot(back)));
+ }
+ require26(!box.isEmpty(),'La selección no contiene geometría visible.');
+ const size=box.getSize(new THREE.Vector3()),aspect=r.renderer.domElement.clientWidth/Math.max(1,r.renderer.domElement.clientHeight);
+ box.getCenter(center);const target=right.clone().multiplyScalar(center.x).addScaledVector(up,center.y).addScaledVector(back,center.z);
+ moveView69(r,target.sub(r.controls.target));
+ const height=Math.max(size.y,size.x/Math.max(.01,aspect),.001)*1.18;
+ if(r.camera.isOrthographicCamera)zoomView69(r,viewHeight69(r)/height);
+ else{
+  const distance=size.z*.5+height*r.camera.zoom/(2*Math.tan(r.camera.fov*Math.PI/360));
+  zoomView69(r,r.camera.position.distanceTo(r.controls.target)/distance);
+ }
+}
+function presetView69(r,direction){
+ const rec=cameraRecord69(r),axis=new THREE.Vector3(...direction).normalize();
+ const height=viewHeight69(r),distance=Math.max(.05,r.camera.position.distanceTo(r.controls.target));
+ const vertical=!direction[0]&&!direction[2];
+ rec.mode=vertical&&direction[1]>0?'2d':'3d';rec.projection='orthographic';
+ rec.up=vertical?[0,0,direction[1]>0?-1:1]:[0,1,0];
+ rec.position=worldCAD33(r.controls.target.clone().addScaledVector(axis,distance));rec.span=height;rec.zoom=1;
+ applyCamera69(r,rec);
+}
+function cancelViewGesture69(r=cad33.runtime){
+ if(!r)return;
+ r.viewGesture69=null;r.navigation69=null;r.orbitLimited69=false;r.panView69=false;
+ r.controls.enabled=true;
+ r.controls.enableRotate=cad33.view==='3d';
+ r.controls.minPolarAngle=0;r.controls.maxPolarAngle=Math.PI;
+ r.controls.mouseButtons.LEFT=THREE.MOUSE.ROTATE;
+ r.controls.touches.ONE=cad33.view==='3d'?THREE.TOUCH.ROTATE:THREE.TOUCH.PAN;
+ if($('cadZoomBox69'))$('cadZoomBox69').hidden=true;
+}
+function zoomPoint69(r,event){
+ const g=r.viewGesture69;
+ if(!g)return false;
+ const {screen,ray}=rayCAD33(event);
+ if(g.kind==='window'&&!g.first){g.first=screen;viewStatus69('Marca la esquina opuesta de la ventana.');return true;}
+ const center=g.first?{x:(g.first.x+screen.x)/2,y:(g.first.y+screen.y)/2}:screen;
+ const rect=r.renderer.domElement.getBoundingClientRect();
+ ray.setFromCamera(new THREE.Vector2(center.x/rect.width*2-1,1-center.y/rect.height*2),r.camera);
+ const normal=r.camera.getWorldDirection(new THREE.Vector3()),plane=new THREE.Plane().setFromNormalAndCoplanarPoint(normal,r.controls.target);
+ const point=ray.ray.intersectPlane(plane,new THREE.Vector3());
+ cancelViewGesture69(r);
+ if(!point)return true;
+ const fraction=g.first?Math.max(Math.abs(g.first.x-screen.x)/rect.width,Math.abs(g.first.y-screen.y)/rect.height):1;
+ if(fraction<.008){viewStatus69('La ventana de zoom es demasiado pequeña.');return true;}
+ rememberView69(r);moveView69(r,point.sub(r.controls.target));zoomView69(r,1/fraction);
+ viewStatus69(g.first?'Zoom por ventana aplicado.':'Vista centrada.');return true;
+}
+function previewZoom69(r,event){
+ const first=r.viewGesture69?.first;if(!first)return;
+ const {screen}=rayCAD33(event),box=$('cadZoomBox69');
+ Object.assign(box.style,{left:Math.min(first.x,screen.x)+'px',top:Math.min(first.y,screen.y)+'px',
+  width:Math.abs(first.x-screen.x)+'px',height:Math.abs(first.y-screen.y)+'px'});
+ box.hidden=false;
+}
+function walkView69(r,key){
+ const mode=r.navigation69;
+ if(!['walk','fly'].includes(mode))return false;
+ const forward=r.camera.getWorldDirection(new THREE.Vector3());if(mode==='walk')forward.y=0;
+ if(forward.lengthSq()<1e-8)forward.set(0,0,-1);forward.normalize();
+ const side=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();
+ const directions={w:forward,s:forward.clone().negate(),a:side.clone().negate(),d:side,q:new THREE.Vector3(0,-1,0),e:new THREE.Vector3(0,1,0)};
+ if(!directions[key]||(mode==='walk'&&['q','e'].includes(key)))return false;
+ const step=Number($('cadViewStep69').value);
+ require26(Number.isFinite(step)&&step>0,'Introduce un paso positivo en metros.');
+ moveView69(r,directions[key].multiplyScalar(step));return true;
+}
+function hiddenView69(space){
+ const r=cad33.runtime;
+ if(!r||ui58.section!=='tabCAD33'||space!==modifySpace56())return null;
+ return cadViewStates69.get(cadFiles65.active)?.hidden||null;
+}
+function filterView69(r,mode){
+ const state=viewState69();
+ if(mode==='show')state.hidden=null;
+ else{
+  const selection=new Set(selectionCAD33().map(e=>e.id));
+  if(mode==='isolate')state.hidden={isolate:true,ids:selection};
+  else if(state.hidden?.isolate)for(const id of selection)state.hidden.ids.delete(id);
+  else state.hidden={isolate:false,ids:new Set([...(state.hidden?.ids||[]),...selection])};
+  cad33.selected.clear();cancelGrips68();refreshCADUI33();
+ }
+ r.cached63=null;drawCAD33();
+}
+function viewMeshMaterial69(r,object,style){
+ const material=object.material;
+ if(!object.isMesh||!material?.isMeshBasicMaterial||material.map||material.depthWrite===false)return null;
+ if(style==='shade'){
+  if(!object.geometry.getAttribute('normal'))object.geometry.computeVertexNormals();
+  r.shadeMaterials69??=new WeakMap();
+  let shaded=r.shadeMaterials69.get(material);
+  if(!shaded){
+   shaded=new THREE.MeshLambertMaterial();r.shadeMaterials69.set(material,shaded);
+   material.addEventListener('dispose',()=>shaded.dispose());
+  }
+  shaded.color.copy(material.color);shaded.side=material.side;shaded.opacity=material.opacity;
+  shaded.transparent=material.transparent;return shaded;
+ }
+ return null;
+}
+function renderCADView69(r){
+ // Drawings opened outside Vista use the same renderer without allocating a second canvas.
+ const state=r.viewDisplay69,renderer=r.renderer;
+ if(!state)return renderer.render(r.scene,r.camera);
+ const style=state.style,originals=[];
+ if(style!=='original'){
+  for(const object of r.group.children){
+   const m=object.material;
+   if(!object.isMesh||!m?.isMeshBasicMaterial||m.map||m.depthWrite===false)continue;
+   const shaded=viewMeshMaterial69(r,object,style);
+   originals.push([object,m,m.wireframe,m.transparent,m.opacity]);
+   if(shaded)object.material=shaded;
+   else if(style==='wire')m.wireframe=true;
+   else if(style==='opaque'){m.transparent=false;m.opacity=1;}
+  }
+ }
+ try{
+  renderer.render(r.scene,r.camera);
+  if(state.layout!=='single'){
+   const size=renderer.getSize(r.viewSize69??=new THREE.Vector2());
+   const w=Math.floor(size.x*.32),h=Math.floor(size.y*.32);
+   if(w<2||h<2)return;
+   const x=size.x-w-12,y=12;
+   const c=r.inset69??=new THREE.OrthographicCamera(-1,1,1,-1,.001,1e8);
+   const span=viewHeight69(r),distance=Math.max(20,span*2,r.camera.position.distanceTo(r.controls.target));
+   c.left=-span*w/h/2;c.right=-c.left;c.top=span/2;c.bottom=-c.top;
+   const iso=state.layout==='iso';c.up.set(0,iso?1:0,iso?0:-1);
+   c.position.copy(r.controls.target).add(iso?new THREE.Vector3(distance,distance,-distance):new THREE.Vector3(0,distance,0));
+   c.lookAt(r.controls.target);c.updateProjectionMatrix();
+   renderer.setScissorTest(true);renderer.setScissor(x,y,w,h);renderer.setViewport(x,y,w,h);
+   renderer.render(r.scene,c);
+  }
+ }finally{
+  if(state.layout!=='single'){
+   const size=renderer.getSize(r.viewSize69??=new THREE.Vector2());
+   renderer.setScissorTest(false);renderer.setViewport(0,0,size.x,size.y);
+  }
+  for(const [o,m,wireframe,transparent,opacity] of originals){
+   o.material=m;m.wireframe=wireframe;m.transparent=transparent;m.opacity=opacity;
+  }
+ }
+}
+function displayView69(r){
+ if(!r)return;
+ const state=viewState69().display;
+ r.viewDisplay69=state;
+ r.scene.background.set(state.background);
+ const pixelRatio=Math.min(2,(window.devicePixelRatio||1)*state.quality);
+ if(r.renderer.getPixelRatio()!==pixelRatio)r.renderer.setPixelRatio(pixelRatio);
+ if(state.style==='shade'&&!r.viewLights69){
+  const key=new THREE.DirectionalLight('#ffffff',1.75);key.position.set(2,4,3);
+  r.viewLights69=new THREE.Group();r.viewLights69.add(new THREE.AmbientLight('#ffffff',.65),key);r.scene.add(r.viewLights69);
+ }
+ if(state.grid&&!r.grid69){r.grid69=new THREE.GridHelper(1,20,0x66849c,0x3a4d5d);r.scene.add(r.grid69);}
+ for(const o of r.group.children)if(o.isMesh&&o.material?.depthWrite===false&&o.renderOrder===1000)o.material.color.copy(r.scene.background);
+ if(r.grid69)r.grid69.visible=state.grid;
+ const stage=$('cadStage33');
+ stage.classList.toggle('cad-no-axes69',!state.axes);stage.classList.toggle('cad-no-labels69',!state.labels);
+ $('cadInset69').querySelector('span').textContent=state.layout==='iso'?'Isométrica auxiliar':'Planta auxiliar';$('cadInset69').hidden=state.layout==='single';
+ viewDirty69(r);
+}
+function updateGrid69(r){
+ const grid=r.grid69;if(!grid?.visible)return;
+ const size=20*10**Math.floor(Math.log10(Math.max(.0001,viewHeight69(r))/8)),step=size/20,t=r.controls.target;
+ grid.position.set(Math.round(t.x/step)*step,cad33.doc.planeZ-r.origin.z-.0001,Math.round(t.z/step)*step);
+ grid.scale.setScalar(size);
+}
+function refreshViews69(){
+ const chooser=$('cadSavedViews69'),selected=chooser.value,views=cad33.doc?.savedViews69;
+ chooser.replaceChildren(new Option('Seleccionar vista',''));
+ for(const name of Object.keys(views||{}).sort((a,b)=>a.localeCompare(b,'es')))chooser.add(new Option(name,name));
+ chooser.value=selected;
+ if(chooser.selectedIndex<0)chooser.selectedIndex=0;
+ const state=viewState69().display;
+ for(const [id,key] of [['cadViewGrid69','grid'],['cadViewAxes69','axes'],['cadViewLabels69','labels']])$(id).checked=state[key];
+ $('cadViewBackground69').value=state.background;$('cadViewQuality69').value=String(state.quality);
+}
+function namedView69(r,action){
+ const doc=ensureCAD33(),views=Object.assign(Object.create(null),doc.savedViews69||{}),picker=$('cadSavedViews69');
+ const name=action==='save'?$('cadViewName69').value.trim():picker.value;
+ require26(name&&name.length<=80,'Escribe o selecciona un nombre de vista de hasta 80 caracteres.');
+ if(action==='restore'){rememberView69(r);applyCamera69(r,views[name]);return;}
+ require26(canChange15(),'Abre un proyecto editable para guardar vistas.');
+ if(action==='save'){
+  if(Object.hasOwn(views,name)&&!confirm('¿Actualizar la vista «'+name+'»?'))return;
+  views[name]=cameraRecord69(r);
+ }else if(!confirm('¿Eliminar la vista «'+name+'»?'))return;
+ else delete views[name];
+ require26(doc.zone===currentZone(),'Cambia al huso del dibujo para guardar vistas.');
+ if(commitCAD63(action==='save'?'Guardar vista':'Eliminar vista',doc,{...doc,savedViews69:views},false,false,[])){
+  refreshViews69();if(action==='save')picker.value=name;
+ }
+}
+function runView69(action,arg){
+ const r=cad33.runtime;
+ try{
+  require26(r,'Abre el dibujo CAD para utilizar Vista.');
+  if(action!=='walkStep')cancelViewGesture69(r);
+  switch(action){
+   case 'redraw':viewDirty69(r);break;
+   case 'regen':case 'regenAll':
+    r.cached63=null;if(action==='regenAll')r.inset69=null;drawCAD33();break;
+   case 'fit':rememberView69(r);fitCAD33();break;
+   case 'fitSelection':rememberView69(r);fitSelection69(r);break;
+   case 'zoom':rememberView69(r);zoomView69(r,arg);break;
+   case 'factor':{
+    const n=Number($('cadZoomFactor69').value);
+    require26(Number.isFinite(n)&&n>0,'Introduce un factor de zoom positivo.');
+    rememberView69(r);zoomView69(r,n);break;
+   }
+   case 'center':case 'window':
+    cancelGrips68();r.viewGesture69={kind:action};r.controls.enabled=false;$('cadViewPanel69').hidden=true;syncTools35();
+    return viewStatus69(action==='center'?'Toca el punto que quieres centrar.':'Marca la primera esquina de la ventana.');
+   case 'previous':{
+    const record=viewState69().previous.pop();require26(record,'Todavía no hay una vista anterior.');applyCamera69(r,record);break;
+   }
+   case 'panMode':rememberView69(r);r.panView69=true;r.controls.mouseButtons.LEFT=THREE.MOUSE.PAN;r.controls.touches.ONE=THREE.TOUCH.PAN;
+    return viewStatus69('Arrastra el dibujo para desplazarlo. Pulsa Esc para terminar.');
+   case 'pan':{
+    rememberView69(r);r.camera.updateMatrixWorld(true);
+    const axis=new THREE.Vector3().setFromMatrixColumn(r.camera.matrixWorld,Math.abs(arg)===1?0:1);
+    moveView69(r,axis.multiplyScalar(Math.sign(arg)*viewHeight69(r)*.18));break;
+   }
+   case 'orbit':
+    rememberView69(r);if(cad33.view!=='3d')viewCAD33('3d');
+    if(arg==='horizontal'){
+     const angle=r.controls.getPolarAngle();r.controls.minPolarAngle=angle;r.controls.maxPolarAngle=angle;r.orbitLimited69=true;
+    }
+    return viewStatus69('Arrastra para girar alrededor del centro de la vista.');
+   case 'projection':{
+    rememberView69(r);const record=cameraRecord69(r);record.projection=arg;record.mode='3d';
+    if(cad33.view==='2d'){record.up=[0,1,0];record.position=worldCAD33(r.controls.target.clone().add(new THREE.Vector3(r.span,r.span,r.span)));}
+    record.span=viewHeight69(r);record.zoom=1;
+    if(arg==='perspective'){
+     const distance=record.span/(2*Math.tan(record.fov*Math.PI/360)),direction=localCAD33(record.position).sub(r.controls.target);
+     record.position=worldCAD33(r.controls.target.clone().add(direction.setLength(distance)));
+    }
+    applyCamera69(r,record);break;
+   }
+   case 'preset':rememberView69(r);presetView69(r,arg);break;
+   case 'fov':{
+    const n=Number($('cadViewFov69').value);
+    require26(Number.isFinite(n)&&n>=5&&n<=150,'Introduce un campo de visión entre 5° y 150°.');
+    require26(r.camera.isPerspectiveCamera,'Selecciona primero la cámara en perspectiva.');
+    rememberView69(r);r.camera.fov=n;r.camera.updateProjectionMatrix();viewDirty69(r);break;
+   }
+   case 'cameraXYZ':{
+    const inputs=['X','Y','Z','TX','TY','TZ'].map(axis=>$('cadCamera'+axis+'69').value.trim());
+    require26(inputs.every(value=>value&&Number.isFinite(Number(value))),'Completa las seis coordenadas de cámara y objetivo.');
+    const [x,y,z,tx,ty,tz]=inputs.map(Number),rec=cameraRecord69(r);
+    rec.position={x,y,z};rec.target={x:tx,y:ty,z:tz};rec.mode='3d';rec.up=x===tx&&y===ty?[0,0,-1]:[0,1,0];
+    rememberView69(r);applyCamera69(r,rec);break;
+   }
+   case 'cameraRead':{
+    const {position:p,target:t}=cameraRecord69(r);
+    [p.x,p.y,p.z,t.x,t.y,t.z].forEach((value,i)=>{$('cadCamera'+['X','Y','Z','TX','TY','TZ'][i]+'69').value=value;});break;
+   }
+   case 'walk':case 'fly':
+    rememberView69(r);if(cad33.view!=='3d'||!r.camera.isPerspectiveCamera)viewCAD33('3d');
+    r.navigation69=action;
+    return viewStatus69(action==='walk'?'Paseo activo. Usa WASD o los botones para desplazarte.':'Vuelo activo. Usa WASD y Q/E o los botones para desplazarte.');
+   case 'walkStep':require26(walkView69(r,arg),'Activa Paseo o Vuelo. La altura solo cambia en Vuelo.');return;
+   case 'stop':return viewStatus69('Navegación finalizada.');
+   case 'fullscreen':return fullscreenCAD36();
+   case 'saved':namedView69(r,arg);break;
+   case 'visibility':filterView69(r,arg);break;
+   case 'display':{
+    const [key,value]=arg;viewState69().display[key]=value;displayView69(r);break;
+   }
+   case 'clean':$('cadStage33').classList.toggle('cad-clean69');return;
+   case 'png':{
+    const context=captured37(),name=safeName14(activeCAD65().name||'Dibujo')+'_vista.png';
+    updateGrid69(r);renderCADView69(r);
+    r.renderer.domElement.toBlob(blob=>{if(blob)void exportFile37(name,blob,'image/png',context);else viewStatus69('No se pudo capturar la vista.');},'image/png');
+    return;
+   }
+  }
+  viewStatus69('Vista actualizada.');
+ }catch(e){viewStatus69(e.message);}
+}
+function initView69(){
+ const root=$('cadViewPanel69'),controls=$('cadViewControls69');
+ const makeButton=(label,action,arg)=>{
+  const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;
+  b.onclick=()=>runView69(action,arg);return b;
+ };
+ const makeGroup=(title,items,opened=false)=>{
+  const group=document.createElement('details'),summary=document.createElement('summary'),body=document.createElement('div');
+  group.open=opened;summary.textContent=title;body.className='cad-view-options69';
+  for(const item of items)body.append(Array.isArray(item)?makeButton(...item):item);
+  group.append(summary,body);controls.append(group);
+ };
+ const field=(label,id,type='number',value='',change)=> {
+  const wrapper=document.createElement('label'),input=document.createElement('input');
+  input.id=id;input.type=type;if(type==='number')input.step='any';
+  input.value=value;if(change)input.onchange=()=>change(type==='checkbox'?input.checked:input.value);
+  wrapper.append(label,input);return wrapper;
+ };
+ const change=(key,value)=>runView69('display',[key,value]);
+ const saved=document.createElement('select');saved.id='cadSavedViews69';saved.setAttribute('aria-label','Vistas guardadas');
+ makeGroup('Redibujar y regenerar',[
+  ['Redibujar todo','redraw'],['Regenerar','regen'],['Regenerar todo','regenAll']
+ ]);
+ makeGroup('Zoom',[
+  ['Acercar','zoom',1.4],['Alejar','zoom',1/1.4],['Ventana','window'],['Centro','center'],
+  ['Extensión del dibujo','fit'],['Selección','fitSelection'],['Anterior','previous'],
+  field('Factor','cadZoomFactor69','number',1.5),['Aplicar factor','factor']
+ ],true);
+ makeGroup('Encuadre',[
+  ['Tiempo real','panMode'],['Izquierda','pan',-1],['Derecha','pan',1],['Arriba','pan',2],['Abajo','pan',-2]
+ ]);
+ makeGroup('Órbita 3D',[
+  ['Órbita libre','orbit','free'],['Órbita horizontal','orbit','horizontal'],['Terminar','stop']
+ ]);
+ makeGroup('Cámara',[
+  ['Ortográfica','projection','orthographic'],['Perspectiva','projection','perspective'],
+  ['Leer cámara actual','cameraRead'],
+  ...['X','Y','Z','TX','TY','TZ'].map((axis,i)=>field((i<3?'Cámara ':'Objetivo ')+axis.at(-1),'cadCamera'+axis+'69')),
+  ['Aplicar coordenadas XYZ','cameraXYZ']
+ ]);
+ makeGroup('Paseo y vuelo',[
+  ['Paseo','walk'],['Vuelo','fly'],['Terminar','stop'],field('Paso (m)','cadViewStep69','number',5),
+  ['Avanzar','walkStep','w'],['Retroceder','walkStep','s'],['Izquierda','walkStep','a'],['Derecha','walkStep','d'],
+  ['Ascender','walkStep','e'],['Descender','walkStep','q']
+ ]);
+ makeGroup('Ventanas',[
+  ['Ventana única','display',['layout','single']],['Planta auxiliar','display',['layout','inset']],
+  ['Isométrica auxiliar','display',['layout','iso']]
+ ]);
+ makeGroup('Vistas guardadas',[
+  field('Nombre','cadViewName69','text'),['Guardar vista actual','saved','save'],saved,
+  ['Restaurar','saved','restore'],['Eliminar','saved','delete']
+ ]);
+ makeGroup('Punto de vista 3D',[
+  ['Superior','preset',[0,1,0]],['Inferior','preset',[0,-1,0]],
+  ['Norte','preset',[0,0,-1]],['Sur','preset',[0,0,1]],
+  ['Este','preset',[1,0,0]],['Oeste','preset',[-1,0,0]],
+  ['Isométrica NE','preset',[1,1,-1]],['Isométrica NO','preset',[-1,1,-1]],
+  ['Isométrica SE','preset',[1,1,1]],['Isométrica SO','preset',[-1,1,1]]
+ ]);
+ makeGroup('Ajustes de vista',[
+  field('Campo de visión (°)','cadViewFov69','number',45),['Aplicar a perspectiva','fov'],
+  ['Restaurar vista anterior','previous']
+ ]);
+ makeGroup('Ocultar',[
+  ['Ocultar selección','visibility','hide'],['Aislar selección','visibility','isolate'],
+  ['Mostrar todo','visibility','show']
+ ]);
+ makeGroup('Estilos visuales',[
+  ['Original','display',['style','original']],['Alámbrico','display',['style','wire']],
+  ['Sombreado 3D','display',['style','shade']],['Caras opacas (ocultar líneas detrás)','display',['style','opaque']]
+ ]);
+ makeGroup('Render',[
+  ['Actualizar imagen','redraw'],['Guardar imagen PNG','png']
+ ]);
+ makeGroup('Pantalla',[
+  ['Pantalla completa · Ctrl+0','fullscreen'],['Mostrar u ocultar controles gráficos','clean'],
+  field('Rejilla','cadViewGrid69','checkbox','',checked=>change('grid',checked)),
+  field('Ejes 3D','cadViewAxes69','checkbox','',checked=>change('axes',checked)),
+  field('Etiquetas CAD','cadViewLabels69','checkbox','',checked=>change('labels',checked)),
+  field('Fondo','cadViewBackground69','color','#171e27',value=>change('background',value)),
+  field('Resolución (0,5 a 2)','cadViewQuality69','number',1,value=>{
+   const quality=Number(value);if(quality>=.5&&quality<=2)change('quality',quality);
+   else{refreshViews69();viewStatus69('La resolución debe estar entre 0,5 y 2.');}
+  })
+ ]);
+ root.classList.add('cad-panel33');
+ $('cadViewClose69').addEventListener('click',()=>{
+  closeView69();
+  document.querySelector('.cad-tools33:not([hidden]) [aria-controls="cadViewPanel69"]')?.focus();
+ });
+ document.addEventListener('keydown',event=>{
+  const r=cad33.runtime;
+  if(ui58.section!=='tabCAD33'||!r||event.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+  if(event.code==='Digit0'&&(event.ctrlKey||event.metaKey)){event.preventDefault();fullscreenCAD36();return;}
+  if(event.key==='Escape'&&(r.viewGesture69||viewNavigation69(r)||!root.hidden)){
+   closeView69();event.preventDefault();event.stopImmediatePropagation();viewStatus69('Navegación finalizada.');
+  }else if(!event.altKey&&!event.ctrlKey&&!event.metaKey&&r.navigation69&&/^[wasdqe]$/i.test(event.key)){
+   if(r.navigation69==='walk'&&/^[qe]$/i.test(event.key))return;
+   event.preventDefault();runView69('walkStep',event.key.toLowerCase());
+  }
+ },true);
+}
+
 init55();
 init56();
 initMaps57();
@@ -11752,6 +12263,7 @@ initTerrain41();
 initMass42();
 initXML43();
 initXML44();
+initView69();
 initCadTabs49();
 initCadIcons50();
 initSiteIcons51();

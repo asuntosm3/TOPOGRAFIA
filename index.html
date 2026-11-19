@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="topografia-version" content="5.68.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.71 RC1 · 2026-11-18</title>
+  <title>SiteSCad · v5.73 RC1 · 2026-11-19</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3607,6 +3607,24 @@ body.cad-full33 .workspace-head58{display:none}
 #siteCADDrawings72 .site-cad-actions72{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 #siteCADDrawings72 .site-cad-actions72 .btn{font-size:.72rem}
 </style>
+<style id="cadCommandGlyphs73">
+.btn.cad-command-glyph73{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;text-align:left;line-height:1.25;white-space:normal;min-width:0}
+.cad-command-glyph73[hidden]{display:none!important}
+.cad-command-glyph73 .cad-command-label73{min-width:0;overflow-wrap:anywhere}
+.cad-command-glyph73>.cad-glyph57{flex:0 0 25px;width:25px;height:25px;padding:2px;pointer-events:none}
+summary.cad-command-glyph73>.cad-glyph57{display:inline-block;vertical-align:middle;margin-inline:4px 7px}
+@media(pointer:coarse){#cadStage33 .btn.cad-command-glyph73{min-height:44px}}
+</style>
+<style id="cadInsertCSS74">
+#tabCAD33 #cadInsertPanel74{width:350px;padding:0;color:#e7f3fb;background:#1b2632;border:1px solid #4a647b}
+#cadInsertPanel74>h3{margin:0;padding:8px 12px;position:sticky;top:0;z-index:1;background:#253746;color:#e7f3fb}
+#cadInsertControls74{padding:4px 10px 8px}
+#cadInsertControls74>details{padding:4px 0;border-bottom:1px solid #3a4d60}
+#cadInsertControls74 summary{padding:7px 4px;cursor:pointer;font-weight:650}
+#cadInsertStatus74{margin:0;padding:8px 12px;font-size:.77rem}
+#insCancelReading74{margin:0 12px 8px}
+#insManagerList74>section{border-bottom:1px solid var(--border);padding:8px 0}
+</style>
 </head>
 <body>
 
@@ -3617,7 +3635,7 @@ body.cad-full33 .workspace-head58{display:none}
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.71 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.73 RC1</span>
       </div>
     </div>
 
@@ -3689,30 +3707,82 @@ Del dato de campo a la entrega.</div></nav>
 <div class="cad-buttons33"><button class="btn" onclick="stakeCAD33()">Replantear selección</button><button class="btn" onclick="deleteCAD33()">Borrar selección</button></div><p class="field-note">El replanteo de curvas usa una discretización de cuerda máxima de 1 mm. Los trazados verticales deben replantearse mediante puntos XYZ, porque no tienen un PK único en planta.</p><label for="cadEntitySearch33">Buscar entidades (primeras 500 coincidencias)</label><input id="cadEntitySearch33" class="input-field" oninput="refreshCADUI33()"><div id="cadEntities33" class="cad-list33"></div></section>
 <section id="cadLayerPanel33" class="cad-panel33" hidden=""><h3>Capas <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><label for="cadActiveLayer33">Capa activa</label><select id="cadActiveLayer33" class="input-field" onchange="settingsCAD33()"></select><div id="cadLayers33"></div><label for="cadNewLayer33">Nueva capa</label><input id="cadNewLayer33" class="input-field" placeholder="BORDILLOS"><label>Color<input id="cadNewColor33" type="color" value="#e4ad50"></label><button class="btn" onclick="addLayerCAD33()">Crear capa y activar</button><button class="btn" onclick="deleteEmptyLayerCAD33()">Eliminar capa activa vacía</button><label><input id="cadSurveyVisible33" type="checkbox" checked="" onchange="drawCAD33()"> Mostrar puntos medidos como referencia (solo lectura)</label></section>
 <section id="cadPointsPanel33" class="cad-panel33" hidden=""><h3>Levantamiento → dibujo <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><p id="cadPointCount33" class="field-note"></p><label for="cadPointSearch33">Buscar punto o código</label><input id="cadPointSearch33" class="input-field" oninput="refreshPointListCAD33()"><div id="cadPointList33" class="cad-list33"></div><p id="cadPointOrder33" class="field-note"></p><button class="btn" onclick="pointsToCAD33(false)">Copiar puntos XYZ al dibujo</button><label><input id="cadAllowMixedDatum33" type="checkbox"> He verificado la compatibilidad vertical aunque las etiquetas de referencia sean distintas</label><button class="btn" onclick="pointsToCAD33(true)">Unir en orden de selección · polilínea 3D</button><label>Altura de rótulo de puntos (m)<input id="cadLabelHeight33" class="input-field" type="number" step="any" value="0.4"></label><button class="btn" onclick="labelPointsCAD33()">Rotular selección · ID, código y cota</button><label for="cadJoinCode33">Código exacto</label><input id="cadJoinCode33" class="input-field" placeholder="BORD"><button class="btn" onclick="pointsToCAD33(true,true)">Unir ese código en orden de adquisición</button><p class="field-note">Cada copia conserva su XYZ y referencia al punto. Las ediciones del CAD nunca cambian la observación medida. «Actualizar copias desde puntos» se aplica solo a geometrías que aún conservan ese vínculo.</p></section>
+<section id="cadInsertPanel74" aria-labelledby="cadInsertTitle74" hidden>
+ <h3 id="cadInsertTitle74">Insertar <button id="cadInsertClose74" class="btn" type="button">Cerrar</button></h3>
+ <div id="cadInsertControls74"></div>
+ <p id="cadInsertStatus74" role="status"></p>
+ <button id="insCancelReading74" class="btn" type="button" hidden>Cancelar lectura</button>
+</section>
+<dialog id="cadInsertFile74" class="dwg-layers60" aria-labelledby="insFileTitle74">
+ <form id="insFileForm74" method="dialog">
+  <h3 id="insFileTitle74"></h3>
+  <label>Archivo <input id="insFile74" type="file" required></label>
+  <fieldset id="insFilePosition74" hidden>
+   <legend>Colocación · esquina inferior izquierda</legend>
+   <div class="cad-print-fields65">
+    <label>X <input id="insImage74x" type="number" step="any"></label>
+    <label>Y <input id="insImage74y" type="number" step="any"></label>
+    <label>Z <input id="insImage74z" type="number" step="any"></label>
+    <label>Ancho (unidades del dibujo) <input id="insImageWidth74" type="number" min="0" step="any" value="10"></label>
+    <label>Opacidad <input id="insImageOpacity74" type="number" min=".01" max="1" step=".01" value="1"></label>
+    <label id="insFilePageWrap74">Página PDF <input id="insFilePage74" type="number" min="1" step="1" value="1"></label>
+   </div>
+  </fieldset>
+  <label id="insFileCloud74" hidden><input id="insCloudAssume74" type="checkbox"> Si falta el CRS, confirmar que ya está en el huso UTM del proyecto</label>
+  <p id="insFileNote74" role="status" class="field-note"></p>
+  <footer><button class="btn" type="button" onclick="$('cadInsertFile74').close()">Cancelar</button><button class="btn btn-primary">Insertar</button></footer>
+ </form>
+</dialog>
+<dialog id="insManager74" class="dwg-layers60" aria-labelledby="insManagerTitle74">
+ <form method="dialog"><h3 id="insManagerTitle74"></h3><div id="insManagerList74"></div><footer><button class="btn">Cerrar</button></footer></form>
+</dialog>
+<dialog id="insField74" class="dwg-layers60" aria-label="Insertar campo">
+ <form id="insFieldForm74" method="dialog"><h3>Insertar campo</h3>
+  <label>Contenido <select id="insFieldType74"><option value="drawing">Nombre del dibujo</option><option value="date">Fecha</option><option value="length">Longitud del objeto seleccionado</option><option value="area">Área del objeto seleccionado</option></select></label>
+  <div class="cad-print-fields65"><label>X <input id="insField74x" type="number" step="any" required></label><label>Y <input id="insField74y" type="number" step="any" required></label><label>Z <input id="insField74z" type="number" step="any" required></label><label>Altura <input id="insFieldHeight74" type="number" min="0" step="any" value="1" required></label></div>
+  <p id="insFieldNote74" role="status"></p><footer><button class="btn" type="button" onclick="$('insField74').close()">Cancelar</button><button class="btn btn-primary">Insertar</button></footer>
+ </form>
+</dialog>
+<dialog id="insLink74" class="dwg-layers60" aria-label="Hipervínculo">
+ <form id="insLinkForm74" method="dialog"><h3>Hipervínculo</h3><label>Dirección <input id="insURL74" type="url" placeholder="https://…" required></label>
+  <p id="insLinkNote74" role="status"></p>
+  <footer><button class="btn" type="button" onclick="$('insLink74').close()">Cerrar</button><button id="insLinkOpen74" class="btn" type="button">Abrir</button><button id="insLinkRemove74" class="btn" type="button">Quitar de la selección</button><button class="btn btn-primary">Asignar</button></footer>
+ </form>
+</dialog>
+<dialog id="insPages74" class="dwg-layers60" aria-label="Aplicar configuración de presentación">
+ <form id="insPagesForm74" method="dialog"><h3>Configuraciones de presentación</h3><label>Configuración <select id="insPageChoice74"></select></label>
+  <footer><button class="btn" type="button" onclick="$('insPages74').close()">Cancelar</button><button class="btn btn-primary">Aplicar</button></footer>
+ </form>
+</dialog>
+<dialog id="insCompat74" class="dwg-layers60" aria-labelledby="insCompatName74">
+ <form method="dialog"><h3 id="insCompatName74"></h3><p>Este formato requiere conversión previa para incorporar su geometría.</p><p id="insCompatText74"></p>
+  <footer><button class="btn">Cerrar</button><button id="insCompatImport74" class="btn" type="button">Importar DWG / DXF…</button><button id="insCompatRaster74" class="btn" type="button">Colocar imagen…</button></footer>
+ </form>
+</dialog>
 <dialog id="cadClose65" class="dwg-layers60" aria-label="Cerrar dibujo">
  <form method="dialog"><h3>Cerrar dibujo</h3><p id="cadCloseName65"></p><footer>
-  <button class="btn" autofocus>Cancelar</button>
-  <button id="cadCloseDiscard65" class="btn" type="button">Descartar cambios</button>
-  <button id="cadCloseSave65" class="btn btn-primary" type="button">Guardar en SiteSCad y cerrar</button>
+  <button class="btn" autofocus data-cad-glyph73="close">Cancelar</button>
+  <button id="cadCloseDiscard65" class="btn" type="button" data-cad-glyph73="erase">Descartar cambios</button>
+  <button id="cadCloseSave65" class="btn btn-primary" type="button" data-cad-glyph73="save">Guardar en SiteSCad y cerrar</button>
  </footer></form>
 </dialog>
 <dialog id="cadSaveFormat65" class="dwg-layers60" aria-label="Guardar dibujo como">
  <form method="dialog"><h3>Guardar dibujo como</h3><div class="cad-file-actions65">
-  <button class="btn" onclick="saveDrawing65(captureCAD65(),'scad')">SiteSCad JSON</button>
-  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dwg')">DWG 2018</button>
-  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dxf')">DXF</button>
- </div><footer><button class="btn">Cancelar</button></footer></form>
+  <button class="btn" onclick="saveDrawing65(captureCAD65(),'scad')" data-cad-glyph73="file">SiteSCad JSON</button>
+  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dwg')" data-cad-glyph73="cube">DWG 2018</button>
+  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dxf')" data-cad-glyph73="wire">DXF</button>
+ </div><footer><button class="btn" data-cad-glyph73="close">Cancelar</button></footer></form>
 </dialog>
 <dialog id="cadExportFormat65" class="dwg-layers60" aria-label="Exportar dibujo">
  <form method="dialog"><h3>Exportar o compartir dibujo</h3><div class="cad-file-actions65">
-  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dxf',null,false)">DXF</button>
-  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dwg',null,false)">DWG 2018</button>
-  <button class="btn" onclick="plotCAD65('singlePDF')">PDF</button>
- </div><footer><button class="btn">Cancelar</button></footer></form>
+  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dxf',null,false)" data-cad-glyph73="wire">DXF</button>
+  <button class="btn" onclick="saveDrawing65(captureCAD65(),'dwg',null,false)" data-cad-glyph73="cube">DWG 2018</button>
+  <button class="btn" onclick="plotCAD65('singlePDF')" data-cad-glyph73="pdf">PDF</button>
+ </div><footer><button class="btn" data-cad-glyph73="close">Cancelar</button></footer></form>
 </dialog>
 <dialog id="cadDrawingProperties65" class="dwg-layers60" aria-label="Propiedades del dibujo">
  <form method="dialog"><h3>Propiedades del dibujo</h3><p id="cadDrawingDetails65"></p>
- <footer><button class="btn">Cerrar</button><button class="btn" onclick="renameDrawing65()">Cambiar nombre…</button></footer></form>
+ <footer><button class="btn" data-cad-glyph73="close">Cerrar</button><button class="btn" onclick="renameDrawing65()" data-cad-glyph73="saveAs">Cambiar nombre…</button></footer></form>
 </dialog>
 <dialog id="cadPage65" class="dwg-layers60" aria-label="Configurar página">
  <form method="dialog" id="cadPageForm65"><h3>Configuración de página</h3><div class="cad-print-fields65">
@@ -3723,65 +3793,65 @@ Del dato de campo a la entrega.</div></nav>
   <label>Espacio <select id="cadPrintSpace65"><option value="model">Modelo</option><option value="paper">Presentación</option></select></label>
   <label>Estilo <select id="cadInk65"><option value="mono">Monocromo</option><option value="color">Color</option></select></label>
   <label>Grosor por defecto (mm) <input id="cadWeight65" type="number" min=".05" max="2" step="any" required></label>
- </div><footer><button type="button" class="btn" onclick="$('cadPage65').close()">Cancelar</button> <button class="btn btn-primary">Aplicar</button></footer></form>
+ </div><footer><button type="button" class="btn" onclick="$('cadPage65').close()" data-cad-glyph73="close">Cancelar</button> <button class="btn btn-primary" data-cad-glyph73="check">Aplicar</button></footer></form>
 </dialog>
 <dialog id="cadPreview65" class="dwg-layers60" aria-labelledby="cadPreviewTitle65">
  <form method="dialog"><h3 id="cadPreviewTitle65"></h3>
   <div class="cad-file-actions65">
-   <button class="btn btn-primary" type="button" id="cadPreviewPrint65">Imprimir</button>
-   <button class="btn" type="button" id="cadPreviewPDF65">Guardar PDF</button>
-   <a class="btn" id="cadPreviewOpen65" target="_blank" rel="noopener">Abrir PDF</a>
-   <button class="btn">Cerrar</button>
+   <button class="btn btn-primary" type="button" id="cadPreviewPrint65" data-cad-glyph73="print">Imprimir</button>
+   <button class="btn" type="button" id="cadPreviewPDF65" data-cad-glyph73="save">Guardar PDF</button>
+   <a class="btn" id="cadPreviewOpen65" target="_blank" rel="noopener" data-cad-glyph73="folder">Abrir PDF</a>
+   <button class="btn" data-cad-glyph73="close">Cerrar</button>
   </div><iframe id="cadPreviewFrame65" title="Vista preliminar del PDF"></iframe>
  </form>
 </dialog>
 <section id="cadFilesPanel33" class="cad-panel33" hidden>
- <h3>Archivos <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar menú</button></h3>
+ <h3>Archivos <button class="btn" onclick="this.closest('.cad-panel33').hidden=true" data-cad-glyph73="close">Cerrar menú</button></h3>
  <p id="cadFileCurrent65" class="field-note"></p>
  <input id="cadOpen65" type="file" accept=".dwg,.dxf,.json" multiple hidden onchange="openDrawings65(event,'drawing')">
  <input id="cadOpenSet65" type="file" accept=".json" hidden onchange="openDrawings65(event,'set')">
  <input id="cadFile33" type="file" accept=".dxf,.dwg" hidden onchange="importCAD33(event)">
  <div class="cad-file-actions65" aria-label="Dibujos">
-  <button class="btn" onclick="newDrawing65()">Nuevo dibujo</button><button class="btn" onclick="$('cadOpen65').click()">Abrir dibujos…</button>
-  <button class="btn" onclick="closeDrawing65()">Cerrar dibujo</button><button class="btn" onclick="$('cadFile33').click()">Importar al activo…</button>
+  <button class="btn" onclick="newDrawing65()" data-cad-glyph73="newFile">Nuevo dibujo</button><button class="btn" onclick="$('cadOpen65').click()" data-cad-glyph73="folder">Abrir dibujos…</button>
+  <button class="btn" onclick="closeDrawing65()" data-cad-glyph73="closeFile">Cerrar dibujo</button><button class="btn" onclick="$('cadFile33').click()" data-cad-glyph73="importFile">Importar al activo…</button>
  </div>
- <details><summary>Opciones de importación</summary>
+ <details><summary data-cad-glyph73="importFile">Opciones de importación</summary>
   <label><input id="cadAssumeMeters33" type="checkbox"> Usar metros si el dibujo no declara unidades</label>
   <label><input id="cadPartial33" type="checkbox"> Aceptar importación parcial automáticamente</label>
-  <button class="btn" onclick="copyViewerDXFCAD33()">Añadir último DXF del Visor</button>
+  <button class="btn" onclick="copyViewerDXFCAD33()" data-cad-glyph73="importFile">Añadir último DXF del Visor</button>
  </details>
  <p id="cadImportReport33" class="field-note" role="status"></p>
- <button id="cadCancelImport67" class="btn" type="button" hidden onclick="cadImport67?.abort()">Cancelar importación</button>
+ <button id="cadCancelImport67" class="btn" type="button" hidden onclick="cadImport67?.abort()" data-cad-glyph73="stop">Cancelar importación</button>
  <div class="cad-file-actions65" aria-label="Guardar y exportar">
-  <button class="btn btn-primary" onclick="const tab=captureCAD65();saveDrawing65(tab,tab.format)">Guardar</button>
-  <button class="btn" onclick="$('cadSaveFormat65').showModal()">Guardar como…</button>
-  <button class="btn" onclick="saveAllDrawings65()">Guardar todo</button>
-  <button class="btn" onclick="$('cadExportFormat65').showModal()">Exportar…</button>
+  <button class="btn btn-primary" onclick="const tab=captureCAD65();saveDrawing65(tab,tab.format)" data-cad-glyph73="save">Guardar</button>
+  <button class="btn" onclick="$('cadSaveFormat65').showModal()" data-cad-glyph73="saveAs">Guardar como…</button>
+  <button class="btn" onclick="saveAllDrawings65()" data-cad-glyph73="saveAll">Guardar todo</button>
+  <button class="btn" onclick="$('cadExportFormat65').showModal()" data-cad-glyph73="exportFile">Exportar…</button>
  </div>
  <p id="cadDWGExportStatus59" class="field-note" role="status"></p>
- <details open><summary>Conjuntos de planos</summary><div class="cad-file-actions65">
-  <button class="btn" onclick="savePlanSet65()">Nuevo o guardar conjunto…</button>
-  <button class="btn" onclick="$('cadOpenSet65').click()">Abrir conjunto…</button>
-  <button class="btn" onclick="savePlanSet65(false)">Preparar conjunto para compartir</button>
+ <details open><summary data-cad-glyph73="set">Conjuntos de planos</summary><div class="cad-file-actions65">
+  <button class="btn" onclick="savePlanSet65()" data-cad-glyph73="setNew">Nuevo o guardar conjunto…</button>
+  <button class="btn" onclick="$('cadOpenSet65').click()" data-cad-glyph73="folder">Abrir conjunto…</button>
+  <button class="btn" onclick="savePlanSet65(false)" data-cad-glyph73="share">Preparar conjunto para compartir</button>
  </div></details>
- <details open><summary>Impresión y trazado</summary><div class="cad-file-actions65">
-  <button class="btn" onclick="configureCADPage65()">Configurar página…</button>
-  <button class="btn" onclick="configureCADPage65('cadInk65')">Estilos de trazado…</button>
-  <button class="btn" onclick="plotCAD65('preview')">Vista preliminar…</button>
-  <button class="btn" onclick="plotCAD65('print')">Trazar / imprimir…</button>
-  <button class="btn" onclick="plotCAD65('batch')">Impresión por lotes…</button>
-  <button class="btn" onclick="plotCAD65('smart')">Trazado por lotes automático…</button>
-  <button class="btn" onclick="plotCAD65('set')">Trazar conjunto…</button>
-  <button class="btn" onclick="plotCAD65('publish')">Publicar PDF…</button>
+ <details open><summary data-cad-glyph73="print">Impresión y trazado</summary><div class="cad-file-actions65">
+  <button class="btn" onclick="configureCADPage65()" data-cad-glyph73="page">Configurar página…</button>
+  <button class="btn" onclick="configureCADPage65('cadInk65')" data-cad-glyph73="sliders">Estilos de trazado…</button>
+  <button class="btn" onclick="plotCAD65('preview')" data-cad-glyph73="preview">Vista preliminar…</button>
+  <button class="btn" onclick="plotCAD65('print')" data-cad-glyph73="print">Trazar / imprimir…</button>
+  <button class="btn" onclick="plotCAD65('batch')" data-cad-glyph73="batch">Impresión por lotes…</button>
+  <button class="btn" onclick="plotCAD65('smart')" data-cad-glyph73="smart">Trazado por lotes automático…</button>
+  <button class="btn" onclick="plotCAD65('set')" data-cad-glyph73="set">Trazar conjunto…</button>
+  <button class="btn" onclick="plotCAD65('publish')" data-cad-glyph73="publish">Publicar PDF…</button>
  </div></details>
  <p id="cadPlotStatus65" class="field-note" role="status"></p>
- <details><summary>Rendimiento CAD</summary>
-  <button class="btn" type="button" onclick="measureCAD67()">Medir durante 5 s</button>
+ <details><summary data-cad-glyph73="speed">Rendimiento CAD</summary>
+  <button class="btn" type="button" onclick="measureCAD67()" data-cad-glyph73="speed">Medir durante 5 s</button>
   <p id="cadPerformance67" class="field-note" role="status"></p>
  </details>
  <div class="cad-file-actions65">
-  <button class="btn" onclick="drawingProperties65()">Propiedades del dibujo…</button>
-  <button class="btn" onclick="panelCAD33('cadPrecisionPanel33')">Ayudas al dibujo</button>
+  <button class="btn" onclick="drawingProperties65()" data-cad-glyph73="info">Propiedades del dibujo…</button>
+  <button class="btn" onclick="panelCAD33('cadPrecisionPanel33')" data-cad-glyph73="help">Ayudas al dibujo</button>
  </div>
 </section>
 <section id="cadPrecisionPanel33" class="cad-panel33" hidden=""><h3>Precisión y Z <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><label>Plano de trabajo · Z (m)<input id="cadPlaneZ33" class="input-field" type="number" step="any" value="0" onchange="settingsCAD33()"></label><label>Referencia vertical declarada del dibujo<input id="cadDatum33" class="input-field" maxlength="300" value="Sin verificar · Z de origen" onchange="settingsCAD33()"></label><label><input id="cadSnap33" type="checkbox" checked=""> Referencias: puntos, extremos, centros y cuadrantes</label><label><input id="cadMid33" type="checkbox" checked=""> Referencia a punto medio (XYZ interpoladas)</label><label><input id="cadIntersect33" type="checkbox"> Referencia a intersección XYZ de líneas (máximo 300 visibles)</label><label><input id="cadPerp33" type="checkbox"> Referencia perpendicular 3D desde el último vértice</label><label><input id="cadPolar33" type="checkbox"> Seguimiento polar XY para puntos libres</label><label>Incremento polar (°)<input id="cadPolarStep33" class="input-field" type="number" step="any" value="15"></label><label><input id="cadOrtho33" type="checkbox"> Ortogonal XY para puntos libres</label><p class="field-note">Un toque libre se proyecta sobre el plano horizontal Z indicado. Una referencia toma las XYZ reales del punto. La entrada numérica siempre respeta la XYZ introducida. El CAD conserva las cotas de origen: no aplica el geoide otra vez ni cambia el datum al escribir una etiqueta.</p><p class="field-note">Dedo, lápiz y ratón: toque para dibujar/seleccionar; arrastrar para desplazar en 2D u orbitar en 3D; dos dedos o rueda para acercar. La representación de curvas es muestreada; el modelo y el DXF conservan su definición analítica.</p></section>
@@ -7363,12 +7433,13 @@ function fitCAD33(){
  if(largeCAD61()){drawCAD33(true);return;}
  const box=new THREE.Box3(),entities=visibleCAD33();
  const points=$('cadSurveyVisible33').checked&&modifySpace56()==='model'?surveyPointsCAD33():[];
- r.origin=entities[0]?.points[0]||points[0]||{x:0,y:0,z:ensureCAD33().planeZ};
+ r.origin=entities[0]?.points[0]||points[0]||underlaysInsert74(ensureCAD33(),modifySpace56())[0]?.origin||{x:0,y:0,z:ensureCAD33().planeZ};
  for(const e of entities)for(const p of ['RAY','XLINE'].includes(e.type)?e.points:geometry33(e))box.expandByPoint(localCAD33(p));
  for(const p of points)box.expandByPoint(localCAD33(p));
  frameCAD63(r,box);drawCAD33();
 }
 function frameCAD63(r,box){
+ boundsInsert74(box);
  if(box.isEmpty())box.setFromCenterAndSize(new THREE.Vector3(),new THREE.Vector3(10,10,10));
  const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(10,size.x,size.y,size.z)*1.4;
  r.span=span;r.controls.target.copy(center);
@@ -7602,6 +7673,7 @@ const art35={
  save:'<path d="M5 4h19l4 4v21H5Z" fill="#345a70" stroke="#87badd"/><path d="M10 4h12v9H10Z" fill="#80d7c1"/><path d="M10 20h13v9H10Z" fill="#d8eef5"/><path d="M19 6v5" stroke="#315a65"/>',
  calculate:'<rect x="6" y="3" width="21" height="27" rx="3" fill="#364f68" stroke="#8ebfe0"/><path d="M10 7h13v6H10Z" fill="#8ce4c6"/><path d="M10 18h4m-2-2v4m6-2h5m-13 7h4m4-2 4 4m0-4-4 4" stroke="#f1cb76" stroke-width="2"/>',
  close:'<circle cx="16" cy="16" r="12" fill="#354a5f" stroke="#88a5bc"/><path d="m11 11 10 10m0-10L11 21" stroke="#d7ecf6" stroke-width="2"/>',
+ insert:'<path d="M7 4h15v17H7Z" fill="#345a70" stroke="#9ad4ee"/><path d="m14 13 8-7 7 6-7 7-8-6Z" fill="#467b72" stroke="#7be0c6"/><path d="M2 24h12m-6-6v12" stroke="#efbe60" stroke-width="2"/>',
  view:'<path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16Z" fill="#345a70" stroke="#9ad4ee"/><circle cx="16" cy="16" r="4" fill="#80d7c1" stroke="#d7fff5"/>',
  edition:'<rect x="5" y="5" width="18" height="24" rx="2" fill="#345a70" stroke="#9ad4ee"/><path d="M10 10h8m-8 5h6m-6 5h4" stroke="#d7fff5"/><path d="m15 26 2-6L26 9l4 3-10 12-5 2Z" fill="#bd913d" stroke="#f8d47f"/>',
  undo:'<path d="M6 12h13a9 9 0 0 1 0 18M6 12l7-7m-7 7 7 7" transform="translate(0 -2)" fill="none" stroke="#edc26b" stroke-width="2.5"/>',
@@ -8195,7 +8267,7 @@ async function xmlSurface42(file,a,j,meta){const hint43=await hintXML43(file);ch
  if(close&&name==='Surface'){if(surface.faces.length){const tin=buildSurface(surface.name,surface.faces,'LandXML por bloques');tin.terrain41={...meta,sourcePoints,sourceFaces,workingNodes:surface.points.size,facesOutsideOrMissing:surface.missing,area:a,method:'Triángulos originales completos de la zona; sin simplificar topología'};tins.push(tin);}surface=null;}
  }require26(root&&!stack.length&&!surface&&!part,'LandXML incompleto o mal formado.');require26(tins.length,a?'No hay triángulos completos de esta superficie dentro de la zona seleccionada. Desactiva «Recortar LandXML a la zona» para importar el archivo completo.':'El LandXML no contiene superficies TIN con vértices y caras válidos. Si contiene ejes, utiliza Carreteras → LandXML.');return tins;}
 async function lazModule42(){if(!mass42.module){const data=Uint8Array.from(atob(lidarWasm42),c=>c.charCodeAt(0));mass42.module=await LidarReader42.createLazPerf({wasmBinary:data});}return mass42.module;}
-async function cloud42(file,a,j,meta){const source={byteLength:file.size,read:async(o,n)=>{checkTerrain41(j);return bytes42(file,o,n);}},compressed=await LidarReader42.isCompressed(source),options={cacheChunks:1,maxRecordPayload:16*1024*1024};if(compressed)options.lazPerf={module:await lazModule42()};const reader=await LidarReader42.open(source,options);try{const crs=reader.crs,expected=25800+currentZone();let known=crs.horizontalEpsg;if(!known&&crs.wkt){const ids=[...crs.wkt.matchAll(/(?:ID|AUTHORITY)\s*\[\s*["']EPSG["']\s*,\s*["']?(\d+)/gi)].map(m=>Number(m[1])),utm=[...new Set(ids.filter(n=>n>=25828&&n<=25831))];known=utm.length===1?utm[0]:ids.at(-1);require26(known,'La nube declara un CRS WKT que no se puede verificar. Reproyecta a ETRS89 UTM del proyecto.');}require26(!crs.linearUnitsEpsg||crs.linearUnitsEpsg===9001,'LAS/LAZ no está en metros.');require26(!crs.verticalUnitsEpsg||crs.verticalUnitsEpsg===9001,'Cotas LAS/LAZ no están en metros.');require26(known===expected||!known&&$('massAssume42').checked,'El CRS de la nube no coincide o no está declarado. Reproyecta al huso activo; si no tiene CRS, confirma que ya usa ETRS89 UTM del proyecto.');const h=reader.header,fmt=h.pointDataRecordFormat,only=$('massClass42').value==='2',cells=new Map();let step=stepTerrain41(),scanned=0,eligible=0,withheld=0;const add=p=>{const k=Math.floor(p.x/step)+','+Math.floor(p.y/step),old=cells.get(k);if(!old||p.z<old.z)cells.set(k,p);};for await(const block of reader.blocks({chunkSize:1024*1024})){checkTerrain41(j);const v=new DataView(block.bytes.buffer,block.bytes.byteOffset,block.bytes.byteLength);for(let n=0;n<block.count;n++){const o=n*block.recordLength,classification=fmt<6?v.getUint8(o+15)&31:v.getUint8(o+16),flags=fmt<6?v.getUint8(o+15)&128:v.getUint8(o+15)&4;scanned++;if(flags){withheld++;continue;}if(only&&classification!==2)continue;const p={x:v.getInt32(o,true)*h.scale[0]+h.offset[0],y:v.getInt32(o+4,true)*h.scale[1]+h.offset[1],z:v.getInt32(o+8,true)*h.scale[2]+h.offset[2],classification,intensity:v.getUint16(o+12,true)};if(!insideTerrain41(p,a))continue;eligible++;add(p);if(cells.size>budget42()){require26($('massAdapt42').checked,'Más puntos de trabajo que la capacidad elegida. Aumenta el paso o activa Adaptar malla.');const old=[...cells.values()];step*=2;cells.clear();for(const p of old)add(p);}}terrainStatus41((compressed?'LAZ':'LAS')+': '+scanned.toLocaleString('es')+' / '+reader.pointCount.toLocaleString('es')+' puntos · '+cells.size.toLocaleString('es')+' celdas de trabajo · paso '+step+' m.');await yield42();}
+async function cloud42(file,a,j,meta){const source={byteLength:file.size,read:async(o,n)=>{checkTerrain41(j);return bytes42(file,o,n);}},compressed=await LidarReader42.isCompressed(source),options={cacheChunks:1,maxRecordPayload:16*1024*1024};if(compressed)options.lazPerf={module:await lazModule42()};const reader=await LidarReader42.open(source,options);try{const crs=reader.crs,expected=25800+currentZone();let known=crs.horizontalEpsg;if(!known&&crs.wkt){const ids=[...crs.wkt.matchAll(/(?:ID|AUTHORITY)\s*\[\s*["']EPSG["']\s*,\s*["']?(\d+)/gi)].map(m=>Number(m[1])),utm=[...new Set(ids.filter(n=>n>=25828&&n<=25831))];known=utm.length===1?utm[0]:ids.at(-1);require26(known,'La nube declara un CRS WKT que no se puede verificar. Reproyecta a ETRS89 UTM del proyecto.');}require26(!crs.linearUnitsEpsg||crs.linearUnitsEpsg===9001,'LAS/LAZ no está en metros.');require26(!crs.verticalUnitsEpsg||crs.verticalUnitsEpsg===9001,'Cotas LAS/LAZ no están en metros.');require26(known===expected||!known&&(j.assumeCRS??$('massAssume42').checked),'El CRS de la nube no coincide o no está declarado. Reproyecta al huso activo; si no tiene CRS, confirma que ya usa ETRS89 UTM del proyecto.');const h=reader.header,fmt=h.pointDataRecordFormat,only=$('massClass42').value==='2',cells=new Map();let step=stepTerrain41(),scanned=0,eligible=0,withheld=0;const add=p=>{const k=Math.floor(p.x/step)+','+Math.floor(p.y/step),old=cells.get(k);if(!old||p.z<old.z)cells.set(k,p);};for await(const block of reader.blocks({chunkSize:1024*1024})){checkTerrain41(j);const v=new DataView(block.bytes.buffer,block.bytes.byteOffset,block.bytes.byteLength);for(let n=0;n<block.count;n++){const o=n*block.recordLength,classification=fmt<6?v.getUint8(o+15)&31:v.getUint8(o+16),flags=fmt<6?v.getUint8(o+15)&128:v.getUint8(o+15)&4;scanned++;if(flags){withheld++;continue;}if(only&&classification!==2)continue;const p={x:v.getInt32(o,true)*h.scale[0]+h.offset[0],y:v.getInt32(o+4,true)*h.scale[1]+h.offset[1],z:v.getInt32(o+8,true)*h.scale[2]+h.offset[2],classification,intensity:v.getUint16(o+12,true)};if(!insideTerrain41(p,a))continue;eligible++;add(p);if(cells.size>budget42()){require26($('massAdapt42').checked,'Más puntos de trabajo que la capacidad elegida. Aumenta el paso o activa Adaptar malla.');const old=[...cells.values()];step*=2;cells.clear();for(const p of old)add(p);}}terrainStatus41((compressed?'LAZ':'LAS')+': '+scanned.toLocaleString('es')+' / '+reader.pointCount.toLocaleString('es')+' puntos · '+cells.size.toLocaleString('es')+' celdas de trabajo · paso '+step+' m.');await yield42();}
  const points=[...cells.values()];require26(points.length>=3,'No hay al menos tres puntos válidos en la zona y clase elegidas.');return {points,meta:{...meta,format:compressed?'LAZ':'LAS',declaredPoints:reader.pointCount,scanned,eligible,withheld,workingNodes:points.length,workingStep:step,classification:only?'2-suelo':'Todas excepto withheld',sourceEPSG:known||null,assumedCRS:!known,method:'Menor cota observada por celda; original conservado sin modificar'}};}finally{await reader.close();}}
 async function archiveBlob42(file,c){require26(current37(c),'El proyecto ha cambiado.');return {folderSaved:false,retained:false};}
 async function assetFile14(a){if(a.assetKey15)a=await store14('assets','readonly',s=>s.get(a.assetKey15));require26(a,'Archivo no disponible.');if(a.blob42)return new File([a.blob42],a.name.split('/').at(-1),{type:a.type});if(a.externalOnly42&&!a.handle){const ctx=workspace14.context;require26(ctx&&a.id===workspace14.id,'Conecta la carpeta original del proyecto.');const dir=await ctx.dir.getDirectoryHandle(a.group),p=await assetParent14(dir,a.name);return(await p.dir.getFileHandle(p.name)).getFile();}return before42_assetFile14(a);}
@@ -8452,10 +8524,12 @@ function initCadIcons50(){
  const vista=surveyTool49('view','Vista',toggleView69,'cadViewPanel69');
  const measure=drawing.querySelector('[data-tool36="measure"]')||drawing.querySelector('[aria-label="Medir"]');
  if(measure)measure.after(vista);else drawing.append(vista);
- vista.after(surveyTool49('edition','Edición',()=>panelCAD33('cadEditionPanel71'),'cadEditionPanel71'));
+ const edition=surveyTool49('edition','Edición',()=>panelCAD33('cadEditionPanel71'),'cadEditionPanel71');
+ vista.after(edition);
+ edition.after(surveyTool49('insert','Insertar',()=>panelCAD33('cadInsertPanel74'),'cadInsertPanel74'));
  const bars=new Map([['cad',drawing],['topography',$('cadSurveyTools49')]]),defs=new Map(),tabs={cad:[],topography:[]};
  for(const [mode,nav]of bars)for(const b of nav.querySelectorAll('button')){const def=iconDefinition51(b),panel=b.getAttribute('aria-controls'),key=panel?'panel:'+panel:def.tool?'tool:'+def.tool:def.label==='Medir'?'tool:measure':def.label==='Replantear'?'action:stake':'label:'+def.label;if(!defs.has(key))defs.set(key,def);if(!tabs[mode].some(x=>x.key===key))tabs[mode].push({key,visible:true});}
- const opts={scope:'cad',title:'Cad',modes:['cad','topography'],names:{cad:'Cad',topography:'Topografía'},storage:'sitescad.cad-icons.v1',upgrade:upgradeEditionIcon71,defs,defaults:{version:1,tabs},root:$('tabCAD33'),stage:$('cadStage33'),tabs:new Map([['cad',$('cadTab49')],['topography',$('cadTopoTab49')]]),bars:()=>bars,mode:()=>cadTabs49.mode,switchMode:setCadMode49,canMove:()=>!cad33.draft?.length,blockedMessage:'Termina o cancela el trazado antes de mover los iconos.',run:(def,b,e)=>def.run.call(b,e)};
+ const opts={scope:'cad',title:'Cad',modes:['cad','topography'],names:{cad:'Cad',topography:'Topografía'},storage:'sitescad.cad-icons.v1',upgrade:upgradeInsertIcon74,defs,defaults:{version:1,tabs},root:$('tabCAD33'),stage:$('cadStage33'),tabs:new Map([['cad',$('cadTab49')],['topography',$('cadTopoTab49')]]),bars:()=>bars,mode:()=>cadTabs49.mode,switchMode:setCadMode49,canMove:()=>!cad33.draft?.length,blockedMessage:'Termina o cancela el trazado antes de mover los iconos.',run:(def,b,e)=>def.run.call(b,e)};
  iconSystems51.cad=createIconSystem51(opts);iconSystems51.cad.init();
 }
 function initSiteIcons51(){
@@ -10008,6 +10082,9 @@ function setCADSetting56(key,value,label){
 }
 function attachReference56(mode){
  if(!needProject15())return;
+ const selected=selectedDraw52().find(e=>e.reference56)?.reference56;
+ const managed=mode==='reload'&&selected&&rowsInsert74(ensureCAD33()).find(row=>row.id===selected.id);
+ if(managed){try{chooseInsertFile74(managed.kind,managed);}catch(error){messageCAD33(error.message);}return;}
  const project=workspace14.id,doc=cad33.doc,space=modifySpace56(),selection=selectedDraw52(),reference=mode==='reload'?selection.find(e=>e.reference56)?.reference56:null;
  if(mode==='reload'&&!reference){messageCAD33('Selecciona una referencia DXF vinculada.');return;}
  const pick=document.createElement('input');pick.type='file';pick.accept='.dxf';
@@ -10039,6 +10116,7 @@ function manageReference56(bind){
    assertEditable56(doc,list);
    if(bind)for(const e of editEntities67(doc,new Set(list.map(item=>item.id))).values()){delete e.reference56;delete e.source33.draw52;}
    else doc.entities=doc.entities.filter(e=>e.reference56?.id!==reference.id);
+   if(doc.insertRefs74)doc.insertRefs74=rowsInsert74(doc).filter(row=>row.id!==reference.id);
   });
  });
 }
@@ -10846,9 +10924,11 @@ function firstVisibleCAD63(){
  for(const e of visibleStepsCAD63(ensureCAD33(),modifySpace56()))if(e)return e.points[0];
 }
 function* visibleStepsCAD63(doc,space,hidden=null){
+ const refsOff=(doc.insertRefs74||[]).filter(row=>row.visible===false);
+ const hiddenRefs=refsOff.length?new Set(refsOff.map(row=>row.id)):null;
  const layers=new Set(doc.layers.filter(l=>l.visible).map(l=>l.name)),scale=doc.annotationScale56||1;
  for(const e of doc.entities){
-  if((hidden&&hidden.ids.has(e.id)!==hidden.isolate)||!inSpace56(e,space)||!layers.has(e.layer)||(e.annotation56?.length&&!e.annotation56.includes(scale))){yield null;continue;}
+  if((hiddenRefs&&hiddenRefs.has(e.reference56?.id))||(hidden&&hidden.ids.has(e.id)!==hidden.isolate)||!inSpace56(e,space)||!layers.has(e.layer)||(e.annotation56?.length&&!e.annotation56.includes(scale))){yield null;continue;}
   if(e.type==='TEXT'&&e.annotation56?.length)yield {...e,height:e.height*scale/(e.annotationBase56||1)};
   else if(e.clip56)yield* clipDisplay56(e);
   else yield e;
@@ -11794,6 +11874,7 @@ function placeArmedGrip68(event){
 }
 
 function initCADFiles65(){
+ for(const el of document.querySelectorAll('[data-cad-glyph73]'))addCommandGlyph73(el,el.dataset.cadGlyph73);
  const panel=$('cadFilesPanel33');
  const history=panel.querySelector('.cad-history49')?.parentElement;
  if(history)panel.append(history);
@@ -12002,6 +12083,7 @@ function viewMeshMaterial69(r,object,style){
  return null;
 }
 function renderCADView69(r){
+ syncUnderlays74(r);
  // Drawings opened outside Vista use the same renderer without allocating a second canvas.
  const state=r.viewDisplay69,renderer=r.renderer;
  if(!state)return renderer.render(r.scene,r.camera);
@@ -12185,11 +12267,11 @@ function initView69(){
  const root=$('cadViewPanel69'),controls=$('cadViewControls69');
  const makeButton=(label,action,arg)=>{
   const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;
-  b.onclick=()=>runView69(action,arg);return b;
+  addCommandGlyph73(b,viewGlyph73(action,arg));b.onclick=()=>runView69(action,arg);return b;
  };
  const makeGroup=(title,items,opened=false)=>{
   const group=document.createElement('details'),summary=document.createElement('summary'),body=document.createElement('div');
-  group.open=opened;summary.textContent=title;body.className='cad-view-options69';
+  group.open=opened;summary.textContent=title;addCommandGlyph73(summary,groupGlyphs73[title]);body.className='cad-view-options69';
   for(const item of items)body.append(Array.isArray(item)?makeButton(...item):item);
   group.append(summary,body);controls.append(group);
  };
@@ -12268,6 +12350,7 @@ function initView69(){
   })
  ]);
  root.classList.add('cad-panel33');
+ addCommandGlyph73($('cadViewClose69'),'close');
  $('cadViewClose69').addEventListener('click',()=>{
   closeView69();
   document.querySelector('.cad-tools33:not([hidden]) [aria-controls="cadViewPanel69"]')?.focus();
@@ -12382,6 +12465,7 @@ function shiftEdition71(source,delta,layer,space){
  item.id=idCAD33();item.layer=layer;item.space56=space;
  item.points=item.points.map(move);
  delete item.refs;delete item.reference56;
+ if(item.field74?.id)delete item.field74;
  if(item.clip56){
   for(const p of [item.clip56.lo,item.clip56.hi]){p.x+=delta.x;p.y+=delta.y;}
  }
@@ -12556,11 +12640,11 @@ function initEdition71(){
  function button(label,action,key=''){
   const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;
   if(key){const hint=document.createElement('small');hint.textContent=key;b.append(hint);}
-  b.onclick=()=>runEdition71(action);return b;
+  addCommandGlyph73(b,editGlyphs73[action]);b.onclick=()=>runEdition71(action);return b;
  }
  function group(title,items,open=false){
   const details=document.createElement('details'),summary=document.createElement('summary'),itemsNode=document.createElement('div');
-  details.open=open;summary.textContent=title;itemsNode.className='cad-view-options69';
+  details.open=open;summary.textContent=title;addCommandGlyph73(summary,groupGlyphs73[title]);itemsNode.className='cad-view-options69';
   for(const item of items)itemsNode.append(Array.isArray(item)?button(...item):item);
   details.append(summary,itemsNode);body.append(details);
  }
@@ -12614,6 +12698,7 @@ function initEdition71(){
  layer.onchange=()=>{prefs.layer=layer.value;store();};
  snap.onchange=()=>{prefs.snap=snap.checked;store();};
  panel.classList.add('cad-panel33');
+ addCommandGlyph73($('cadEditionClose71'),'close');
  $('cadEditionClose71').onclick=()=>{panel.hidden=true;syncTools35();document.querySelector('.cad-tools33:not([hidden]) [aria-controls="cadEditionPanel71"]')?.focus();};
  const acceptsKeys=event=>ui58.section==='tabCAD33'&&cad33.runtime&&!event.isComposing&&
   !event.altKey&&!event.target.closest?.('input,textarea,select,[contenteditable],dialog[open]')&&
@@ -12796,6 +12881,494 @@ function queueSiteDrawings72(){
  });
 }
 
+const commandGlyphs73={
+ file:['M5 3h9l5 5v13H5Zm9 0v5h5','M8 13h8m-8 4h8'],
+ newFile:['M5 3h9l5 5v13H5Zm9 0v5h5','M8 14h8m-4-4v8'],
+ folder:['M2 6h7l2 2h10v3M3 20l3-9h16l-3 9Z','M2 6v13'],
+ closeFile:['M5 3h9l5 5v13H5Zm9 0v5h5','m9 11 6 6m0-6-6 6'],
+ importFile:['M13 5h8v15h-8m3-11h2m-2 7h2','M2 12h12m-4-4 4 4-4 4'],
+ exportFile:['M11 5H3v15h8m-5-9h2m-2 5h2','M9 12h12m-4-4 4 4-4 4'],
+ save:['M4 3h13l3 3v15H4Z','M8 3v6h8V3M8 21v-7h8v7'],
+ saveAs:['M3 3h12l3 3v5M7 3v6h7V3M3 3v18h8','m12 20 1-4 6-6 3 3-6 6Z'],
+ saveAll:['M2 17V2h13m-9 19V6h12l3 3v12Z','M10 6v5h7V6m-7 15v-6h7v6'],
+ set:['M2 7h7l2 2h10v11H2ZM5 4h13','M6 12h11m-11 4h11'],
+ setNew:['M2 7h7l2 2h10v11H2ZM5 4h13','M8 15h7m-3.5-3.5v7'],
+ share:['M5 10 18 4M5 14l13 6','M4 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4m16-8a2 2 0 1 0 0 4 2 2 0 0 0 0-4m0 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4'],
+ page:['M5 3h14v18H5Z','M8 6h8v12H8Zm2 3h4m-4 3h4'],
+ preview:['M3 3h16v11H3Z','M10 17c3-4 8-4 11 0-3 4-8 4-11 0Zm6 0h.1'],
+ print:['M7 8V3h10v5M6 17H3V8h18v9h-3','M7 14h10v7H7Zm10-3h1'],
+ batch:['M6 9V3h11v6M3 10h16v8h-3M6 15h8v6H6Z','M21 12v8h-4M16 13h1'],
+ smart:['M4 11h16v7h-4M8 11V4h6m-7 11h8v6H7Z','m18 2-4 5h4l-2 5 6-6h-4l2-4'],
+ publish:['M5 11h14v10H5Zm3 6h8','M12 14V3m-4 4 4-4 4 4'],
+ pdf:['M5 3h9l5 5v13H5Zm9 0v5h5','M7 16h2v-3H7v6m4-6h2v6h-2Zm5 6v-6h2m-2 3h2'],
+ refresh:measureGlyphs57.update,
+ regen:['M3 4h10v10H3Zm3 0v10m4-10v10M3 7h10M3 11h10','M10 17a5 5 0 1 0 9-3m0-3v3h-3'],
+ regenAll:['M3 3h12v12H3Zm4 4h14v14H7Z','M10 13a4 4 0 1 1 1 5m-2-1 2 1-1 2'],
+ undo:['M4 10h10a5 5 0 1 1 0 10','M9 5l-5 5 5 5'],
+ redo:['M20 10H10a5 5 0 1 0 0 10','m15 5 5 5-5 5'],
+ recover:['M4 3h10l5 5v4m-5-9v5h5M4 3v18h7','M11 16h7a2 2 0 1 1 0 4m-4-7-3 3 3 3'],
+ scissors:['m8 15 12-11M8 9l12 11','M6 13a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'],
+ copy:modifyGlyphs57.copy,
+ base:['M8 3h10v13H8ZM5 7H3v13h11v-2','M13 10h9m-4.5-4.5v9'],
+ clipboard:['M7 5H4v16h16V5h-3M8 3h8v5H8Z','M8 12h8m-8 4h8'],
+ paste:['M6 5H3v16h8M7 3h8v5H7Z','M12 14h9m-3-3 3 3-3 3'],
+ pasteBlock:modifyGlyphs57.blockInsert,
+ original:['M4 3v17h17','M4 20l12-11m0 0h-5m5 0v5M4 20h.1'],
+ pasteText:modifyGlyphs57.text,
+ find:measureGlyphs57.analyze,
+ replace:['M4 8h7M7.5 8v7m-3 0h6','M13 6h7l-3-3m3 3-3 3m3 9h-7l3-3m-3 3 3 3'],
+ convert:['M3 5h9M7 3v3m-2 1c1 5 2 7 6 9m0-9c-2 4-3 6-7 9','m13 20 4-10 4 10m-7-3h6'],
+ erase:modifyGlyphs57.erase,
+ selectAll:['M3 3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6m0-6V3','m7 12 3 3 7-7'],
+ zoomIn:['M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14m5 12 6 6','M6 10h8m-4-4v8'],
+ zoomOut:['M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14m5 12 6 6','M6 10h8'],
+ window:['M3 3h18v18H3Z','M7 7h10v10H7Zm0 0-3-3m13 13 3 3'],
+ target:measureGlyphs57.centerMark,
+ fit:['M3 8V3h5m8 0h5v5m0 8v5h-5m-8 0H3v-5','M7 7h10v10H7Z'],
+ pan:modifyGlyphs57.move,
+ left:['M5 12h14','m11 6-6 6 6 6'],
+ right:['M5 12h14','m13 6 6 6-6 6'],
+ up:['M12 5v14','m6 11 6-6 6 6'],
+ down:['M12 5v14','m6 13 6 6 6-6'],
+ orbit:modifyGlyphs57.rotate3d,
+ orbitFlat:['M21 12a9 4 0 1 1-5-4','m18 5 1 5-5 1M12 4v16'],
+ stop:['M5 5h14v14H5Z','M8 8h8v8H8Z'],
+ close:['M5 5h14v14H5Z','m8 8 8 8m0-8-8 8'],
+ orthographic:['M12 4h8v16h-8','M3 6h7M3 12h7M3 18h7'],
+ perspective:['M13 4h7v16h-7','M3 12l10-8M3 12h10m-10 0 10 8'],
+ camera:['M3 7h12v10H3Zm12 3 6-4v12l-6-4','M6 11h4m-2-2v4'],
+ xyz:['M5 5v14h14M5 19l9-9','M10 15h2m-1-1v2M5 9h3m6 10v-3'],
+ walk:['M13 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4','m9 20 3-7 5 7m-5-7v-4l6 3m-6-3-4 4H5'],
+ fly:['m3 12 18-8-6 16-4-6Z','m11 14 10-10'],
+ single:['M3 4h18v16H3Z','M3 8h18'],
+ inset:['M3 4h18v16H3Z','M12 11h6v6h-6Z'],
+ inset3d:['M3 4h18v16H3Z','m11 12 4-2 4 2v4l-4 2-4-2Zm0 0 4 2 4-2m-4 2v4'],
+ cube:['m4 8 8-5 8 5v8l-8 5-8-5Z','M4 8l8 5 8-5m-8 5v8'],
+ hide:['M3 12s4-6 9-6 9 6 9 6-4 6-9 6-9-6-9-6Z','M4 20 20 4'],
+ eye:['M3 12s4-6 9-6 9 6 9 6-4 6-9 6-9-6-9-6Z','M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6'],
+ wire:['m4 8 8-5 8 5v8l-8 5-8-5Zm0 0 8 5 8-5m-8 5v8','M4 16l8-5 8 5m-8-13v8'],
+ shade:['m4 8 8-5 8 5v8l-8 5-8-5Zm0 0 8 5 8-5m-8 5v8','m14 15 4-3m-4 6 4-3'],
+ opaque:['m4 8 8-5 8 5v8l-8 5-8-5Zm0 0 8 5 8-5m-8 5v8','M5 10v5l5 3'],
+ image:['M3 4h18v16H3Z','m4 17 5-6 4 4 3-3 4 5m-4-9h.1'],
+ fullscreen:['M3 8V3h5m8 0h5v5m0 8v5h-5m-8 0H3v-5','M6 6 3 3m15 3 3-3m-3 15 3 3M6 18l-3 3'],
+ sliders:measureGlyphs57.style,
+ info:modifyGlyphs57.properties,
+ speed:measureGlyphs57.analyze,
+ help:['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18','M9 9a3 3 0 1 1 5 2c-1 1-2 1-2 3m0 3h.1'],
+ check:['M4 4h16v16H4Z','m7 12 3 3 7-7']
+};
+function addCommandGlyph73(element,key){
+ if(!element||!Object.hasOwn(commandGlyphs73,key))return;
+ const label=document.createElement('span');label.className='cad-command-label73';
+ label.append(...element.childNodes);element.append(label);
+ addCADGlyph57(element,commandGlyphs73,key);
+ element.classList.add('cad-command-glyph73');
+}
+const editGlyphs73={
+ undo:'undo',redo:'redo',oops:'recover',cut:'scissors',copy:'copy',base:'base',paste:'paste',block:'pasteBlock',original:'original',
+ baseXYZ:'base',pasteXYZ:'xyz',blockXYZ:'pasteBlock',text:'pasteText',textXYZ:'xyz',read:'clipboard',external:'importFile',
+ delete:'erase',all:'selectAll',find:'find',replace:'replace',convert:'convert'
+};
+function viewGlyph73(action,arg){
+ switch(action){
+  case 'zoom':return arg>1?'zoomIn':'zoomOut';
+  case 'pan':return ({'-1':'left',1:'right',2:'up','-2':'down'})[arg];
+  case 'walkStep':return {w:'up',s:'down',a:'left',d:'right',e:'up',q:'down'}[arg];
+  case 'orbit':return arg==='horizontal'?'orbitFlat':'orbit';
+  case 'projection':return arg;
+  case 'preset':return arg.filter(Boolean).length===1?({'0,1,0':'up','0,-1,0':'down','0,0,-1':'target','0,0,1':'target','1,0,0':'right','-1,0,0':'left'})[arg.join()]:'cube';
+  case 'saved':return {save:'save',restore:'recover',delete:'erase'}[arg];
+  case 'visibility':return {hide:'hide',isolate:'selectAll',show:'eye'}[arg];
+  case 'display':return {single:'single',inset:'inset',iso:'inset3d',original:'cube',wire:'wire',shade:'shade',opaque:'opaque'}[arg[1]];
+  default:return {redraw:'refresh',regen:'regen',regenAll:'regenAll',window:'window',center:'target',fit:'fit',
+   fitSelection:'selectAll',previous:'undo',factor:'zoomIn',panMode:'pan',stop:'stop',cameraRead:'camera',cameraXYZ:'xyz',
+   walk:'walk',fly:'fly',fov:'sliders',fullscreen:'fullscreen',clean:'eye',png:'image'}[action];
+ }
+}
+
+const groupGlyphs73={
+ 'Redibujar y regenerar':'refresh','Zoom':'zoomIn','Encuadre':'pan','Órbita 3D':'orbit','Cámara':'camera',
+ 'Paseo y vuelo':'fly','Ventanas':'inset','Vistas guardadas':'save','Punto de vista 3D':'cube','Ajustes de vista':'sliders',
+ 'Ocultar':'hide','Estilos visuales':'wire','Render':'image','Pantalla':'fullscreen','Historial':'undo',
+ 'Portapapeles':'clipboard','Punto base e inserción XYZ':'xyz','Pegado especial':'pasteText','Ajustes de copiar y pegar':'sliders',
+ 'Selección':'selectAll','Buscar y reemplazar':'find','GB2BIG5':'convert'
+};
+
+const insert74={pending:false};
+const insertKinds74={
+ dwg:{name:'Referencia DWG / DXF',accept:'.dwg,.dxf'},
+ dgn:{name:'Enlazar DGN',accept:'.dgn',attachment:true},
+ dwf:{name:'Enlazar DWF / DWFx',accept:'.dwf,.dwfx',attachment:true},
+ pdf:{name:'Enlazar PDF',accept:'.pdf',image:true},
+ raster:{name:'Referencia de imagen ráster',accept:'.png,.jpg,.jpeg,.webp,.gif,.bmp,.avif',image:true},
+ cloud:{name:'Nube de puntos LAS / LAZ',accept:'.las,.laz'},
+ pdfImage:{name:'Importar página PDF como imagen',accept:'.pdf',image:true},
+ ole:{name:'Adjuntar documento',accept:'',attachment:true},
+ edit:{name:'Importar copia DWG / DXF',accept:'.dwg,.dxf'}
+};
+function insertStatus74(text){$('cadInsertStatus74').textContent=text;messageCAD33(text);}
+function insertDocument74(){
+ require26(usableCADFiles65()&&!dynamic53.session,'Termina el comando o la importación en curso.');
+ const doc=ensureCAD33();require26(doc.zone===currentZone(),'Selecciona el huso del dibujo.');
+ return doc;
+}
+function numberInsert74(id){return numCAD33(id);}
+function pointInsert74(prefix){return xyz33(Object.fromEntries(['x','y','z'].map(axis=>[axis,numberInsert74(prefix+axis)])));}
+function defaultInsertPoint74(prefix,doc){
+ const r=cad33.runtime,p=r?worldCAD33(r.controls.target):{x:0,y:0};
+ $(prefix+'x').value=p.x;$(prefix+'y').value=p.y;$(prefix+'z').value=doc.planeZ;
+}
+function chooseInsertFile74(kind,prior=null){
+ const doc=insertDocument74(),entry=insertKinds74[kind],dialog=$('cadInsertFile74'),file=$('insFile74'),form=$('insFileForm74');
+ $('insFileTitle74').textContent=entry.name;
+ $('insFilePosition74').hidden=!entry.image;
+ $('insFilePageWrap74').hidden=!['pdf','pdfImage'].includes(kind);
+ $('insFileCloud74').hidden=kind!=='cloud';
+ $('insFileNote74').textContent=entry.attachment?'El archivo queda adjunto al dibujo. Su contenido se abre con su aplicación de origen.':
+  kind==='pdfImage'?'Se incorpora una página como imagen colocada por coordenadas.':
+  kind==='cloud'?'Se conserva una muestra de puntos. Usa las opciones de paso y clase de Importaciones grandes.':'';
+ file.accept=entry.accept;file.value='';$('insCloudAssume74').checked=false;
+ $('insImageOpacity74').value=prior?.opacity??1;
+ defaultInsertPoint74('insImage74',doc);
+ if(prior?.origin)for(const axis of ['x','y','z'])$('insImage74'+axis).value=prior.origin[axis];
+ $('insFilePage74').value=prior?.page||1;$('insImageWidth74').value=prior?.width||10;
+ form.onsubmit=event=>{
+  event.preventDefault();const source=file.files[0];
+  if(!source)return;
+  try{
+   const placement=entry.image?{origin:pointInsert74('insImage74'),width:numberInsert74('insImageWidth74'),
+    page:kind==='raster'?1:numberInsert74('insFilePage74'),opacity:numberInsert74('insImageOpacity74')}:null;
+   if(placement)require26(placement.width>0&&placement.width<1e7&&placement.opacity>0&&placement.opacity<=1&&
+    Number.isInteger(placement.page)&&placement.page>0,'Revisa el ancho, la página y la opacidad.');
+   dialog.close();void processInsert74(kind,source,doc,placement,prior);
+  }catch(error){$('insFileNote74').textContent=error.message;}
+ };
+ dialog.showModal();
+}
+function rowsInsert74(doc){return doc.insertRefs74||[];}
+function insertReferenceRows74(doc,record){doc.insertRefs74=[...rowsInsert74(doc).filter(row=>row.id!==record.id),record];}
+async function pdfInsert74(file,page){
+ require26(file.size<=32*1024*1024,'El PDF supera 32 MiB.');
+ const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer()),isEvalSupported:false}).promise;
+ try{
+  require26(page<=pdf.numPages,'El PDF tiene '+pdf.numPages+' páginas.');
+  const sheet=await pdf.getPage(page),natural=sheet.getViewport({scale:1});
+  const viewport=sheet.getViewport({scale:Math.min(2,2048/Math.max(natural.width,natural.height))});
+  const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+  await sheet.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+  return {data:canvas.toDataURL('image/png'),ratio:viewport.height/viewport.width};
+ }finally{await pdf.destroy();}
+}
+async function rasterInsert74(file){
+ require26(/\.(png|jpe?g|webp|gif|bmp|avif)$/i.test(file.name),'Selecciona una imagen ráster admitida.');
+ require26(file.size<=16*1024*1024,'La imagen supera 16 MiB.');
+ const url=URL.createObjectURL(file);
+ try{
+  const img=await loadImage(url),scale=Math.min(1,2048/Math.max(img.naturalWidth,img.naturalHeight));
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+  canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  return {data:canvas.toDataURL('image/png'),ratio:canvas.height/canvas.width};
+ }finally{URL.revokeObjectURL(url);}
+}
+function mergeInsertCAD74(next,parsed,record,space){
+ const layers=new Set(next.layers.map(layer=>layer.name));
+ for(const layer of parsed.layers||[])if(!layers.has(layer.name)){next.layers.push(layer);layers.add(layer.name);}
+ const current=next.entities.filter(e=>!record||e.reference56?.id!==record.id);
+ next.entities=current.concat(parsed.entities.map(e=>({...e,id:idCAD33(),space56:space,...(record?{
+  reference56:{id:record.id,file:record.name},...(record.kind==='cloud'?{}:{source33:{...e.source33,draw52:{group:record.id,kind:'reference56'}}})
+ }:{} )})));
+ if(record)insertReferenceRows74(next,record);
+}
+async function processInsert74(kind,file,doc,placement=null,prior=null){
+ if(insert74.pending)return;
+ const entry=insertKinds74[kind],project=workspace14.id,space=prior?.space||modifySpace56();
+ const allowed=entry.accept?entry.accept.split(',').some(ext=>file.name.toLowerCase().endsWith(ext)):true;
+ if(!allowed){insertStatus74('Elige un archivo del formato indicado.');return;}
+ insert74.pending=true;cadFiles65.reading=true;$('insCancelReading74').hidden=false;
+ const controller=new AbortController();insert74.controller=controller;
+ const check=()=>require26(!controller.signal.aborted&&workspace14.id===project&&cad33.doc===doc&&!data15.closed,
+  'Operación cancelada o dibujo activo cambiado.');
+ const record={id:prior?.id||idCAD33(),kind,name:file.name.slice(0,300),space,visible:prior?.visible!==false};
+ try{
+  check();insertStatus74('Leyendo '+record.name+'…');
+  let parsed=null;
+  if(kind==='dwg'||kind==='edit'){
+   const base=prior?{...doc,entities:doc.entities.filter(e=>e.reference56?.id!==prior.id)}:doc;
+   parsed=await loadEditableCAD58(file,$('cadAssumeMeters33').checked,$('cadPartial33').checked,insertStatus74,base,controller.signal);
+   if(!parsed){insertStatus74('Importación cancelada.');return;}
+  }else if(kind==='cloud'){
+   const j={project,epoch:terrain41.epoch,zone:currentZone(),controller,assumeCRS:$('insCloudAssume74').checked};
+   const cloud=await cloud42(file,null,j,{originalFile:file.name});
+   const layer=('NUBE_'+record.id).slice(0,80);
+   parsed={layers:[{name:layer,color:'#75d7bc',visible:true,locked:false}],
+    entities:cloud.points.map(p=>({type:'POINT',points:[xyz33(p)],layer}))};
+   record.sample=cloud.points.length;
+  }else if(entry.image){
+   Object.assign(record,placement,await (kind==='raster'?rasterInsert74(file):pdfInsert74(file,placement.page)));
+   require26(rowsInsert74(doc).filter(r=>r.id!==record.id).reduce((n,r)=>n+(r.data?.length||0),record.data.length)<=16*1024*1024,
+    'Los adjuntos de este dibujo superan 16 MiB. Reduce la resolución o retira otro adjunto.');
+  }else{
+   require26(file.size<=8*1024*1024,'El adjunto supera 8 MiB.');
+   // Store as an inert attachment, regardless of the file's declared MIME type.
+   record.data=await bytesDataURL16(await file.arrayBuffer());
+   require26(rowsInsert74(doc).filter(r=>r.id!==record.id).reduce((n,r)=>n+(r.data?.length||0),record.data.length)<=16*1024*1024,
+    'Los adjuntos de este dibujo superan 16 MiB.');
+  }
+  check();
+  const changed=changeCAD33(prior?'Recargar referencia':entry.name,next=>{
+   if(parsed)mergeInsertCAD74(next,parsed,kind==='edit'?null:record,space);
+   else insertReferenceRows74(next,record);
+  });
+  require26(changed,'No se pudo completar la inserción.');
+  if(parsed||entry.image)fitCAD33();
+  renderInsertManager74();
+  insertStatus74(record.name+' · '+(kind==='cloud'?record.sample+' puntos de muestra añadidos.':
+   entry.attachment?'archivo adjunto.':parsed?parsed.entities.length+' entidades incorporadas.':'página o imagen colocada.'));
+ }catch(error){insertStatus74(error.message);}
+ finally{insert74.pending=false;insert74.controller=null;cadFiles65.reading=false;$('insCancelReading74').hidden=true;}
+}
+function underlaysInsert74(doc,space){
+ return rowsInsert74(doc).filter(row=>insertKinds74[row.kind]?.image&&row.visible!==false&&row.space===space&&
+  /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(row.data||'')&&row.origin&&
+  [row.origin.x,row.origin.y,row.origin.z,row.width,row.ratio,row.opacity].every(Number.isFinite)&&row.width>0&&row.ratio>0);
+}
+function boundsInsert74(box){
+ for(const row of underlaysInsert74(ensureCAD33(),modifySpace56())){
+  box.expandByPoint(localCAD33(row.origin));
+  box.expandByPoint(localCAD33({x:row.origin.x+row.width,y:row.origin.y+row.width*row.ratio,z:row.origin.z}));
+ }
+}
+function syncUnderlays74(runtime){
+ const doc=cad33.doc,space=modifySpace56(),origin=runtime.origin,previous=runtime.insert74;
+ if(previous?.rows===doc?.insertRefs74&&previous?.space===space&&previous?.origin===origin)return;
+ if(!doc?.insertRefs74?.length&&!previous)return;
+ if(previous){runtime.scene.remove(previous.group);clearMeshes39(previous.group);}
+ const group=new THREE.Group();runtime.scene.add(group);
+ const state={group,rows:doc?.insertRefs74,space,origin};runtime.insert74=state;
+ for(const row of doc?underlaysInsert74(doc,space):[]){
+  const width=row.width,height=width*row.ratio;
+  const texture=new THREE.TextureLoader().load(row.data,()=>{if(cad33.runtime===runtime&&runtime.insert74===state)runtime.renderDirty63=true;});
+  texture.encoding=THREE.sRGBEncoding;
+  const material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide,transparent:true,opacity:row.opacity,depthWrite:false,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:4});
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(width,height),material);
+  mesh.rotation.x=-Math.PI/2;mesh.position.copy(localCAD33({x:row.origin.x+width/2,y:row.origin.y+height/2,z:row.origin.z}));
+  mesh.renderOrder=-100;group.add(mesh);
+ }
+}
+function renderInsertManager74(){
+ const doc=cad33.doc,list=$('insManagerList74');list.replaceChildren();
+ if(!doc)return;
+ const scope=$('insManager74').dataset.scope;
+ const rows=rowsInsert74(doc).filter(row=>scope==='images'?insertKinds74[row.kind]?.image:scope==='cloud'?row.kind==='cloud':
+  !insertKinds74[row.kind]?.image&&row.kind!=='cloud');
+ for(const row of rows){
+  const section=document.createElement('section'),title=document.createElement('strong'),actions=document.createElement('div');
+  title.textContent=row.name+(row.sample?' · '+row.sample.toLocaleString('es-ES')+' puntos':'');
+  actions.className='cad-view-options69';
+  const button=(label,glyph,action)=>actions.append(insertButton74(label,glyph,action));
+  if(!insertKinds74[row.kind]?.attachment)button(row.visible===false?'Mostrar':'Ocultar',row.visible===false?'eye':'hide',()=>{
+   insertDocument74();changeCAD33('Visibilidad de referencia',next=>insertReferenceRows74(next,{...row,visible:row.visible===false}));
+   renderInsertManager74();
+  });
+  if(insertKinds74[row.kind])button('Recargar…','refresh',()=>{$('insManager74').close();chooseInsertFile74(row.kind,row);});
+  if(insertKinds74[row.kind]?.attachment)button('Guardar adjunto…','save',()=>{
+   const bytes=Uint8Array.from(atob(row.data.split(',')[1]),ch=>ch.charCodeAt(0));
+   exportFile37(row.name,bytes);
+  });
+  if(row.kind==='dwg'||row.kind==='cloud')button('Convertir en geometría editable','pasteBlock',()=>{
+   insertDocument74();
+   changeCAD33('Incorporar referencia',next=>{
+    const ids=new Set(next.entities.filter(e=>e.reference56?.id===row.id).map(e=>e.id));
+    for(const e of editEntities67(next,ids).values()){delete e.reference56;delete e.source33?.draw52;}
+    next.insertRefs74=rowsInsert74(next).filter(item=>item.id!==row.id);
+   });renderInsertManager74();
+  });
+  button('Quitar…','erase',()=>{
+   insertDocument74();if(!confirm('¿Quitar «'+row.name+'» del dibujo? Puedes deshacer.'))return;
+   changeCAD33('Quitar referencia',next=>{
+    next.insertRefs74=rowsInsert74(next).filter(item=>item.id!==row.id);
+    if(row.kind==='dwg'||row.kind==='cloud')next.entities=next.entities.filter(e=>e.reference56?.id!==row.id);
+   });renderInsertManager74();
+  });
+  section.append(title,actions);list.append(section);
+ }
+ if(!rows.length)list.textContent='No hay archivos de esta categoría en el dibujo.';
+}
+function openInsertManager74(scope){
+ insertDocument74();$('insManager74').dataset.scope=scope;
+ $('insManagerTitle74').textContent={refs:'Referencias externas',images:'Imágenes y páginas PDF',cloud:'Nubes de puntos'}[scope];
+ renderInsertManager74();$('insManager74').showModal();
+}
+function fieldTextInsert74(field,doc){
+ const tab=activeCAD65();
+ if(field.kind==='drawing')return tab.name;
+ if(field.kind==='date')return new Intl.DateTimeFormat('es-ES',{dateStyle:'short'}).format(new Date());
+ const e=getEntity67(doc,field.id);
+ if(!e)return '[Objeto no disponible]';
+ const m=measureCAD33(e),value=field.kind==='area'?m.area:m.spatial;
+ return Number.isFinite(value)?metric(value)+(field.kind==='area'?' m²':' m'):'[Sin valor finito]';
+}
+function fieldInsert74(){
+ const doc=insertDocument74(),source=[...cad33.selected][0];
+ defaultInsertPoint74('insField74',doc);
+ $('insFieldForm74').onsubmit=event=>{
+  event.preventDefault();
+  try{
+   insertDocument74();const kind=$('insFieldType74').value,height=numberInsert74('insFieldHeight74');
+   const field={kind,id:source||null},linked=kind==='area'||kind==='length';
+   require26(!linked||getEntity67(doc,source),'Selecciona primero el objeto que quieras medir.');
+   require26(height>0,'La altura debe ser positiva.');
+   const entity=newEntity33('TEXT',[pointInsert74('insField74')],{height,text:fieldTextInsert74(field,doc),rotation:0,field74:field});
+   require26(addEntities33([entity],'Insertar campo'),'No se pudo insertar el campo.');
+   $('insField74').close();insertStatus74('Campo insertado.');
+  }catch(error){$('insFieldNote74').textContent=error.message;}
+ };
+ $('insFieldNote74').textContent='';$('insField74').showModal();
+}
+function updateFieldsInsert74(){
+ const doc=insertDocument74(),locked=new Set(doc.layers.filter(l=>l.locked).map(l=>l.name)),values=new Map();
+ for(const entity of doc.entities)if(entity.type==='TEXT'&&entity.field74&&!locked.has(entity.layer)&&!entity.reference56){
+  const value=fieldTextInsert74(entity.field74,doc);
+  if(value!==entity.text)values.set(entity.id,value);
+ }
+ if(values.size)changeCAD33('Actualizar campos',next=>{
+  for(const [id,entity] of editEntities67(next,new Set(values.keys())))entity.text=values.get(id);
+ });
+ insertStatus74(values.size+' campos actualizados.');
+}
+function hyperlinkURL74(value){
+ const url=new URL(value);
+ require26(['https:','http:','mailto:'].includes(url.protocol),'Usa una dirección https, http o mailto.');
+ require26(!url.username&&!url.password&&url.href.length<=2048,'Dirección de enlace no válida.');
+ return url.href;
+}
+function hyperlinkInsert74(){
+ const doc=insertDocument74(),selection=selectionCAD33();assertEditable56(doc,selection);
+ require26(selection.every(e=>!e.reference56),'Selecciona geometría editable.');
+ const dialog=$('insLink74'),input=$('insURL74'),note=$('insLinkNote74');
+ input.value=selection[0].hyperlink74||'';note.textContent='';
+ const save=remove=>{
+  try{
+   insertDocument74();const url=remove?'':hyperlinkURL74(input.value.trim());
+   require26(changeCAD33(remove?'Quitar hipervínculo':'Asignar hipervínculo',next=>{
+    for(const entity of editEntities67(next,new Set(selection.map(e=>e.id))).values()){
+     if(remove)delete entity.hyperlink74;else entity.hyperlink74=url;
+    }
+   }),'No se pudo modificar el hipervínculo.');
+   dialog.close();insertStatus74(remove?'Hipervínculo retirado.':'Hipervínculo asignado.');
+  }catch(error){note.textContent=error.message;}
+ };
+ $('insLinkForm74').onsubmit=e=>{e.preventDefault();save(false);};
+ $('insLinkRemove74').onclick=()=>save(true);
+ $('insLinkOpen74').onclick=()=>{try{window.open(hyperlinkURL74(input.value.trim()),'_blank','noopener,noreferrer');}catch(e){note.textContent=e.message;}};
+ dialog.showModal();
+}
+function presentationInsert74(action){
+ const doc=insertDocument74(),tab=activeCAD65(),page=pageSettings65(tab);
+ if(action==='paper'||action==='model'){
+  changeCAD33(action==='paper'?'Ver presentación':'Ver modelo',next=>{next.space56=action;});
+  cad33.selected.clear();refreshCADUI33();fitCAD33();return;
+ }
+ const pages=doc.insertPages74||[];
+ if(action==='save'){
+  const name=prompt('Nombre de la configuración de presentación','Presentación '+(pages.length+1))?.trim();
+  if(!name)return;
+  require26(name.length<=80,'Usa un nombre de hasta 80 caracteres.');
+  const match=pages.find(item=>item.name===name);
+  if(match&&!confirm('¿Actualizar «'+name+'»?'))return;
+  require26(pages.length<50||match,'El dibujo admite hasta 50 configuraciones.');
+  changeCAD33('Guardar configuración de presentación',next=>{
+   next.insertPages74=[...pages.filter(item=>item.name!==name),{name,page:{...page,space:'paper'}}];
+  });insertStatus74('Configuración guardada: '+name+'.');return;
+ }
+ require26(pages.length,'Guarda antes una configuración de presentación.');
+ const dialog=$('insPages74'),picker=$('insPageChoice74');
+ picker.replaceChildren(...pages.map((item,i)=>new Option(item.name,String(i))));
+ $('insPagesForm74').onsubmit=event=>{
+  event.preventDefault();
+  try{
+   insertDocument74();tab.page=pageSettings65({page:pages[Number(picker.value)].page});
+   markCAD65();scheduleSave();dialog.close();presentationInsert74('paper');
+  }catch(error){insertStatus74(error.message);}
+ };
+ dialog.showModal();
+}
+function insertButton74(label,glyph,action){
+ const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=label;
+ addCommandGlyph73(button,glyph);
+ button.onclick=()=>{try{action();}catch(error){insertStatus74(error.message);}};
+ return button;
+}
+function unsupportedInsert74(name,alternative){
+ $('insCompatName74').textContent=name;$('insCompatText74').textContent=alternative;
+ $('insCompat74').showModal();
+}
+function upgradeInsertIcon74(stored,layout){
+ upgradeEditionIcon71(stored,layout);
+ const key='panel:cadInsertPanel74',rows=layout.tabs.cad;
+ if(!stored?.insertIcon74&&!Object.values(layout.tabs).some(items=>items.some(row=>row.key===key))){
+  const index=rows.findIndex(row=>row.key==='panel:cadEditionPanel71');
+  rows.splice(index<0?rows.length:index+1,0,{key,visible:true});
+ }
+ layout.insertIcon74=true;return layout;
+}
+function initInsert74(){
+ const panel=$('cadInsertPanel74'),body=$('cadInsertControls74'),choose=kind=>()=>chooseInsertFile74(kind);
+ const group=(title,glyph,items,open=false)=>{
+  const group=document.createElement('details'),summary=document.createElement('summary'),grid=document.createElement('div');
+  group.open=open;summary.textContent=title;addCommandGlyph73(summary,glyph);grid.className='cad-view-options69';
+  for(const item of items)grid.append(insertButton74(...item));
+  group.append(summary,grid);body.append(group);
+ };
+ const compat=(label,name,hint)=>[label,'help',()=>unsupportedInsert74(name,hint)];
+ const cadHint='Convierte el archivo a DWG o DXF con su aplicación de origen y usa «Importar copia DWG / DXF».';
+ group('Bloques y datos','pasteBlock',[
+  ['Insertar bloque…','pasteBlock',()=>openDraw52('blockInsert')],['Crear definición…','setNew',()=>openDraw52('blockCreate')],
+  ['Campo…','pasteText',fieldInsert74],['Actualizar campos','refresh',updateFieldsInsert74],
+  ['Hipervínculo… · Ctrl+K','share',hyperlinkInsert74]
+ ],true);
+ group('Referencias externas','set',[
+  ['Referencia DWG / DXF…','importFile',choose('dwg')],['Enlazar DGN como adjunto…','file',choose('dgn')],
+  ['Enlazar DWF como adjunto…','file',choose('dwf')],['Enlazar PDF…','pdf',choose('pdf')],
+  ['Referencia de imagen ráster…','image',choose('raster')],['Nube de puntos LAS / LAZ…','target',choose('cloud')]
+ ],true);
+ group('Presentación','page',[
+  ['Ver presentación','page',()=>presentationInsert74('paper')],['Volver a modelo','cube',()=>presentationInsert74('model')],
+  ['Configurar página…','sliders',()=>configureCADPage65('cadPrintSpace65')],
+  ['Guardar configuración…','save',()=>presentationInsert74('save')],
+  ['Aplicar configuración…','folder',()=>presentationInsert74('apply')]
+ ]);
+ group('Administradores','sliders',[
+  ['Referencias externas…','set',()=>openInsertManager74('refs')],['Imágenes y PDF…','image',()=>openInsertManager74('images')],
+  ['Nubes de puntos…','target',()=>openInsertManager74('cloud')]
+ ]);
+ group('Importar','importFile',[
+  ['Importar copia DWG / DXF…','importFile',choose('edit')],
+  ['Importar PDF como imagen…','pdf',choose('pdfImage')],
+  compat('Importar DGN…','Importar DGN',cadHint),
+  compat('Importar ACIS…','Importar ACIS',cadHint),
+  compat('Metarchivo de Windows…','Metarchivo de Windows','Convierte WMF o EMF a PNG para colocarlo como imagen, o a DXF para trabajar con geometría editable.'),
+  ['Adjuntar documento (alternativa a OLE)…','file',choose('ole')],
+  compat('Importar IFC…','Importar IFC',cadHint),
+  compat('STEP como geometría…','Importar STEP',cadHint),
+  compat('STEP como bloque…','Importar STEP como bloque','Convierte el modelo a DWG o DXF, importa la copia, selecciona la geometría y usa «Crear definición».'),
+  compat('Importar RVT…','Importar RVT',cadHint)
+ ]);
+ panel.classList.add('cad-panel33');
+ $('insCompatImport74').onclick=()=>{$('insCompat74').close();chooseInsertFile74('edit');};
+ $('insCompatRaster74').onclick=()=>{$('insCompat74').close();chooseInsertFile74('raster');};
+ $('cadInsertClose74').onclick=()=>{panel.hidden=true;syncTools35();};
+ $('insCancelReading74').onclick=()=>insert74.controller?.abort();
+ document.addEventListener('keydown',event=>{
+  if(ui58.section!=='tabCAD33'||!(event.ctrlKey||event.metaKey)||event.altKey||event.shiftKey||
+   event.key.toLowerCase()!=='k'||event.target.closest?.('input,textarea,select,[contenteditable],dialog[open]')||
+   document.querySelector('dialog[open],.destination-overlay37:not([hidden])'))return;
+  event.preventDefault();
+  try{hyperlinkInsert74();}catch(error){insertStatus74(error.message);}
+ });
+}
+
 init55();
 init56();
 initMaps57();
@@ -12833,6 +13406,7 @@ initXML43();
 initXML44();
 initView69();
 initEdition71();
+initInsert74();
 initCadTabs49();
 initCadIcons50();
 initSiteIcons51();

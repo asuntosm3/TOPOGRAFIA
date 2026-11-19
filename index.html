@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.86.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.87.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.86 RC1 · 2026-11-19</title>
+  <title>SiteSCad · v5.87 RC1 · 2026-11-19</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3705,7 +3705,7 @@ summary.cad-command-glyph73>.cad-glyph57{display:inline-block;vertical-align:mid
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.86 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.87 RC1</span>
       </div>
     </div>
 
@@ -5040,7 +5040,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.86.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.87.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -7674,7 +7674,46 @@ function selectionCAD33(){
 }
 function editableCAD33(){const list=selectionCAD33();require26(list.every(e=>!layerCAD33(e.layer).locked),'Hay entidades en capas bloqueadas.');return list;}
 function addEntities33(items,label='Dibujar'){const layer=layerCAD33(ensureCAD33().activeLayer);require26(layer&&!layer.locked,'Desbloquea la capa activa.');return changeCAD33(label,d=>{d.entities=d.entities.concat(items);});}
-function transformEntity33(e,fn,scale=1){const out=clone33(e);out.points=e.points.map(fn);if(['ARC','CIRCLE'].includes(e.type)){const c=e.points[0],u=e.u||basis33(e.normal).u,v=cross33(unit33(e.normal),u),newU=unit33(sub33(fn(add33(c,u)),fn(c))),newV=unit33(sub33(fn(add33(c,v)),fn(c)));out.u=newU;out.normal=unit33(cross33(newU,newV));out.radius=e.radius*Math.abs(scale);}if(e.type==='TEXT'){out.height=e.height*Math.abs(scale);const a=(e.rotation||0)*Math.PI/180,p=fn(add33(e.points[0],{x:Math.cos(a),y:Math.sin(a),z:0})),q=fn(e.points[0]);out.rotation=Math.atan2(p.y-q.y,p.x-q.x)*180/Math.PI;}delete out.refs;return out;}
+function transformEntity33(e,fn,scale=1){
+ const out=clone33(e);
+ out.points=e.points.map(fn);
+ const origin=out.points[0],direction=v=>sub33(fn(add33(e.points[0],v)),origin);
+ if(e.type==='ARC'||e.type==='CIRCLE'){
+  const u=e.u||basis33(e.normal).u,v=cross33(unit33(e.normal),u);
+  out.u=unit33(direction(u));
+  out.normal=unit33(cross33(out.u,unit33(direction(v))));
+  out.radius=e.radius*Math.abs(scale);
+ }
+ if(e.type==='ELLIPSE'){
+  const a=direction(e.majorAxis),b=direction(ellipseMinor55(e));
+  // Diagonalise the transformed pair, preserving the arc phase.
+  const ab=dot33(a,b),aa=dot33(a,a),bb=dot33(b,b);
+  const phase=Math.abs(ab)<=1e-12*aa&&aa>=bb?0:.5*Math.atan2(2*ab,aa-bb);
+  const u=add33(mul33(a,Math.cos(phase)),mul33(b,Math.sin(phase)));
+  const v=add33(mul33(a,-Math.sin(phase)),mul33(b,Math.cos(phase)));
+  Object.assign(out,{majorAxis:u,normal:unit33(cross33(u,v)),ratio:Math.min(1,len33(v)/len33(u)),start:e.closed?0:wrap52(e.start-phase)});
+ }
+ if(e.type==='TEXT'){
+  const angle=(e.rotation||0)*Math.PI/180,d=direction({x:Math.cos(angle),y:Math.sin(angle),z:0});
+  out.height=e.height*Math.abs(scale);
+  out.rotation=Math.atan2(d.y,d.x)*180/Math.PI;
+ }
+ if(e.dimension55)out.dimension55=transformDimension55(e.dimension55,fn,scale);
+ if(e.clip56)out.clip56=transformClip90(e.clip56,fn);
+ delete out.refs;
+ return out;
+}
+function remapTransformCopy90(item,ids,groups){
+ const tag=item.source33?.draw52;
+ for(const key of ['group','dimGroup89']){
+  const source=tag?.[key];
+  if(!source)continue;
+  if(!groups.has(source))groups.set(source,idCAD33());
+  tag[key]=groups.get(source);
+ }
+ if(item.dimension55?.refs)item.dimension55.refs=item.dimension55.refs.map(id=>ids.get(id)||id);
+ if(ids.has(item.field74?.id))item.field74.id=ids.get(item.field74.id);
+}
 function transformCAD33(kind,p){const list=editableCAD33();const pivot=xyz33(p.pivot||list[0].points[0]);let fn,scale=1;if(kind==='move'||kind==='copy'){const delta=xyz33(p.delta);fn=a=>add33(a,delta);}else if(kind==='rotate'){const a=p.angle*Math.PI/180,axis=unit33(p.axis||{x:0,y:0,z:1});require26(Number.isFinite(a),'Ángulo inválido.');require26(!list.some(e=>e.type==='TEXT')||Math.abs(axis.z-1)<1e-9,'El texto horizontal solo admite giro sobre Z.');fn=q=>{const v=sub33(q,pivot);return add33(pivot,add33(add33(mul33(v,Math.cos(a)),mul33(cross33(axis,v),Math.sin(a))),mul33(axis,dot33(axis,v)*(1-Math.cos(a)))));};}else if(kind==='scale'){scale=p.factor;require26(Number.isFinite(scale)&&scale>0,'Escala uniforme positiva requerida.');fn=q=>add33(pivot,mul33(sub33(q,pivot),scale));}else if(kind==='mirror'){const a=p.angle*Math.PI/180;require26(Number.isFinite(a),'Ángulo inválido.');const u={x:Math.cos(a),y:Math.sin(a),z:0};fn=q=>{const v=sub33(q,pivot),along=dot33(v,u);return add33(pivot,{x:2*along*u.x-v.x,y:2*along*u.y-v.y,z:v.z});};}else throw Error('Transformación no válida.');changeCAD33(kind,d=>{
  const copiedIds=new Map(),copiedGroups=new Map();
  if(kind==='copy')for(const e of list)copiedIds.set(e.id,idCAD33());
@@ -7682,12 +7721,7 @@ function transformCAD33(kind,p){const list=editableCAD33();const pivot=xyz33(p.p
   const entity=transformEntity33(e,fn,scale);
   if(kind==='copy'){
    entity.id=copiedIds.get(e.id);
-   const meta=entity.source33?.draw52;
-   if(meta?.kind==='dimension55'){
-    if(!copiedGroups.has(meta.group))copiedGroups.set(meta.group,idCAD33());
-    meta.group=copiedGroups.get(meta.group);
-    if(entity.dimension55?.refs)entity.dimension55.refs=entity.dimension55.refs.map(id=>copiedIds.get(id)||id);
-   }
+   remapTransformCopy90(entity,copiedIds,copiedGroups);
   }
   return entity;
  });if(kind==='copy')for(const item of out)d.entities.push(item);else{const replacements=new Map(out.map(item=>[item.id,item]));d.entities=d.entities.map(e=>replacements.get(e.id)||e);}});}
@@ -9583,22 +9617,6 @@ geometry33=function(e){
  if(!e.closed)samples.push(splinePoint55(e,knots[n]));
  return samples;
 };
-const baseTransform55=transformEntity33;
-transformEntity33=function(e,fn,scale=1){
- const out=baseTransform55(e,fn,scale);
- if(e.type==='ELLIPSE'){
-  const origin=out.points[0],a=sub33(fn(add33(e.points[0],e.majorAxis)),origin);
-  const b=sub33(fn(add33(e.points[0],ellipseMinor55(e))),origin);
-  // Diagonalise the transformed pair, preserving the arc phase.
-  let phase=.5*Math.atan2(2*dot33(a,b),dot33(a,a)-dot33(b,b));
-  if(Math.abs(dot33(a,b))<=1e-12*dot33(a,a)&&dot33(a,a)>=dot33(b,b))phase=0;
-  const u=add33(mul33(a,Math.cos(phase)),mul33(b,Math.sin(phase)));
-  const v=add33(mul33(a,-Math.sin(phase)),mul33(b,Math.cos(phase)));
-  Object.assign(out,{majorAxis:u,normal:unit33(cross33(u,v)),ratio:Math.min(1,len33(v)/len33(u)),start:e.closed?0:wrap52(e.start-phase)});
- }
- if(e.dimension55)out.dimension55=transformDimension55(e.dimension55,fn,scale);
- return out;
-};
 const baseMeasure55=measureCAD33;
 measureCAD33=function(e){
  const result=baseMeasure55(e);
@@ -10070,9 +10088,7 @@ function array56(doc,entities,transforms){
   const groupMap=new Map(),idMap=new Map(entities.map(e=>[e.id,idCAD33()]));
   for(const e of entities){
    const item=transformEntity33(e,fn,scale);item.id=idMap.get(e.id);
-   const tag=item.source33?.draw52;
-   if(tag?.group){if(!groupMap.has(tag.group))groupMap.set(tag.group,idCAD33());tag.group=groupMap.get(tag.group);}
-   if(item.dimension55?.refs)item.dimension55.refs=item.dimension55.refs.map(id=>idMap.get(id)||id);
+   remapTransformCopy90(item,idMap,groupMap);
    delete item.reference56;
    out.push(item);
   }
@@ -10151,18 +10167,39 @@ function blend56(first,second,a,b,amount){
  const d=positive52(amount,'Tensión')*length/3;
  return spline55([x.point,dimAlong55(x.point,x.dir,d),dimAlong55(y.point,y.dir,d),y.point],true);
 }
-function clipEntity56(e,lo,hi){
+// A transformed clipping rectangle keeps its local XY bounds and its 3D coordinate frame.
+function transformClip90(clip,fn){
+ const {lo,hi}=clip;
+ const frame=clip.frame||{origin:{x:lo.x,y:lo.y,z:0},u:{x:1,y:0,z:0},v:{x:0,y:1,z:0},w:{x:0,y:0,z:1}};
+ const origin=fn(frame.origin),direction=axis=>sub33(fn(add33(frame.origin,axis)),origin);
+ return {lo:{...lo},hi:{...hi},frame:{origin,u:direction(frame.u),v:direction(frame.v),w:direction(frame.w)}};
+}
+function clipProjection90({lo,frame}){
+ if(!frame)return point=>point;
+ const {origin,u,v,w}=frame;
+ require26([origin,u,v,w].every(p=>p&&[p.x,p.y,p.z].every(Number.isFinite)),'Marco de delimitación inválido.');
+ const x=cross33(v,w),y=cross33(w,u),det=dot33(u,x);
+ require26(Number.isFinite(det)&&Math.abs(det)>1e-12*len33(u)*len33(v)*len33(w),'Marco de delimitación degenerado.');
+ return point=>{
+  const delta=sub33(point,origin);
+  return {x:lo.x+dot33(delta,x)/det,y:lo.y+dot33(delta,y)/det};
+ };
+}
+function clipEntity56(e,{lo,hi,frame}){
  require26(['LINE','POLYLINE','CIRCLE','ARC','ELLIPSE','SPLINE'].includes(e.type),'Delimitar admite líneas, polilíneas y curvas.');
- const path=geometry33(e),closed=e.closed||e.type==='CIRCLE';
+ const path=geometry33(e),closed=e.closed||e.type==='CIRCLE',project=clipProjection90({lo,frame});
  const result=[];
+ let localA=path.length?project(path[0]):null;
  for(let i=1;i<path.length+(closed?1:0);i++){
-  const a=path[i-1],b=path[i%path.length],d=sub33(b,a);
+  const a=path[i-1],b=path[i%path.length],d=sub33(b,a),localB=project(b);
   let min=0,max=1;
   for(const axis of ['x','y']){
-   if(Math.abs(d[axis])<1e-12){if(a[axis]<lo[axis]||a[axis]>hi[axis])min=Infinity;continue;}
-   const [lower,upper]=[(lo[axis]-a[axis])/d[axis],(hi[axis]-a[axis])/d[axis]].sort((x,y)=>x-y);
-   min=Math.max(min,lower);max=Math.min(max,upper);
+   const start=localA[axis],step=localB[axis]-start;
+   if(Math.abs(step)<1e-12){if(start<lo[axis]-1e-9||start>hi[axis]+1e-9)min=Infinity;continue;}
+   const first=(lo[axis]-start)/step,last=(hi[axis]-start)/step;
+   min=Math.max(min,Math.min(first,last));max=Math.min(max,Math.max(first,last));
   }
+  localA=localB;
   if(max-min>1e-10){
    const p=dimAlong55(a,d,min),q=dimAlong55(a,d,max);
    if(len33(sub33(p,q))>1e-8)result.push([p,q]);
@@ -10171,9 +10208,8 @@ function clipEntity56(e,lo,hi){
  return result;
 }
 function clipDisplay56(e){
- const clip=e.clip56;
- if(!clip)return [e];
- return clipEntity56(e,clip.lo,clip.hi).map(points=>({...e,type:'LINE',closed:false,points,clip56:null}));
+ if(!e.clip56)return [e];
+ return clipEntity56(e,e.clip56).map(points=>({...e,type:'LINE',closed:false,points,clip56:null}));
 }
 function meshFaces56(e,doc){
  const group=e.source33?.draw52?.group;
@@ -10399,7 +10435,7 @@ function modifyCore56(doc,kind,points,p,selected){
    if(kind==='unclip'){delete e.clip56;continue;}
    const lo={x:Math.min(a.x,b.x),y:Math.min(a.y,b.y)},hi={x:Math.max(a.x,b.x),y:Math.max(a.y,b.y)};
    require26(hi.x-lo.x>1e-8&&hi.y-lo.y>1e-8,'El marco no puede ser nulo.');
-   clipEntity56(e,lo,hi);e.clip56={lo,hi};
+   clipEntity56(e,{lo,hi});e.clip56={lo,hi};
   }return entities;
  }
  if(kind==='text'){
@@ -10703,6 +10739,7 @@ function validateMods56(e){
  if(e.clip56){
   const {lo,hi}=e.clip56;
   require26(['LINE','POLYLINE','CIRCLE','ARC','ELLIPSE','SPLINE'].includes(e.type)&&lo&&hi&&[lo.x,lo.y,hi.x,hi.y].every(Number.isFinite)&&hi.x>lo.x&&hi.y>lo.y,'Delimitación inválida.');
+  if(e.clip56.frame!==undefined)clipProjection90(e.clip56);
  }
  if(e.annotation56)require26(Array.isArray(e.annotation56)&&e.annotation56.length<=1000&&e.annotation56.every(v=>Number.isFinite(v)&&v>0&&v<=1e6)&&Number.isFinite(e.annotationBase56)&&e.annotationBase56>0,'Escalas anotativas inválidas.');
 }
@@ -12238,9 +12275,13 @@ function collectGrips68(doc,space){
   const group=e.source33?.draw52;
   if(group&&groups.has(group.group))continue;
   const locked=layer.locked||!!e.reference56;
+  const project=e.clip56?clipProjection90(e.clip56):null;
   for(const grip of entityGrips68(e,Math.max(1,Math.ceil(e.points.length/5000)))){
    if(--budget<0)break;
-   if(e.clip56&&(grip.p.x<e.clip56.lo.x||grip.p.x>e.clip56.hi.x||grip.p.y<e.clip56.lo.y||grip.p.y>e.clip56.hi.y))continue;
+   if(project){
+    const {x,y}=project(grip.p),{lo,hi}=e.clip56;
+    if(x<lo.x-1e-9||x>hi.x+1e-9||y<lo.y-1e-9||y>hi.y+1e-9)continue;
+   }
    if(grip.group)groups.add(grip.group);
    visible.push({...grip,locked});
   }
@@ -13196,16 +13237,9 @@ function loadEditionClipboard88(){
  input.click();
 }
 function shiftEdition71(source,delta,layer,space,id=idCAD33()){
- const item=clone33(source),move=p=>add33(p,delta);
+ const item=transformEntity33(source,p=>add33(p,delta));
  item.id=id;item.layer=layer;item.space56=space;
- item.points=item.points.map(move);
- delete item.refs;delete item.reference56;
- if(item.clip56){
-  for(const p of [item.clip56.lo,item.clip56.hi]){p.x+=delta.x;p.y+=delta.y;}
- }
- if(item.dimension55){
-  item.dimension55=transformDimension55(item.dimension55,move,1);
- }
+ delete item.reference56;
  if(item.source33?.kind==='survey-live')delete item.source33;
  return item;
 }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.82.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.86.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.82 RC1 · 2026-11-19</title>
+  <title>SiteSCad · v5.86 RC1 · 2026-11-19</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3705,7 +3705,7 @@ summary.cad-command-glyph73>.cad-glyph57{display:inline-block;vertical-align:mid
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.82 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.86 RC1</span>
       </div>
     </div>
 
@@ -5040,7 +5040,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.82.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.86.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -7653,6 +7653,7 @@ function before36_undoCAD33(redo=false){
  const from=redo?cad33.redo:cad33.undo,to=redo?cad33.undo:cad33.redo;
  if(!from.length)return;
  const step=from.pop();let doc;
+ if(step.viewOnly89){to.push(step);restoreMacroView89(step.macro89[redo?1:0]);return;}
  if(step.changes){
   const side=redo?1:0,entities=cad33.doc.entities.slice();
   entities.length=step.lengths[side];
@@ -7665,6 +7666,7 @@ function before36_undoCAD33(redo=false){
  invalidateTargetCAD33(doc);cad33.doc=doc;markCAD65();cad33.selected.clear();cad33.draft=[];
  if(step.changes)updateGraphics67(prior,doc,redo?step.changes:step.changes.map(([index,a,b])=>[index,b,a]));
  cad33.live.groups={};cad33.live.undoSaved=false;refreshCAD33();scheduleSave();
+ if(step.macro89)restoreMacroView89(step.macro89[redo?1:0]);
 }
 function selectionCAD33(){
  const d=ensureCAD33(),list=[...cad33.selected].map(id=>getEntity67(d,id)).filter(Boolean);
@@ -9033,8 +9035,22 @@ function buildDraw52(id,points,p={},selected=[],blocks=[]){
   put(ellipse55(center,axis,{x:0,y:0,z:1},minor/major,start,end));
  }
  else if(id==='oblong'){need(2,true);const r=positive52(p.width,'Anchura')/2,u=unit33(sub33(P[1],P[0])),base=Math.atan2(u.y,u.x),pts=[];for(const [c,start]of [[P[1],base-Math.PI/2],[P[0],base+Math.PI/2]])for(let i=0;i<=n()/2;i++){const a=start+Math.PI*i/(n()/2);pts.push(add33(c,{x:r*Math.cos(a),y:r*Math.sin(a),z:0}));}put(poly52(pts,true));}
- else if(id==='blockCreate'){need(1);require26(selected.length&&selected.length<=10000,'Selecciona hasta 10.000 entidades para el bloque.');const name=String(p.name||'').trim();require26(name&&name.length<=80,'Nombre de bloque entre 1 y 80 caracteres.');const existing=blocks.find(b=>b.name===name);require26(!existing||p.overwrite,'Ya existe el bloque. Activa Sustituir definición para actualizarlo.');const entities=selected.map(e=>{const q=transformEntity33(e,v=>sub33(v,P[0]));if(e.source33?.attribute52)q.source33={attribute52:{...e.source33.attribute52}};else delete q.source33;return q;});return {entities:[],block:{name,entities}};}
- else if(id==='blockInsert'){need(1);const block=blocks.find(b=>b.name===p.name);require26(block,'No existe esa definición de bloque en este proyecto.');const scale=positive52(p.scale,'Escala');put(...block.entities.map(e=>({...transformEntity33(e,v=>transformPoint52(mul33(v,scale),P[0],angle()),scale),id:idCAD33(),layer:cad33.doc.activeLayer})));}
+ else if(id==='blockCreate'){need(1);require26(selected.length&&selected.length<=10000,'Selecciona hasta 10.000 entidades para el bloque.');const name=String(p.name||'').trim();require26(name&&name.length<=80,'Nombre de bloque entre 1 y 80 caracteres.');const existing=blocks.find(b=>b.name===name);require26(!existing||p.overwrite,'Ya existe el bloque. Activa Sustituir definición para actualizarlo.');
+  const ids=new Map(selected.map(e=>[e.id,e.id]));
+  const entities=selected.map(e=>{
+   const q=shiftEdition71(e,mul33(P[0],-1),e.layer,'model',e.id);
+   remapField89(q,ids);
+   if(q.dimension55?.refs?.some(ref=>!ids.has(ref)))delete q.dimension55.refs;
+   return q;
+  });
+  return {entities:[],block:{name,entities}};
+ }
+ else if(id==='blockInsert'){
+  need(1);
+  const block=blocks.find(b=>b.name===p.name);require26(block,'No existe esa definición de bloque en este proyecto.');
+  const scale=positive52(p.scale,'Escala');
+  return {entities:instantiateBlock89(block,P[0],scale,angle(),cad33.doc.activeLayer)};
+ }
  else if(id==='blockExplode'){require26(selected.length,'Selecciona un objeto compuesto.');return {entities:[],ungroup:selected.map(e=>e.id)};}
  else if(id==='attribute'){need(1);put(newEntity33('TEXT',[P[0]],{text:String(p.tag||'TAG')+'='+String(p.value||''),height:positive52(p.textHeight,'Altura del texto'),rotation:angle(),source33:{attribute52:{tag:p.tag,value:p.value}}}));}
  else if(id==='table'){need(1);const rows=tableRows79(p);require26(rows.length<=100&&rows.every(r=>r.length<=40),'Tabla: hasta 100 filas y 40 columnas.');const R=rows.length,C=Math.max(...rows.map(r=>r.length)),W=positive52(p.width,'Ancho de columna'),H=positive52(p.height,'Alto de fila'),font=positive52(p.textHeight,'Altura de texto'),point=(x,y)=>add33(P[0],{x,y,z:0});require26(font<H*.8,'El texto debe caber en la altura de fila.');for(let i=0;i<=R;i++)put(line52(point(0,-i*H),point(C*W,-i*H)));for(let j=0;j<=C;j++)put(line52(point(j*W,0),point(j*W,-R*H)));for(let i=0;i<R;i++)for(let j=0;j<C;j++)if(rows[i][j])put(newEntity33('TEXT',[point(j*W+W*.08,-(i+1)*H+H*.2)],{text:rows[i][j],height:font,rotation:0}));}
@@ -9101,8 +9117,32 @@ function openDraw52(id){return guardCAD33(()=>{require26(needProject15(),'Abre u
 function captureDraw52(){return guardCAD33(()=>{require26(draw52.active,'Elige un método.');const points=readDrawPoints52();draw52.keeping=true;try{toolCAD33('polyline');}finally{draw52.keeping=false;}draw52.capturing=true;cad33.draft=points;document.querySelector('.cad-coordinate33').hidden=false;drawCAD33();messageCAD33('Toca puntos en la gráfica o introduce XYZ; después pulsa Crear.');});}
 function selectedDraw52(){if(!cad33.doc)return [];return [...cad33.selected].map(id=>getEntity67(cad33.doc,id)).filter(Boolean);}
 function useSelectionDraw52(){return guardCAD33(()=>{const selected=selectedDraw52();require26(selected.length,'Selecciona entidades antes de abrir Dibujar.');const points=selected.length===1?uniquePoints52(geometry33(selected[0]),!!selected[0].closed||selected[0].type==='CIRCLE'):selected.flatMap(e=>e.type==='POINT'?e.points:uniquePoints52(geometry33(e),!!e.closed));writeDrawPoints52(points);if(draw52.capturing){cad33.draft=points;drawCAD33();}});}
+function instantiateBlock89(block,position,scale,angle,layer){
+ const ids=new Map(block.entities.map(e=>[e.id,idCAD33()])),groups=new Map();
+ const entities=block.entities.map(e=>{
+  const item=transformEntity33(e,v=>transformPoint52(mul33(v,scale),position,angle),scale);
+  item.id=ids.get(e.id);item.layer=layer;item.space56=modifySpace56();
+  const group=dimensionGroup89(e);
+  if(group){
+   if(!groups.has(group))groups.set(group,idCAD33());
+   item.source33={...(item.source33||{}),draw52:{...item.source33?.draw52,dimGroup89:groups.get(group)}};
+  }
+  if(item.dimension55?.refs){
+   const links=item.dimension55.refs.map(ref=>ids.get(ref));
+   if(links.every(Boolean))item.dimension55.refs=links;else delete item.dimension55.refs;
+  }
+  remapField89(item,ids);
+  return item;
+ });
+ const byId=new Map(entities.map(e=>[e.id,e]));
+ for(const item of entities){
+  const field=item.field74;
+  if(field?.id&&['area','length'].includes(field.kind))item.text=measuredField89(field,byId.get(field.id));
+ }
+ return entities;
+}
 function createDraw52(){try{require26(draw52.active&&canChange15(),'Abre un proyecto y espera a que termine la operación en curso.');const id=draw52.active,method=draw52.methods.get(id),params=valuesDraw52(),points=readDrawPoints52(),selected=selectedDraw52(),result=buildDraw52(id,points,params,selected,ensureCAD33().blocks52||[]),group=idCAD33();
- for(const [i,e]of result.entities.entries())e.source33={...(e.source33||{}),draw52:{group,kind:id==='wipeout'?'wipeout':id,method:method.name,...(id==='blockInsert'?{blockName:params.name}:{}),...(i===0?{creationParameters:params}:{} )}};
+ for(const [i,e]of result.entities.entries())e.source33={...(e.source33||{}),draw52:{...(id==='blockInsert'&&e.source33?.draw52?.dimGroup89?{dimGroup89:e.source33.draw52.dimGroup89}:{}),group,kind:id==='wipeout'?'wipeout':id,method:method.name,...(id==='blockInsert'?{blockName:params.name}:{}),...(i===0?{creationParameters:params}:{} )}};
  const layer=layerCAD33(ensureCAD33().activeLayer);require26(layer&&!layer.locked,'Desbloquea la capa activa.');const ok=changeCAD33('Dibujar · '+method.family+' · '+method.name,d=>{if(result.block){d.blocks52=(d.blocks52||[]).filter(b=>b.name!==result.block.name);require26(d.blocks52.length<100,'Máximo 100 definiciones de bloque.');d.blocks52.push(result.block);require26(JSON.stringify(d.blocks52).length<=8*1024*1024,'La biblioteca de bloques supera 8 MB. Reduce el tamaño o el número de definiciones.');}if(result.ungroup)for(const e of editEntities67(d,new Set(result.ungroup)).values())if(e.source33?.draw52)delete e.source33.draw52;d.entities=d.entities.concat(result.entities);});require26(ok,'No se guardó la construcción.');
  draw52.keeping=true;try{toolCAD33('select');}finally{draw52.keeping=false;}draw52.capturing=false;document.querySelector('.cad-coordinate33').hidden=true;cad33.selected=new Set(result.entities.map(e=>e.id));$('drawError52').textContent='';messageCAD33(result.block?'Definición «'+result.block.name+'» guardada en el proyecto.':result.ungroup?'Selección desagrupada.':result.entities.length+' entidades editables creadas.');refreshCADUI33();drawCAD33();
  }catch(e){$('drawError52').textContent=e.message;messageCAD33(e.message);}}
@@ -9584,14 +9624,13 @@ function dimNumber55(value,min,max,label){
 function dimStyle55(p){
  return {height:dimNumber55(p.height,.001,1e5,'Altura'),arrow:dimNumber55(p.arrow,.001,1e5,'Flecha'),precision:Math.round(dimNumber55(p.precision,0,8,'Decimales')),gap:dimNumber55(p.gap,0,1e5,'Separación')};
 }
+function dimensionGroup89(entity){
+ const tag=entity.source33?.draw52;
+ return tag?.dimGroup89||(tag?.kind==='dimension55'||entity.dimension55?tag?.group:null);
+}
 function dimGroups55(selected,doc,strict=true){
- const groups=new Map();
- for(const e of selected){
-  const group=e.source33?.draw52?.group;
-  if(group)groups.set(group,null);
- }
- for(const e of doc.entities)if(e.dimension55&&groups.has(e.source33?.draw52?.group))groups.set(e.source33.draw52.group,e);
- const records=[...groups.values()].filter(Boolean);
+ const groups=new Set(selected.map(dimensionGroup89).filter(Boolean));
+ const records=doc.entities.filter(e=>e.dimension55&&groups.has(dimensionGroup89(e)));
  if(strict)require26(records.length,'Selecciona una cota creada en SiteSCad.');
  return records;
 }
@@ -9762,12 +9801,12 @@ function dimParts55(model,doc){
  return parts;
 }
 function installDimModels55(doc,models,replace=[]){
- const originals=new Map(replace.map(e=>[e.source33.draw52.group,e]));
+ const originals=new Map(replace.map(e=>[dimensionGroup89(e),e]));
  const groupIds=new Set(originals.keys());
- for(const e of doc.entities)if(groupIds.has(e.source33?.draw52?.group)){
+ for(const e of doc.entities)if(groupIds.has(dimensionGroup89(e))){
   require26(!doc.layers.find(layer=>layer.name===e.layer)?.locked,'Hay cotas en capas bloqueadas.');
  }
- doc.entities=doc.entities.filter(e=>!groupIds.has(e.source33?.draw52?.group));
+ doc.entities=doc.entities.filter(e=>!groupIds.has(dimensionGroup89(e)));
  const ids=[];
  for(const {model,group=idCAD33(),layer=doc.activeLayer} of models){
   require26(!doc.layers.find(item=>item.name===layer)?.locked,'Desbloquea la capa de acotación.');
@@ -9777,7 +9816,7 @@ function installDimModels55(doc,models,replace=[]){
    part.layer=layer;
    const original=originals.get(group);
    for(const key of ['space56','style56','annotation56','annotationBase56'])if(original?.[key]!==undefined)part[key]=clone33(original[key]);
-   part.source33={draw52:{group,kind:'dimension55',method:model.kind}};
+   part.source33=original?.source33?.draw52?.dimGroup89?clone33(original.source33):{draw52:{group,kind:'dimension55',method:model.kind}};
    if(!i)part.dimension55=model;
    ids.push(part.id);
   }
@@ -9799,7 +9838,7 @@ function dimCreateModels55(kind,points,p,selected,doc){
 }
 function dimTargets55(kind,points,p,selected,doc){
  const records=dimGroups55(selected,doc);
- const models=records.map(e=>({model:clone33(e.dimension55),layer:e.layer,group:e.source33.draw52.group}));
+ const models=records.map(e=>({model:clone33(e.dimension55),layer:e.layer,group:dimensionGroup89(e)}));
  if(kind==='space'){
   require26(models.length>=2,'Selecciona al menos dos cotas lineales.');
   const axes=models.map(({model})=>{
@@ -12528,16 +12567,19 @@ function hiddenView69(space){
  if(!r||ui58.section!=='tabCAD33'||space!==modifySpace56())return null;
  return cadViewStates69.get(cadFiles65.active)?.hidden||null;
 }
+function hiddenAfterView69(hidden,mode,selection){
+ if(mode==='show')return null;
+ if(mode==='isolate')return {isolate:true,ids:selection};
+ const ids=new Set(hidden?.ids);
+ if(hidden?.isolate)for(const id of selection)ids.delete(id);
+ else for(const id of selection)ids.add(id);
+ return {isolate:!!hidden?.isolate,ids};
+}
 function filterView69(r,mode){
  const state=viewState69();
- if(mode==='show')state.hidden=null;
- else{
-  const selection=new Set(selectionCAD33().map(e=>e.id));
-  if(mode==='isolate')state.hidden={isolate:true,ids:selection};
-  else if(state.hidden?.isolate)for(const id of selection)state.hidden.ids.delete(id);
-  else state.hidden={isolate:false,ids:new Set([...(state.hidden?.ids||[]),...selection])};
-  cad33.selected.clear();cancelGrips68();refreshCADUI33();
- }
+ const selection=mode==='show'?null:new Set(selectionCAD33().map(e=>e.id));
+ state.hidden=hiddenAfterView69(state.hidden,mode,selection);
+ if(selection){cad33.selected.clear();cancelGrips68();refreshCADUI33();}
  r.cached63=null;drawCAD33();
 }
 function viewMeshMaterial69(r,object,style){
@@ -12656,7 +12698,7 @@ function namedView69(r,action){
   refreshViews69();if(action==='save')picker.value=name;
  }
 }
-function runView69(action,arg){
+function runView69(action,arg,strict=false){
  const r=cad33.runtime;
  try{
   require26(r,'Abre el dibujo CAD para utilizar Vista.');
@@ -12741,7 +12783,7 @@ function runView69(action,arg){
    }
   }
   viewStatus69('Vista actualizada.');
- }catch(e){viewStatus69(e.message);}
+ }catch(e){if(strict)throw e;viewStatus69(e.message);}
 }
 function initView69(){
  const root=$('cadViewPanel69'),controls=$('cadViewControls69');
@@ -12850,12 +12892,13 @@ function initView69(){
 
 const edition71={clip:null,pending:null,erased:new WeakMap(),settings:{layer:'source',snap:true}};
 const editionClipboard71='SITESCAD CAD 1\n';
+const editionSystemLimit88=12000000,editionFileLimit88=128*1024*1024;
 const editionTypes71=new Set(['POINT','LINE','POLYLINE','CIRCLE','ARC','TEXT','FACE','RAY','XLINE','ELLIPSE','SPLINE']);
 function editionStatus71(text){
  $('cadEditionStatus71').textContent=text;messageCAD33(text);
 }
 function editionReady71(write=false){
- require26(cad33.runtime&&cad33.doc,'Abre un dibujo en Cad.');
+ require26(cad33.doc,'Abre un dibujo en Cad.');
  require26(!cad33.draft.length&&!dynamic53.session,'Termina o cancela el comando en curso.');
  if(write)require26(usableCADFiles65(),'El dibujo está ocupado o no permite cambios.');
  return cad33.doc;
@@ -12890,36 +12933,93 @@ function editionXYZ71(prefix){
  return xyz33({x:Number(raw[0]),y:Number(raw[1]),z:Number(raw[2])});
 }
 function editionEntityPortable71(e){
- const out={type:e.type,layer:e.layer,points:e.points};
+ const out={id:e.id,type:e.type,layer:e.layer,points:e.points};
  for(const key of ['closed','radius','normal','u','start','sweep','text','height','rotation','majorAxis','ratio',
-  'degree','knots','weights','periodic','style56','clip56','annotation56','annotationBase56']){
+  'degree','knots','weights','periodic','style56','clip56','annotation56','annotationBase56',
+  'dimension55','field74','source33','font78','renderOrder79','hyperlink74']){
   if(Object.hasOwn(e,key))out[key]=e[key];
  }
  return out;
 }
-function decodeEdition71(text){
- require26(text.length<=12000000,'El contenido externo del portapapeles supera 12 MB.');
+function editionMetadata88(value,depth=0){
+ if(value==null||typeof value==='string'||typeof value==='boolean'||typeof value==='number'&&Number.isFinite(value))return;
+ require26(depth<12&&typeof value==='object','Metadatos CAD inválidos.');
+ for(const key of Object.keys(value)){
+  require26(!['__proto__','constructor','prototype'].includes(key),'Metadatos CAD inválidos.');
+  editionMetadata88(value[key],depth+1);
+ }
+}
+function editionEntityId88(id){return typeof id==='string'&&id.length>0&&id.length<=120;}
+function decodeEdition71(text,limit=editionSystemLimit88){
+ require26(text.length<=limit&&(text.length<=limit/3||new Blob([text]).size<=limit),'El portapapeles CAD supera el tamaño admitido para esta vía.');
+
  require26(text.startsWith(editionClipboard71),'El portapapeles no contiene geometría SiteSCad. Usa Pegado especial para texto.');
  const data=JSON.parse(text.slice(editionClipboard71.length));
- require26(data&&Array.isArray(data.entities)&&data.entities.length>0&&data.entities.length<=CAD_CAPACITY61.entities&&
-  Array.isArray(data.layers)&&data.layers.length<=1000&&[28,29,30,31].includes(data.zone)&&typeof data.datum==='string'&&data.datum.length<=300,
-  'Formato de portapapeles CAD inválido.');
+ require26(Array.isArray(data?.entities),'Formato de portapapeles CAD inválido.');
+ const reader=editionDecoder89(data);
+ reader.add(data.entities);
+ return reader.finish();
+}
+function editionDecoder89(data){
+ require26(data&&Array.isArray(data.layers)&&data.layers.length<=1000&&[28,29,30,31].includes(data.zone)&&
+  typeof data.datum==='string'&&data.datum.length<=300,'Formato de portapapeles CAD inválido.');
  const base=xyz33(data.base),names=new Set(),layers=data.layers.map(l=>{
   require26(l&&typeof l.name==='string'&&l.name.trim()&&l.name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(l.name)&&
    /^#[\da-f]{6}$/i.test(l.color)&&!names.has(l.name),'Capa del portapapeles inválida.');
   names.add(l.name);return {name:l.name,color:l.color,visible:true,locked:false};
  });
  let vertices=0;
- const entities=data.entities.map(e=>{
+ const ids=new Set(),entities=[];
+ const validate=e=>{
   require26(e&&editionTypes71.has(e.type)&&names.has(e.layer),'Entidad del portapapeles inválida.');
   const out=editionEntityPortable71(e);vertices+=validateEntity67(out);
+  if(out.id!==undefined){
+   require26(editionEntityId88(out.id)&&!ids.has(out.id),'Identificador CAD inválido o duplicado.');
+   ids.add(out.id);
+  }
+  if(out.dimension55){
+   const dim=out.dimension55;
+   require26(typeof dim==='object'&&typeof dim.kind==='string'&&Array.isArray(dim.points)&&dim.points.length<=250000
+    &&dim.style&&(!dim.refs||Array.isArray(dim.refs)&&dim.refs.every(editionEntityId88)),'Cota del portapapeles inválida.');
+   editionMetadata88(dim);
+   dim.points.forEach(xyz33);
+   for(const key of ['breakPoint','jogPoint','textPoint'])if(dim[key])xyz33(dim[key]);
+   dimStyle55(dim.style);
+  }
+  if(out.field74){
+   require26(out.type==='TEXT'&&['drawing','date','length','area'].includes(out.field74.kind)&&
+    (out.field74.id==null||editionEntityId88(out.field74.id)),'Campo del portapapeles inválido.');
+   const {kind,id,lastValue}=out.field74;
+   require26(lastValue===undefined||typeof lastValue==='string'&&lastValue.length<=2000,'Valor de campo inválido.');
+   out.field74={kind,id:id??null,...(lastValue!==undefined?{lastValue}:{})};
+  }
+  if(out.source33){
+   require26(typeof out.source33==='object'&&!Array.isArray(out.source33),'Origen CAD inválido.');
+   editionMetadata88(out.source33);
+  }
+  if(out.font78)editionMetadata88(out.font78);
+  if(out.hyperlink74!==undefined){
+   require26(typeof out.hyperlink74==='string','Hipervínculo CAD inválido.');
+   out.hyperlink74=hyperlinkURL74(out.hyperlink74);
+  }
+  if(out.renderOrder79!==undefined)require26(Number.isFinite(out.renderOrder79),'Orden de dibujo inválido.');
   require26(vertices<=CAD_CAPACITY61.vertices,'El portapapeles supera el límite de vértices.');
   return out;
- });
- return {base,entities,layers,zone:data.zone,datum:data.datum};
+ };
+ return {
+  add(rows){
+   require26(entities.length+rows.length<=CAD_CAPACITY61.entities,'El portapapeles supera el límite de entidades.');
+   for(const row of rows)entities.push(validate(row));
+  },
+  finish(){
+   require26(entities.length,'El portapapeles CAD está vacío.');
+   return {base,entities,layers,zone:data.zone,datum:data.datum};
+  }
+ };
 }
 function copyEdition71(base=null,cut=false,system=true){
  const doc=editionReady71(cut),entries=selectionCAD33();
+ const tab=cut?activeCAD65():null,context=cut?captured37():null,revision=tab?.revision;
  if(cut){
   assertEditable56(doc,entries);
   require26(entries.every(e=>!e.reference56),'Las referencias vinculadas se pueden copiar; para cortar, usa geometría propia.');
@@ -12927,30 +13027,184 @@ function copyEdition71(base=null,cut=false,system=true){
  const names=new Set(entries.map(e=>e.layer));
  const clip={base:base||xyz33(entries[0].points[0]),entities:entries.map(clone33),
   layers:doc.layers.filter(l=>names.has(l.name)).map(clone33),zone:doc.zone,datum:doc.datum};
- if(cut){
-  const ids=new Set(entries.map(e=>e.id));
-  require26(changeCAD33('Cortar',next=>{next.entities=next.entities.filter(e=>!ids.has(e.id));}),'No se cortaron los objetos.');
- }
  edition71.clip=clip;
- if(system&&navigator.clipboard?.writeText){
-  try{
-   const payload=editionClipboard71+JSON.stringify({...clip,entities:clip.entities.map(editionEntityPortable71)});
-   if(payload.length<=12000000)navigator.clipboard.writeText(payload).catch(()=>{});
-  }catch{}
- }
- editionStatus71(entries.length+(cut?' objetos cortados.':' objetos copiados.'));
+ const status=message=>{if(edition71.clip===clip)editionStatus71(message);};
+ const summary=entries.length+' objetos copiados.';
+ const internal=reason=>status((cut?'Corte cancelado. Los objetos siguen en el dibujo. ':summary+' ')+
+  reason+' La copia interna está disponible. Usa «Guardar portapapeles CAD» para trasladarla.');
+ if(!system){status(summary);return;}
+ if(!navigator.clipboard?.writeText){internal('Portapapeles del sistema no disponible.');return;}
+ try{
+  const parts=editionPayload88(clip,editionSystemLimit88);
+  if(!parts){internal('La selección supera el límite de 12 MB del portapapeles del sistema.');return;}
+  status(cut?'Esperando confirmación del portapapeles antes de cortar…':summary+' Enviando al portapapeles del sistema…');
+  const write=()=>navigator.clipboard.writeText(parts.join(''));
+  const pending=edition71.systemWrite?edition71.systemWrite.catch(()=>{}).then(write):Promise.resolve(write());
+  edition71.systemWrite=pending;
+  const clear=()=>{if(edition71.systemWrite===pending)edition71.systemWrite=null;};
+  return pending.then(()=>{
+   clear();
+   if(!cut){status(summary+' Disponibles en el portapapeles del sistema.');return;}
+   if(edition71.clip!==clip)return;
+   if(!current37(context)||activeCAD65()!==tab||cad33.doc!==doc||tab.revision!==revision){
+    status('Corte cancelado porque cambió el dibujo. La copia está en el portapapeles del sistema.');return;
+   }
+   try{
+    editionReady71(true);assertEditable56(doc,entries);
+    const ids=new Set(entries.map(e=>e.id));
+    require26(changeCAD33('Cortar',next=>{next.entities=next.entities.filter(e=>!ids.has(e.id));}),'El dibujo no permite cambios.');
+    status(entries.length+' objetos cortados. Disponibles en el portapapeles del sistema.');
+   }catch(error){status('Corte cancelado. '+error.message+' La copia está en el portapapeles del sistema.');}
+  },()=>{clear();internal('El navegador rechazó el acceso al portapapeles del sistema.');});
+ }catch{internal('No se pudo preparar o escribir la copia externa.');}
 }
-function shiftEdition71(source,delta,layer,space){
+function editionPayload88(clip,limit){
+ const {entities,...meta}=clip,encoder=new TextEncoder();
+ const start=editionClipboard71+JSON.stringify(meta).slice(0,-1)+',"entities":[';
+ const parts=[start];let bytes=encoder.encode(start).length+2;
+ if(bytes>limit)return null;
+ for(let i=0;i<entities.length;i++){
+  const row=(i?',':'')+JSON.stringify(editionEntityPortable71(entities[i]));
+  bytes+=encoder.encode(row).length;
+  if(bytes>limit)return null;
+  parts.push(row);
+ }
+ parts.push(']}');return parts;
+}
+async function saveEditionClipboard88(){
+ require26(edition71.clip?.entities.length,'Copia objetos CAD antes de guardar.');
+ const parts=editionPayload88(edition71.clip,editionFileLimit88);
+ require26(parts,'El archivo de portapapeles supera 128 MiB. Guarda la selección en varias partes.');
+ const result=await exportFile37('seleccion.scadclip',new Blob(parts,{type:'text/plain'}),'text/plain');
+ require26(result?.pending,'No se pudo preparar el archivo del portapapeles CAD.');
+ editionStatus71('Selección preparada para guardar como archivo.');
+}
+// Reads the envelope followed by one JSON entity at a time, including across UTF-8 chunks.
+async function scanEditionFile89(file,header,send){
+ const reader=file.stream().getReader(),decoder=new TextDecoder('utf-8',{fatal:true});
+ let prefix='',meta=false,phase='first',depth=0,string=false,escape=false,pieces=[],batch=[],weight=0;
+ const flush=async()=>{
+  if(!batch.length)return;
+  const rows=batch;batch=[];weight=0;
+  await send({rows});
+ };
+ try{
+  for(;;){
+   const {value,done}=await reader.read();
+   let text=decoder.decode(value,{stream:!done});
+   if(!meta){
+    prefix+=text;
+    const marker=/,\s*"entities"\s*:\s*\[/g,match=marker.exec(prefix);
+    if(!match){
+     if(done||prefix.length>2*1024*1024)throw Error('Cabecera del archivo de portapapeles CAD inválida.');
+     continue;
+    }
+    if(!prefix.startsWith(header)||match.index>2*1024*1024)throw Error('Cabecera del archivo de portapapeles CAD inválida.');
+    await send({meta:JSON.parse(prefix.slice(header.length,match.index)+'}')});
+    text=prefix.slice(marker.lastIndex);prefix='';meta=true;
+   }
+   let start=depth?0:-1;
+   for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(depth){
+     if(string){
+      if(escape)escape=false;else if(c==='\\')escape=true;else if(c==='"')string=false;
+     }else if(c==='"')string=true;
+     else if(c==='{'||c==='[')depth++;
+     else if((c==='}'||c===']')&&!--depth){
+      pieces.push(text.slice(start,i+1));const row=pieces.join('');pieces=[];start=-1;
+      batch.push(JSON.parse(row));weight+=row.length;phase='separator';
+      if(batch.length>=128||weight>=256*1024)await flush();
+     }
+     continue;
+    }
+    if(/\s/.test(c))continue;
+    if((phase==='first'||phase==='entity')&&c==='{'){depth=1;start=i;}
+    else if(phase==='separator'&&c===',')phase='entity';
+    else if((phase==='first'||phase==='separator')&&c===']')phase='close';
+    else if(phase==='close'&&c==='}')phase='done';
+    else throw Error('Estructura del archivo de portapapeles CAD inválida.');
+   }
+   if(depth&&start>=0)pieces.push(text.slice(start));
+   if(done)break;
+  }
+  if(phase!=='done')throw Error('El archivo de portapapeles CAD está incompleto.');
+  await flush();
+ }finally{try{await reader.cancel();}finally{reader.releaseLock();}}
+}
+async function readEditionClipboard89(file,signal,progress){
+ const source=`let next;
+ self.onmessage=async ({data})=>{
+  if(data.ack){next?.();return;}
+  try{
+   await (${scanEditionFile89.toString()})(data.file,data.header,message=>new Promise(resolve=>{
+    next=resolve;postMessage(message);
+   }));
+   postMessage({done:true});
+  }catch(error){postMessage({error:error.message});}
+ };`;
+ const url=URL.createObjectURL(new Blob([source],{type:'application/javascript'}));
+ let worker;
+ try{
+  worker=new Worker(url);
+  return await new Promise((resolve,reject)=>{
+   let decoder,loaded=0;
+   const cancel=()=>reject(new Error('Lectura del portapapeles CAD cancelada.'));
+   signal.addEventListener('abort',cancel,{once:true});
+   worker.onmessage=({data})=>{
+    try{
+     if(data.error)throw Error(data.error);
+     if(data.done){resolve(decoder.finish());return;}
+     if(data.meta)decoder=editionDecoder89(data.meta);
+     if(data.rows){decoder.add(data.rows);loaded+=data.rows.length;progress(loaded);}
+     worker.postMessage({ack:true});
+    }catch(error){reject(error);}
+   };
+   worker.onerror=event=>{event.preventDefault();reject(Error('No se pudo iniciar el lector de portapapeles CAD.'));};
+   if(signal.aborted)cancel();else worker.postMessage({file,header:editionClipboard71});
+  });
+ }finally{worker?.terminate();URL.revokeObjectURL(url);}
+}
+function loadEditionClipboard88(){
+ editionReady71();
+ const tab=activeCAD65(),context=captured37(),input=document.createElement('input');
+ input.type='file';input.accept='.scadclip';
+ input.onchange=async()=>{
+  const file=input.files?.[0];if(!file)return;
+  edition71.importRead?.abort();
+  const controller=new AbortController(),clip=edition71.clip;
+  edition71.importRead=controller;
+  try{
+   const memory=navigator.deviceMemory;
+   const limit=(memory&&memory<=2?32:memory&&memory<=4?64:128)*1024*1024;
+   require26(file.size<=limit,'Este dispositivo admite archivos de portapapeles CAD de hasta '+limit/1048576+' MiB. Divide la selección.');
+   editionStatus71('Leyendo archivo de portapapeles CAD…');
+   let last=0;
+   const next=await readEditionClipboard89(file,controller.signal,count=>{
+    if(performance.now()-last<250)return;
+    last=performance.now();editionStatus71('Leyendo portapapeles CAD · '+count+' entidades…');
+   });
+   require26(current37(context)&&activeCAD65()===tab,'El dibujo activo ha cambiado.');
+   require26(edition71.clip===clip,'Se conservó la selección de portapapeles más reciente.');
+   editionReady71();
+   edition71.clip=next;
+   editionStatus71(next.entities.length+' objetos cargados. Usa Pegar o Pegar en XYZ.');
+  }catch(error){
+   if(edition71.importRead===controller)editionStatus71(error.message);
+  }finally{if(edition71.importRead===controller)edition71.importRead=null;}
+ };
+ input.click();
+}
+function shiftEdition71(source,delta,layer,space,id=idCAD33()){
  const item=clone33(source),move=p=>add33(p,delta);
- item.id=idCAD33();item.layer=layer;item.space56=space;
+ item.id=id;item.layer=layer;item.space56=space;
  item.points=item.points.map(move);
  delete item.refs;delete item.reference56;
- if(item.field74?.id)delete item.field74;
  if(item.clip56){
   for(const p of [item.clip56.lo,item.clip56.hi]){p.x+=delta.x;p.y+=delta.y;}
  }
  if(item.dimension55){
-  item.dimension55=transformDimension55(item.dimension55,move,1);delete item.dimension55.refs;
+  item.dimension55=transformDimension55(item.dimension55,move,1);
  }
  if(item.source33?.kind==='survey-live')delete item.source33;
  return item;
@@ -12970,26 +13224,39 @@ function pasteEdition71(clip,mode,point,name=''){
   require26((doc.blocks52||[]).length<100,'El dibujo admite hasta 100 definiciones de bloque.');
  }
  const group=mode==='block'?idCAD33():null;
- const entries=clip.entities.map(source=>{
+ const ids=clip.entities.map(()=>idCAD33()),idMap=new Map();
+ clip.entities.forEach((entity,i)=>{if(entity.id)idMap.set(entity.id,ids[i]);});
+ let detached=0;
+ const entries=clip.entities.map((source,i)=>{
   const layer=edition71.settings.layer==='active'?doc.activeLayer:source.layer;
   require26(!layers.get(layer)?.locked,'Desbloquea la capa de destino «'+layer+'» o elige otra en Ajustes.');
   if(!layers.has(layer)&&!newLayers.has(layer)){
    const previous=original.get(layer);require26(previous,'Falta una capa de origen.');
    newLayers.set(layer,{...previous,locked:false});
   }
-  const item=shiftEdition71(source,delta,layer,space),meta=item.source33?.draw52;
+  const item=shiftEdition71(source,delta,layer,space,ids[i]),meta=item.source33?.draw52;
+  detached+=remapField89(item,idMap);
+  if(item.dimension55?.refs?.length){
+   const refs=item.dimension55.refs.map(id=>idMap.get(id));
+   if(refs.every(Boolean))item.dimension55.refs=refs;
+   else{delete item.dimension55.refs;detached++;}
+  }
   if(group){
-   item.source33={...(item.source33||{}),draw52:{...meta,group,kind:'blockInsert',name}};
+   const key=dimensionGroup89(item);
+   if(key&&!groups.has(key))groups.set(key,idCAD33());
+   item.source33={...(item.source33||{}),draw52:{...meta,group,kind:'blockInsert',name,blockName:name,
+    dimGroup89:key?groups.get(key):undefined}};
   }else if(meta?.group){
    if(!groups.has(meta.group))groups.set(meta.group,idCAD33());
    meta.group=groups.get(meta.group);
+   if(meta.dimGroup89){
+    if(!groups.has(meta.dimGroup89))groups.set(meta.dimGroup89,idCAD33());
+    meta.dimGroup89=groups.get(meta.dimGroup89);
+   }
   }
   return item;
  });
- const block=group?{name,entities:entries.map(e=>{
-  const q=shiftEdition71(e,mul33(point,-1),e.layer,'model');
-  delete q.source33;delete q.dimension55;return q;
- })}:null;
+ const block=group?{name,entities:entries.map(e=>shiftEdition71(e,mul33(point,-1),e.layer,'model',e.id))}:null;
  require26(changeCAD33(group?'Pegar como bloque':'Pegar',next=>{
   next.layers=next.layers.concat([...newLayers.values()]);
   if(block){
@@ -12999,7 +13266,9 @@ function pasteEdition71(clip,mode,point,name=''){
   next.entities=next.entities.concat(entries);
  }),'No se pegaron los objetos.');
  editionSelection71(entries);
- editionStatus71(group?'Bloque «'+name+'» insertado.':entries.length+' objetos pegados.');
+ editionStatus71((group?'Bloque «'+name+'» insertado.':entries.length+' objetos pegados.')+
+  (detached?' '+detached+' vínculos a objetos fuera de la copia quedaron sin asociar.':''));
+
 }
 function pasteTextEdition71(point){
  const doc=editionReady71(true),text=$('edExternal71').value;
@@ -13021,6 +13290,18 @@ function prepareEdition71(action,point=null){
   else pasteEdition71(clip,action,p,name);
  };
  if(point){apply(point);return;}
+ if(!cad33.runtime){
+  if($('cadEditionPanel71').hidden)panelCAD33('cadEditionPanel71');
+  const input=$(action==='base'?'edBaseX71':'edPasteX71');
+  const group=input?.closest('details');
+  if(group)group.open=true;
+  const special=action==='text'?$('edExternal71')?.closest('details'):null;
+  if(special)special.open=true;
+  input?.focus();
+  const xyzAction={base:'Copiar con XYZ base',paste:'Pegar en XYZ',block:'Pegar bloque en XYZ',text:'Pegar texto en XYZ'};
+  editionStatus71('El visor gráfico no está disponible. Introduce XYZ y pulsa «'+xyzAction[action]+'».');
+  return;
+ }
  closeView69();cancelGrips68();
  if(cad33.tool!=='select')closeCommand36();
  $('cadEditionPanel71').hidden=true;syncTools35();
@@ -13097,6 +13378,8 @@ function runEdition71(action){
    case 'delete':editionReady71(true);deleteCAD33();break;
    case 'all':editionReady71();editionSelection71(visibleCAD33());editionStatus71(cad33.selected.size+' objetos seleccionados.');break;
    case 'find':case 'replace':case 'convert':editTextEdition71(action);break;
+   case 'saveClipboard':void saveEditionClipboard88().catch(error=>editionStatus71(error.message));break;
+   case 'loadClipboard':loadEditionClipboard88();break;
    case 'external':
     edition71.clip=decodeEdition71($('edExternal71').value);editionStatus71(edition71.clip.entities.length+' objetos cargados en el portapapeles CAD.');break;
    case 'read':
@@ -13152,6 +13435,7 @@ function initEdition71(){
  ]);
  group('Pegado especial',[
   field('Contenido del portapapeles','External','textarea'),['Leer portapapeles','read'],['Cargar geometría SiteSCad','external'],
+  ['Guardar portapapeles CAD…','saveClipboard'],['Cargar portapapeles CAD…','loadClipboard'],
   field('Altura de texto','TextHeight','number',1),['Pegar como texto','text'],['Pegar texto en XYZ','textXYZ']
  ]);
  group('Ajustes de copiar y pegar',[
@@ -13180,7 +13464,7 @@ function initEdition71(){
  panel.classList.add('cad-panel33');
  addCommandGlyph73($('cadEditionClose71'),'close');
  $('cadEditionClose71').onclick=()=>{panel.hidden=true;syncTools35();document.querySelector('.cad-tools33:not([hidden]) [aria-controls="cadEditionPanel71"]')?.focus();};
- const acceptsKeys=event=>ui58.section==='tabCAD33'&&cad33.runtime&&!event.isComposing&&
+ const acceptsKeys=event=>ui58.section==='tabCAD33'&&cad33.doc&&!event.isComposing&&
   !event.altKey&&!event.target.closest?.('input,textarea,select,[contenteditable],dialog[open]')&&
   !document.querySelector('dialog[open],.destination-overlay37:not([hidden])');
  document.addEventListener('keydown',event=>{
@@ -13707,14 +13991,28 @@ function openInsertManager74(scope){
  $('insManagerTitle74').textContent={refs:'Referencias externas',images:'Imágenes y páginas PDF',cloud:'Nubes de puntos'}[scope];
  renderInsertManager74();$('insManager74').showModal();
 }
-function fieldTextInsert74(field,doc){
- const tab=activeCAD65();
- if(field.kind==='drawing')return tab.name;
- if(field.kind==='date')return new Intl.DateTimeFormat('es-ES',{dateStyle:'short'}).format(new Date());
- const e=getEntity67(doc,field.id);
- if(!e)return '[Objeto no disponible]';
- const m=measureCAD33(e),value=field.kind==='area'?m.area:m.spatial;
+function remapField89(item,ids){
+ const field=item.field74;
+ if(!field||!['area','length'].includes(field.kind))return 0;
+ const wasLinked=!!field.id;
+ field.id=ids.get(field.id)||null;
+ if(field.id){delete field.lastValue;return 0;}
+ field.lastValue=field.lastValue??item.text;
+ item.text=detachedFieldText89(field.kind,field.lastValue);
+ return Number(wasLinked);
+}
+function detachedFieldText89(kind,lastValue){
+ return ('['+(kind==='area'?'Área':'Longitud')+' sin vínculo] · Último valor: '+lastValue).slice(0,2000);
+}
+function measuredField89(field,entity){
+ if(!entity)return '[Objeto no disponible]';
+ const m=measureCAD33(entity),value=field.kind==='area'?m.area:m.spatial;
  return Number.isFinite(value)?metric(value)+(field.kind==='area'?' m²':' m'):'[Sin valor finito]';
+}
+function fieldTextInsert74(field,doc){
+ if(field.kind==='drawing')return activeCAD65().name;
+ if(field.kind==='date')return new Intl.DateTimeFormat('es-ES',{dateStyle:'short'}).format(new Date());
+ return measuredField89(field,getEntity67(doc,field.id));
 }
 function fieldInsert74(){
  const doc=insertDocument74(),source=[...cad33.selected][0];
@@ -13733,15 +14031,26 @@ function fieldInsert74(){
  };
  $('insFieldNote74').textContent='';$('insField74').showModal();
 }
-function updateFieldsInsert74(){
- const doc=insertDocument74(),locked=new Set(doc.layers.filter(l=>l.locked).map(l=>l.name)),values=new Map();
+function fieldChanges89(doc){
+ const locked=new Set(doc.layers.filter(l=>l.locked).map(l=>l.name)),values=new Map();
  for(const entity of doc.entities)if(entity.type==='TEXT'&&entity.field74&&!locked.has(entity.layer)&&!entity.reference56){
-  const value=fieldTextInsert74(entity.field74,doc);
-  if(value!==entity.text)values.set(entity.id,value);
+  const field=entity.field74,detached=['area','length'].includes(field.kind)&&!field.id;
+  const lastValue=detached?(field.lastValue??entity.text):undefined;
+  const text=detached?detachedFieldText89(field.kind,lastValue):fieldTextInsert74(field,doc);
+  if(text!==entity.text)values.set(entity.id,{text,lastValue});
  }
- if(values.size)changeCAD33('Actualizar campos',next=>{
-  for(const [id,entity] of editEntities67(next,new Set(values.keys())))entity.text=values.get(id);
- });
+ return values;
+}
+function applyFieldChanges89(next,values){
+ for(const [id,entity] of editEntities67(next,new Set(values.keys()))){
+  const {text,lastValue}=values.get(id);
+  entity.text=text;
+  if(lastValue!==undefined)entity.field74={...entity.field74,lastValue};
+ }
+}
+function updateFieldsInsert74(){
+ const values=fieldChanges89(insertDocument74());
+ if(values.size)require26(changeCAD33('Actualizar campos',next=>applyFieldChanges89(next,values)),'No se pudieron actualizar los campos.');
  insertStatus74(values.size+' campos actualizados.');
 }
 function hyperlinkURL74(value){
@@ -14916,10 +15225,10 @@ function blockTools79(){
   button('Crear o sustituir desde selección',()=>{done('Indica el punto base y el nombre de la definición.');openDraw52('blockCreate');const field=$('drawField52_name');if(field&&picker.value)field.value=picker.value;},'base');
  });
 }
-function isolateTools79(mode){
+function isolateTools79(mode,strict=false){
  require26(cad33.runtime,'Abre el visor CAD.');
  if(mode!=='show')require26(selectionCAD33().length,'Selecciona al menos un objeto.');
- runView69('visibility',mode);toolsStatus79(mode==='show'?'Visibilidad restablecida.':'Visibilidad actualizada.');
+ runView69('visibility',mode,strict);toolsStatus79(mode==='show'?'Visibilidad restablecida.':'Visibilidad actualizada.');
 }
 function scpCoordinate79(text,base){
  const system=toolsState79().scp||scpWorld79,t=text.trim(),relative=t.startsWith('@');
@@ -15010,15 +15319,15 @@ function slideTools79(){
  },24000000,true);
 }
 const toolsCommands79=new Map([
- ['ENCUADRE',['Encuadrar dibujo','window',()=>runView69('fit')]],
- ['ENCUADRE-SELECCION',['Encuadrar selección','target',()=>runView69('fitSelection')]],
- ['REDIBUJAR',['Redibujar','refresh',()=>runView69('redraw')]],
- ['REGENERAR',['Regenerar','refresh',()=>runView69('regen')]],
- ['VISTA2D',['Activar vista 2D','window',()=>viewCAD33('2d')]],
- ['VISTA3D',['Activar vista 3D','window',()=>viewCAD33('3d')]],
- ['AISLAR',['Aislar selección','target',()=>isolateTools79('isolate')]],
- ['OCULTAR',['Ocultar selección','target',()=>isolateTools79('hide')]],
- ['MOSTRAR',['Mostrar objetos ocultos','check',()=>runView69('visibility','show')]],
+ ['ENCUADRE',['Encuadrar dibujo','window',()=>runView69('fit',undefined,true),true]],
+ ['ENCUADRE-SELECCION',['Encuadrar selección','target',()=>runView69('fitSelection',undefined,true),true]],
+ ['REDIBUJAR',['Redibujar','refresh',()=>runView69('redraw',undefined,true),true]],
+ ['REGENERAR',['Regenerar','refresh',()=>runView69('regen',undefined,true),true]],
+ ['VISTA2D',['Activar vista 2D','window',()=>viewCAD33('2d'),true]],
+ ['VISTA3D',['Activar vista 3D','window',()=>viewCAD33('3d'),true]],
+ ['AISLAR',['Aislar selección','target',()=>isolateTools79('isolate',true),true]],
+ ['OCULTAR',['Ocultar selección','target',()=>isolateTools79('hide',true),true]],
+ ['MOSTRAR',['Mostrar objetos ocultos','check',()=>runView69('visibility','show',true),true]],
  ['ACTUALIZAR-CAMPOS',['Actualizar campos','refresh',()=>refreshFieldsTools79()]],
  ['SELECCIONAR-TODO',['Seleccionar objetos visibles','set',()=>toolsStatus79(setToolsSelection79(visibleCAD33()))]],
  ['LIMPIAR-SELECCION',['Limpiar selección','set',()=>toolsStatus79(setToolsSelection79([]))]]
@@ -15029,17 +15338,86 @@ function parseCommands79(text){
  for(const id of rows)require26(toolsCommands79.has(id),'Comando de SiteSCad desconocido «'+id+'».');
  return rows;
 }
-function runCommands79(text){
- insertDocument74();require26(cad33.runtime,'Abre el visor CAD antes de ejecutar comandos.');
- const commands=parseCommands79(text);
- for(const id of commands){
-  if(['AISLAR','OCULTAR','ENCUADRE-SELECCION'].includes(id))require26(selectionCAD33().length,'Selecciona objetos antes de '+id+'.');
-  toolsCommands79.get(id)[2]();
+function preflightCommands88(commands,doc){
+ const space=modifySpace56();
+ let selection,hidden=hiddenView69(space);
+ commands.forEach((id,i)=>{
+  const step='Paso '+(i+1)+' («'+id+'»). ';
+  require26(cad33.runtime||!toolsCommands79.get(id)[3],step+'Este comando requiere el visor gráfico de CAD. La macro todavía no se ha ejecutado.');
+  if(id==='SELECCIONAR-TODO'){
+   selection=new Set();
+   for(const entity of visibleStepsCAD63(doc,space,hidden))if(entity)selection.add(entity.id);
+  }else if(id==='LIMPIAR-SELECCION')selection=new Set();
+  else if(id==='MOSTRAR')hidden=null;
+  else if(['AISLAR','OCULTAR','ENCUADRE-SELECCION'].includes(id)){
+   selection??=new Set(selectedDraw52().map(entity=>entity.id));
+   require26(selection.size,step+'Selecciona objetos antes de ejecutar este comando. La macro todavía no se ha ejecutado.');
+   if(id!=='ENCUADRE-SELECCION'){
+    hidden=hiddenAfterView69(hidden,id==='AISLAR'?'isolate':'hide',selection);
+    selection=new Set();
+   }
+  }
+ });
+}
+function macroView89(r){
+ const state=r?viewState69():null;
+ return {selection:new Set(cad33.selected),hidden:state?.hidden||null,previous:state?.previous.slice()||null,
+  camera:r?cameraRecord69(r):null};
+}
+function restoreMacroView89(snapshot){
+ cad33.selected=new Set(snapshot.selection);
+ const r=cad33.runtime;
+ if(r&&snapshot.camera){
+  const state=viewState69();
+  state.hidden=snapshot.hidden;state.previous=snapshot.previous.slice();
+  if(JSON.stringify(cameraRecord69(r))!==JSON.stringify(snapshot.camera))applyCamera69(r,snapshot.camera);
+  r.cached63=null;
  }
- return commands.length+' comandos ejecutados.';
+ cancelGrips68();refreshCADUI33();drawCAD33();
+}
+function runCommands79(text){
+ const doc=insertDocument74(),commands=parseCommands79(text);
+ preflightCommands88(commands,doc);
+ const r=commands.some(id=>toolsCommands79.get(id)[3])?cad33.runtime:null;
+ const before=macroView89(r),tab=activeCAD65(),dirty=tab.dirty,revision=tab.revision;
+ const undo=cad33.undo.slice(),redo=cad33.redo.slice();
+ let fields=new Map(),after,stepNumber=0;
+ try{
+  for(const id of commands){
+   stepNumber++;
+   if(id==='ACTUALIZAR-CAMPOS')fields=fieldChanges89(doc);
+   else toolsCommands79.get(id)[2]();
+  }
+  after=macroView89(r);
+  if(fields.size){
+   require26(changeCAD33('Macro CAD',next=>applyFieldChanges89(next,fields)),'El dibujo no permite actualizar los campos.');
+   cad33.undo.at(-1).macro89=[before,after];
+  }else if(before.hidden!==after.hidden||JSON.stringify(before.camera)!==JSON.stringify(after.camera)||
+   before.selection.size!==after.selection.size||[...before.selection].some(id=>!after.selection.has(id))){
+   cad33.undo.push({label:'Macro CAD',viewOnly89:true,macro89:[before,after],bytes:512+40*(before.selection.size+after.selection.size)});
+   if(cad33.undo.length>40)cad33.undo.shift();
+   let bytes=cad33.undo.reduce((sum,step)=>sum+step.bytes,0);
+   while(cad33.undo.length>1&&bytes>16*1024*1024)bytes-=cad33.undo.shift().bytes;
+   cad33.redo=[];
+  }
+ }catch(error){
+  if(cad33.doc!==doc){
+   cad33.doc=doc;cad33.undo.length=0;
+   for(const step of undo)cad33.undo.push(step);
+   cad33.redo=redo;
+   Object.assign(tab,{doc,dirty,revision,undo:cad33.undo,redo});
+   invalidateTargetCAD33(doc);renderCADFiles65();scheduleSave();
+  }
+  const step=commands[stepNumber-1];
+  try{restoreMacroView89(before);}
+  catch(restoreError){throw Error('Falló la macro y no se pudo restaurar la vista. '+restoreError.message+' '+error.message);}
+  const where=stepNumber===commands.length&&after?'al aplicar los cambios':'en el paso '+stepNumber+' («'+step+'»)';
+  throw Error('Macro revertida. Falló '+where+'. '+error.message);
+ }
+ return commands.length+' comandos ejecutados.'+(fields.size?' '+fields.size+' campos actualizados.':'');
 }
 function commandEditor79(mode){
- const state=toolsState79(insertDocument74()),body=state.macro||'VISTA2D\nENCUADRE';
+ const state=toolsState79(insertDocument74()),body=state.macro||'SELECCIONAR-TODO';
  toolsDialog79(mode==='lisp'?'Editor de macros de SiteSCad':mode==='run'?'Ejecutar comandos':'Editar macro',(host,button,done)=>{
   const note=document.createElement('p'),input=document.createElement('textarea'),list=document.createElement('select');
   note.textContent=mode==='lisp'?'Utiliza los comandos de SiteSCad. La ejecución de Visual LISP requiere su motor de escritorio.':'Escribe un comando de SiteSCad por línea.';

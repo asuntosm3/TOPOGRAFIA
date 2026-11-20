@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.87.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.88.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.87 RC1 · 2026-11-19</title>
+  <title>SiteSCad · v5.88 RC1 · 2026-11-20</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3705,7 +3705,7 @@ summary.cad-command-glyph73>.cad-glyph57{display:inline-block;vertical-align:mid
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.87 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.88 RC1</span>
       </div>
     </div>
 
@@ -5040,7 +5040,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.87.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.88.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -7754,14 +7754,104 @@ if(!raw)raw=group.items.find(r=>{if(r.used)return false;const p=e.center||e.posi
 function rawLayersCAD33(text){const lines=String(text).split(/\r?\n/),layers=new Map();let row=null;for(let i=0;i+1<lines.length;i+=2){const code=Number(lines[i].trim()),value=lines[i+1].trim();if(code===0){if(row?.name)layers.set(row.name,row);row=value==='LAYER'?{}:null;}else if(row){if(code===2)row.name=value;if(code===420)row.color=Number(value);if(code===70)row.flags=Number(value);if(code===62)row.aci=Number(value);if(code===6)row.dash=value.toUpperCase();if(code===290)row.plot=value!=='0';if(code===370)row.weight=Number(value);if(code===440)row.transparency=Number(value);}}if(row?.name)layers.set(row.name,row);return layers;}
 function fromOCS33(p,n){const b=basis33(n);return add33(add33(mul33(b.u,p.x??0),mul33(b.v,p.y??0)),mul33(b.n,p.z??0));}
 function normalDXF33(e){return unit33({x:e.extrusionDirectionX??e.extrusionDirection?.x??0,y:e.extrusionDirectionY??e.extrusionDirection?.y??0,z:e.extrusionDirectionZ??e.extrusionDirection?.z??1});}
-function parseCADDXF33(text,name,assumeMeters=false,allowPartial=false){require26(typeof text==='string'&&text.length<=32*1024*1024,'DXF demasiado grande (máximo 32 MB de texto).');const rawLayers=rawLayersCAD33(text),data=new DxfParser().parseSync(text);require26(data?.entities?.length,'DXF sin entidades.');restoreDXFNormals33(data,text);const units=data.header?.$INSUNITS;require26(units===6||((units==null||units===0)&&assumeMeters),'DXF: declara metros ($INSUNITS=6) o confirma metros para un archivo sin unidades. No se escala automáticamente.');const entities=[],skipped={},layers=new Map(),report={file:name,imported:0,skipped,explodedBulges:0};
+const DXF_TEXT_LIMIT91=32*1024*1024;
+function readDXFDetails91(text){
+ const lines=text.split(/\r?\n/),records=new Map(),blocks=new Map();
+ let section='',row=null,headerVar='',zone,datum,lo,hi;
+ function finish(){
+  if(!row)return;
+  if(row.handle&&(row.json.length||row.transparency!==undefined||row.type==='MTEXT'))
+   records.set(row.handle,{...row});
+  if(row.type==='BLOCK'&&row.name)blocks.set(row.name,{path:row.path,flags:row.flags,description:row.description});
+  row=null;
+ }
+ for(let i=0;i+1<lines.length;i+=2){
+  const code=Number(lines[i].trim()),raw=lines[i+1],value=raw.trim();
+  if(code===0){
+   finish();
+   if(value==='SECTION'){section=lines[i+3]?.trim();headerVar='';}
+   else if(value==='ENDSEC')section='';
+   else if(section==='BLOCKS'||section==='ENTITIES')row={type:value,json:'',text:'',app:''};
+  }else if(section==='HEADER'){
+   if(code===999){
+    const match=value.match(/^SiteSCad · EPSG:258(28|29|30|31) · (.*)$/);
+    if(match){zone=Number(match[1]);datum=match[2].slice(0,300);}
+   }else if(code===9){
+    headerVar=value;
+    if(value==='$LIMMIN')lo={};
+    if(value==='$LIMMAX')hi={};
+   }else if(code===10||code===20){
+    const point=headerVar==='$LIMMIN'?lo:headerVar==='$LIMMAX'?hi:null;
+    if(point)point[code===10?'x':'y']=Number(value);
+   }
+  }else if(row){
+   if(code===5)row.handle=value.toUpperCase();
+   if(code===440)row.transparency=Number(value);
+   if(code===1001)row.app=value;
+   if(code===1000&&row.app==='SITESCAD'&&row.json.length<=12000)row.json+=raw;
+   if(row.type==='MTEXT'&&(code===1||code===3))row.text+=raw;
+   if(row.type==='BLOCK'){
+    if(code===2)row.name=value;
+    if(code===1)row.path=value;
+    if(code===70)row.flags=Number(value);
+    if(code===4)row.description=value;
+   }
+  }
+ }
+ finish();
+ const limits=[lo?.x,lo?.y,hi?.x,hi?.y].every(Number.isFinite)&&lo.x<hi.x&&lo.y<hi.y?
+  {minX:lo.x,minY:lo.y,maxX:hi.x,maxY:hi.y,show:true}:undefined;
+ return {records,blocks,zone,datum,limits};
+}
+function dxfStyle91(e,row){
+ const style=styleDXF56(e)||{};
+ if((row?.transparency>>>24)===2)style.transparency=Math.max(0,Math.min(90,Math.round(100*(1-(row.transparency&255)/255))));
+ return Object.keys(style).length?style:undefined;
+}
+function readDXFMetadata91(e,row){
+ if(!row?.json||row.json.length>12000)return null;
+ const meta=JSON.parse(row.json);
+ editionMetadata88(meta);
+ if(meta.tag&&typeof meta.tag.group==='string'&&['blockInsert','dimension55'].includes(meta.tag.kind))
+  e.source33.draw52={group:meta.tag.group,kind:meta.tag.kind,dimGroup89:meta.tag.dimGroup89,blockName:meta.tag.blockName};
+ if(e.type==='TEXT'){
+  const field=meta.field74;
+  if(field&&['drawing','date','area','length'].includes(field.kind)&&(!field.id||typeof field.id==='string'))
+   e.field74={kind:field.kind,id:field.id??null,...(typeof field.lastValue==='string'?{lastValue:field.lastValue.slice(0,2000)}:{})};
+  const font=meta.font78;
+  if(font&&['sans','serif','mono'].includes(font.font))e.font78={font:font.font,bold:!!font.bold,italic:!!font.italic};
+ }
+ if(typeof meta.hyperlink74==='string')e.hyperlink74=hyperlinkURL74(meta.hyperlink74);
+ if(Array.isArray(meta.annotation56)&&meta.annotation56.length&&meta.annotation56.length<=1000&&
+  meta.annotation56.every(n=>Number.isFinite(n)&&n>0&&n<=1e6)&&Number.isFinite(meta.annotationBase56)&&meta.annotationBase56>0){
+  e.annotation56=meta.annotation56;e.annotationBase56=meta.annotationBase56;
+ }
+ const dim=meta.dimension55;
+ if(dim&&typeof dim.kind==='string'&&Array.isArray(dim.points)&&dim.points.length<=1000&&
+  (!dim.refs||Array.isArray(dim.refs)&&dim.refs.every(id=>typeof id==='string'))){
+  const clean={...dim,points:dim.points.map(xyz33),style:dimStyle55(dim.style||{})};
+  for(const key of ['breakPoint','jogPoint','textPoint'])if(clean[key])clean[key]=xyz33(clean[key]);
+  e.dimension55=clean;
+ }
+ const attribute=meta.attribute;
+ if(attribute&&typeof attribute.tag==='string'&&typeof attribute.value==='string')
+  e.source33.attribute52={tag:attribute.tag,value:attribute.value};
+ return typeof meta.id==='string'?meta.id:null;
+}
+function dxfText91(e,row){
+ if(e.type!=='MTEXT')return (e.text||'').slice(0,2000);
+ return (row?.text??e.text??'').replace(/\\([\\{}P])/g,(_,c)=>c==='P'?'\n':c).slice(0,2000);
+}
+function parseCADDXF33(text,name,assumeMeters=false,allowPartial=false){require26(typeof text==='string'&&text.length<=DXF_TEXT_LIMIT91,'DXF demasiado grande (máximo 32 MiB de texto).');const rawLayers=rawLayersCAD33(text),details=readDXFDetails91(text),data=new DxfParser().parseSync(text);
+ require26(data,'DXF no válido.');
+ require26(!details.zone||details.zone===currentZone(),'El DXF declara el huso UTM '+details.zone+'N y el proyecto usa '+currentZone()+'N. Abre o configura un proyecto en el huso de origen antes de importar.');restoreDXFNormals33(data,text);const units=data.header?.$INSUNITS;require26(units===6||((units==null||units===0)&&assumeMeters),'DXF: declara metros ($INSUNITS=6) o confirma metros para un archivo sin unidades. No se escala automáticamente.');const entities=[],skipped={},layers=new Map(),report={file:name,imported:0,skipped,explodedBulges:0};
  const addLayer=name=>{
   if(layers.has(name))return;
   const raw=rawLayers.get(name),source=data.tables?.layer?.layers?.[name],color=Number.isInteger(raw?.color)?raw.color:Number.isInteger(source?.color)?source.color:0x76b6df;
   layers.set(name,{name,color:'#'+(color&0xffffff).toString(16).padStart(6,'0'),visible:!(raw?.aci<0)&&(!!(raw?.flags&1)||source?.visible!==false),locked:!!(raw?.flags&4),...dxfLayerProps80(raw)});
  };
  for(const name of rawLayers.keys())if(name.length<=80&&!/[<>/\\":;?*|=\r\n]/.test(name))addLayer(name);
- const skip=t=>{skipped[t]=(skipped[t]||0)+1;};function convert(e){const n=normalDXF33(e),layer=e.layer||'0',opts={layer,space56:e.inPaperSpace?'paper':'model',style56:styleDXF56(e),source33:{file:name,type:e.type,handle:e.handle||null}},point=p=>xyz33({x:p.x,y:p.y,z:p.z??0});if(e.type==='ELLIPSE'){
+ const skip=t=>{skipped[t]=(skipped[t]||0)+1;};function convert(e){const n=normalDXF33(e),layer=e.layer||'0',opts={layer,space56:e.inPaperSpace?'paper':'model',style56:dxfStyle91(e,details.records.get(String(e.handle).toUpperCase())),source33:{file:name,type:e.type,handle:e.handle||null}},point=p=>xyz33({x:p.x,y:p.y,z:p.z??0});if(e.type==='ELLIPSE'){
  const curve=Object.assign(ellipse55(point(e.center),point(e.majorAxisEndPoint),n,e.axisRatio,e.startAngle??0,e.endAngle??2*Math.PI),opts);
  validateCurve55(curve);
  return [curve];
@@ -7769,15 +7859,155 @@ function parseCADDXF33(text,name,assumeMeters=false,allowPartial=false){require2
  const curve=newEntity33('SPLINE',(e.controlPoints||[]).map(point),{...opts,degree:e.degreeOfSplineCurve,knots:e.knotValues,closed:!!e.closed,periodic:!!e.periodic,...(e.weights?.length?{weights:e.weights}:{})});
  validateCurve55(curve);
  return [curve];
- }if(e.type==='LINE')return [newEntity33('LINE',e.vertices.map(point),opts)];if(e.type==='POINT')return [newEntity33('POINT',[point(e.position)],opts)];if(e.type==='3DFACE'){const p=e.vertices.filter(v=>Object.keys(v).length>0).map(point);if(p.length===4&&len33(sub33(p[2],p[3]))<1e-10)p.pop();return [newEntity33('FACE',p,{...opts,closed:true})];}if(['CIRCLE','ARC'].includes(e.type)){const extra={...opts,normal:n,u:basis33(n).u,radius:e.radius};if(e.type==='ARC'){extra.start=e.startAngle;extra.sweep=((e.endAngle-e.startAngle)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);require26(extra.sweep>1e-12,'Arco de ángulo nulo.');}return [newEntity33(e.type,[fromOCS33(e.center,n)],extra)];}if(['POLYLINE','LWPOLYLINE'].includes(e.type)){require26(!e.isPolyfaceMesh&&!e.is3dPolygonMesh&&!e.includesSplineFitVertices&&!e.includesCurveFitVertices,'Malla o polilínea ajustada requiere definición específica.');const raw=e.vertices||[],is3D=e.type==='POLYLINE'&&e.is3dPolyline,p=raw.map(v=>is3D?point(v):fromOCS33({x:v.x,y:v.y,z:e.elevation??v.z??0},n)),closed=!!(e.shape||e.isClosed);if(!raw.some(v=>v.bulge))return [newEntity33('POLYLINE',p,{...opts,closed})];require26(!is3D,'Bulge en polilínea 3D no compatible.');const out=[];for(let i=0;i<raw.length-1+(closed?1:0);i++){const j=(i+1)%raw.length,a=raw[i],b=raw[j],bulge=a.bulge||0;if(!bulge){out.push(newEntity33('LINE',[p[i],p[j]],opts));continue;}const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);require26(L>1e-12,'Bulge en segmento nulo.');const c={x:(a.x+b.x)/2-dy*(1-bulge*bulge)/(4*bulge),y:(a.y+b.y)/2+dx*(1-bulge*bulge)/(4*bulge),z:e.elevation??a.z??0},s=Math.atan2(a.y-c.y,a.x-c.x),sweep=4*Math.atan(bulge);out.push(newEntity33('ARC',[fromOCS33(c,n)],{...opts,normal:bulge>0?n:mul33(n,-1),u:basis33(n).u,radius:L*(1+bulge*bulge)/(4*Math.abs(bulge)),start:bulge>0?s:-s,sweep:Math.abs(sweep)}));}report.explodedBulges++;return out;}if(e.type==='TEXT'){require26(Math.abs(n.z-1)<1e-10,'Texto con plano inclinado no compatible.');return [newEntity33('TEXT',[point(e.startPoint||e.position)],{...opts,text:e.text||'',height:e.textHeight||1,rotation:e.rotation||0})];}throw Error('Tipo no compatible.');}
-function visit(list,transform=e=>e,override=null,depth=0){require26(depth<=8,'DXF: bloques anidados en exceso.');for(const e of list){if(e.type==='INSERT'){const block=data.blocks?.[e.name],n=normalDXF33(e);if(!block||Math.abs(n.z-1)>1e-10){skip('INSERT');continue;}const pos=e.position||{x:0,y:0,z:0},o=block.position||{x:0,y:0,z:0},a=(e.rotation||0)*Math.PI/180,sx=e.xScale??1,sy=e.yScale??1,sz=e.zScale??1;const fn=p=>{const v=sub33(p,{x:o.x||0,y:o.y||0,z:o.z||0}),x=v.x*sx,y=v.y*sy;return {x:(pos.x||0)+x*Math.cos(a)-y*Math.sin(a),y:(pos.y||0)+x*Math.sin(a)+y*Math.cos(a),z:(pos.z||0)+v.z*sz};};visit(block.entities||[],item=>{if(['CIRCLE','ARC','TEXT'].includes(item.type))require26(Math.abs(Math.abs(sx)-Math.abs(sy))<1e-10&&Math.abs(Math.abs(sx)-Math.abs(sz))<1e-10&&sx!==0,'Bloque con curva/texto y escala no uniforme.');const out=transformEntity33(item,fn,Math.abs(sx));if(out.layer==='0')out.layer=override||e.layer||'0';if(e.inPaperSpace)out.space56='paper';return transform(out);},override||e.layer,depth+1);continue;}try{const list=convert(e).map(transform);for(const item of list){if(override&&item.layer==='0')item.layer=override;require26(!/[<>/\\":;?*|=\r\n]/.test(item.layer),'Nombre de capa no válido.');addLayer(item.layer);entities.push(item);require26(entities.length<=30000,'DXF demasiado grande.');}}catch(error){skip(e.type);}}}
-visit(data.entities);require26(entities.length,'DXF sin geometría CAD compatible.');require26(allowPartial||!Object.keys(skipped).length,'DXF contiene entidades no compatibles: '+Object.entries(skipped).map(([k,v])=>k+' ('+v+')').join(', ')+'. Conserva el original y activa importar compatibles si deseas una copia parcial.');const headerEnd=text.search(/^[ \t]*0\r?\nENDSEC\s*$/m);
+ }if(e.type==='LINE')return [newEntity33('LINE',e.vertices.map(point),opts)];if(e.type==='POINT')return [newEntity33('POINT',[point(e.position)],opts)];if(e.type==='3DFACE'){const p=e.vertices.filter(v=>Object.keys(v).length>0).map(point);if(p.length===4&&len33(sub33(p[2],p[3]))<1e-10)p.pop();return [newEntity33('FACE',p,{...opts,closed:true})];}if(['CIRCLE','ARC'].includes(e.type)){const extra={...opts,normal:n,u:basis33(n).u,radius:e.radius};if(e.type==='ARC'){extra.start=e.startAngle;extra.sweep=((e.endAngle-e.startAngle)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);require26(extra.sweep>1e-12,'Arco de ángulo nulo.');}return [newEntity33(e.type,[fromOCS33(e.center,n)],extra)];}if(['POLYLINE','LWPOLYLINE'].includes(e.type)){require26(!e.isPolyfaceMesh&&!e.is3dPolygonMesh&&!e.includesSplineFitVertices&&!e.includesCurveFitVertices,'Malla o polilínea ajustada requiere definición específica.');const raw=e.vertices||[],is3D=e.type==='POLYLINE'&&e.is3dPolyline,p=raw.map(v=>is3D?point(v):fromOCS33({x:v.x,y:v.y,z:e.elevation??v.z??0},n)),closed=!!(e.shape||e.isClosed);if(!raw.some(v=>v.bulge))return [newEntity33('POLYLINE',p,{...opts,closed})];require26(!is3D,'Bulge en polilínea 3D no compatible.');const out=[];for(let i=0;i<raw.length-1+(closed?1:0);i++){const j=(i+1)%raw.length,a=raw[i],b=raw[j],bulge=a.bulge||0;if(!bulge){out.push(newEntity33('LINE',[p[i],p[j]],opts));continue;}const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy);require26(L>1e-12,'Bulge en segmento nulo.');const c={x:(a.x+b.x)/2-dy*(1-bulge*bulge)/(4*bulge),y:(a.y+b.y)/2+dx*(1-bulge*bulge)/(4*bulge),z:e.elevation??a.z??0},s=Math.atan2(a.y-c.y,a.x-c.x),sweep=4*Math.atan(bulge);out.push(newEntity33('ARC',[fromOCS33(c,n)],{...opts,normal:bulge>0?n:mul33(n,-1),u:basis33(n).u,radius:L*(1+bulge*bulge)/(4*Math.abs(bulge)),start:bulge>0?s:-s,sweep:Math.abs(sweep)}));}report.explodedBulges++;return out;}if(e.type==='TEXT'||e.type==='MTEXT'){
+ require26(Math.abs(n.z-1)<1e-10,'Texto con plano inclinado no compatible.');
+ return [newEntity33('TEXT',[point(e.startPoint||e.position)],{...opts,text:dxfText91(e,details.records.get(String(e.handle).toUpperCase())),
+  height:e.textHeight||e.height||1,rotation:e.rotation??(e.directionVector?Math.atan2(e.directionVector.y,e.directionVector.x)*180/Math.PI:0)})];
+ }throw Error('Tipo no compatible.');}
+ const scopes=new Map(),root={},globalIds=new Map(),references=[];
+ const scopeFor=key=>{
+  if(!scopes.has(key))scopes.set(key,{ids:new Map(),groups:new Map(),items:[]});
+  return scopes.get(key);
+ };
+ const register=(key,oldId,item)=>{
+  const scope=scopeFor(key);
+  if(oldId){
+   if(!scope.ids.has(oldId))scope.ids.set(oldId,item.id);
+   globalIds.set(oldId,globalIds.has(oldId)?null:item.id);
+  }
+  if(item.dimension55||item.field74||item.source33?.draw52)scope.items.push(item);
+ };
+ let vertices=0,instances=0;
+ const limit=()=>Error('DXF supera la capacidad CAD de entidades o vértices. Divide el dibujo antes de importarlo.');
+ function visit(input,target=entities,transform=e=>e,override=null,depth=0,scope=root,registry=register){
+  require26(depth<=8,'DXF: bloques anidados en exceso.');
+  for(const e of input){
+   if(e.type==='INSERT'||e.type==='DIMENSION'){
+    const blockName=e.name||e.block,block=data.blocks?.[blockName],raw=details.blocks.get(blockName);
+    if(e.type==='DIMENSION'){
+     if(!details.records.get(String(e.handle).toUpperCase())?.json||!block){skip('DIMENSION');continue;}
+     visit(block.entities||[],target,item=>{
+      if(e.inPaperSpace)item.space56='paper';
+      return transform(item);
+     },override,depth+1,scope,registry);continue;
+    }
+    const n=normalDXF33(e);
+    if(raw?.flags&4){
+     if(!raw.path||raw.path.length>300||depth){skip('INSERT');continue;}
+     const pos=e.position||{};
+     if(e.rotation||[pos.x,pos.y,pos.z].some(Boolean)||[e.xScale,e.yScale,e.zScale].some(scale=>scale!==undefined&&scale!==1)){skip('INSERT');continue;}
+     references.push({id:idCAD33(),kind:'dwg',name:raw.path,space:e.inPaperSpace?'paper':'model',visible:true});
+     continue;
+    }
+    if(!block||Math.abs(n.z-1)>1e-10){skip('INSERT');continue;}
+    const rows=e.rowCount??1,columns=e.columnCount??1,dx=e.columnSpacing??0,dy=e.rowSpacing??0;
+    if(!Number.isSafeInteger(rows)||!Number.isSafeInteger(columns)||rows<1||columns<1||!Number.isFinite(dx)||!Number.isFinite(dy)){skip('INSERT');continue;}
+    instances+=rows*columns;if(instances>CAD_CAPACITY61.entities)throw limit();
+    const pos=e.position||{},o=block.position||{},a=(e.rotation||0)*Math.PI/180,c=Math.cos(a),sin=Math.sin(a);
+    const sx=e.xScale??1,sy=e.yScale??1,sz=e.zScale??1,layer=override&&(!e.layer||e.layer==='0')?override:e.layer;
+    for(let i=0;i<rows;i++)for(let j=0;j<columns;j++){
+     const origin={x:o.x||0,y:o.y||0,z:o.z||0};
+     const fn=p=>{
+      const v=sub33(p,origin),x=v.x*sx+j*dx,y=v.y*sy+i*dy;
+      return {x:(pos.x||0)+x*c-y*sin,y:(pos.y||0)+x*sin+y*c,z:(pos.z||0)+v.z*sz};
+     };
+     const group=target===entities&&raw?.description!=='SiteSCad instancia'?idCAD33():null;
+     visit(block.entities||[],target,item=>{
+      if(['CIRCLE','ARC','TEXT'].includes(item.type))require26(Math.abs(Math.abs(sx)-Math.abs(sy))<1e-10&&Math.abs(Math.abs(sx)-Math.abs(sz))<1e-10&&sx!==0,'Bloque con curva/texto y escala no uniforme.');
+      const out=transformEntity33(item,fn,Math.abs(sx));
+      if(out.layer==='0')out.layer=layer||'0';
+      if(e.inPaperSpace)out.space56='paper';
+      if(group){
+       const dimGroup89=dimensionGroup89(out);
+       out.source33={...out.source33,draw52:{kind:'blockInsert',group,blockName,dimGroup89}};
+      }
+      return transform(out);
+     },layer,depth+1,{},registry);
+    }
+    continue;
+   }
+   let converted;
+   try{
+    const record=details.records.get(String(e.handle).toUpperCase());
+    converted=convert(e).map(item=>{
+     const oldId=readDXFMetadata91(item,record);
+     item=transform(item);
+     if(override&&item.layer==='0')item.layer=override;
+     require26(!/[<>/\\":;?*|=\r\n]/.test(item.layer),'Nombre de capa no válido.');
+     validateEntity67(item);
+     return {item,oldId};
+    });
+   }catch{skip(e.type);continue;}
+   const count=converted.reduce((sum,{item})=>sum+item.points.length,0);
+   if(target.length+converted.length>CAD_CAPACITY61.entities||vertices+count>CAD_CAPACITY61.vertices)throw limit();
+   vertices+=count;
+   for(const {item,oldId} of converted){addLayer(item.layer);target.push(item);registry(scope,oldId,item);}
+  }
+ }
+ visit(data.entities||[]);
+ function finishLinks(registry,fallback){
+  for(const {ids,groups,items} of registry.values())for(const item of items){
+   const remap=id=>ids.get(id)||fallback?.get(id)||null;
+   const tag=item.source33?.draw52;
+   for(const key of ['group','dimGroup89']){
+    const value=tag?.[key];if(typeof value!=='string')continue;
+    if(!groups.has(value))groups.set(value,idCAD33());
+    tag[key]=groups.get(value);
+   }
+   if(item.dimension55?.refs){
+    const mapped=item.dimension55.refs.map(remap);
+    if(mapped.every(Boolean))item.dimension55.refs=mapped;else delete item.dimension55.refs;
+   }
+   if(item.field74?.id){
+    const mapped=remap(item.field74.id);
+    if(mapped)item.field74.id=mapped;else remapField89(item,new Map());
+   }
+  }
+ }
+ finishLinks(scopes,globalIds);
+ const blocks52=[];
+ for(const [definition,block] of Object.entries(data.blocks||{})){
+  const raw=details.blocks.get(definition);
+  if(definition.startsWith('*')||raw?.flags&4||raw?.description==='SiteSCad instancia'||!block.entities?.length)continue;
+  if(blocks52.length>=100){skip('BLOCK');break;}
+  const items=[],registry=new Map(),previous=new Map(Object.entries(skipped));
+  const origin=block.position||{},offset={x:origin.x||0,y:origin.y||0,z:origin.z||0};
+  visit(block.entities,items,item=>offset.x||offset.y||offset.z?transformEntity33(item,p=>sub33(p,offset)):item,null,1,{},(key,id,item)=>{
+   if(!registry.has(key))registry.set(key,{ids:new Map(),groups:new Map(),items:[]});
+   const entry=registry.get(key);if(id)entry.ids.set(id,item.id);entry.items.push(item);
+  });
+  finishLinks(registry);
+  if(Object.entries(skipped).some(([type,n])=>n!==(previous.get(type)||0)))skip('BLOCK');
+  if(items.length)blocks52.push({name:definition,entities:items});
+ }
+ require26(entities.length||blocks52.length||references.length,'DXF sin geometría CAD compatible.');
+ require26(allowPartial||!Object.keys(skipped).length,'DXF contiene entidades no compatibles: '+Object.entries(skipped).map(([k,v])=>k+' ('+v+')').join(', ')+'. Conserva el original y activa importar compatibles si deseas una copia parcial.');
+ const headerEnd=text.search(/^[ \t]*0\r?\nENDSEC\s*$/m);
  const header=headerEnd<0?'':text.slice(0,headerEnd);
  const current=header.match(/^[ \t]*9\r?\n\$CLAYER\r?\n[ \t]*8\r?\n([^\r\n]+)/m)?.[1].trim();
  const requested=layers.get(current||data.header?.$CLAYER),list=[...layers.values()];
- const activeLayer=(requested&&!requested.frozen?requested:null)?.name||list.find(l=>l.visible&&!l.frozen)?.name||list.find(l=>!l.frozen)?.name||list[0].name;
- const doc={...emptyCAD33(),layers:list,activeLayer,entities};validateCAD33(doc);report.imported=entities.length;return {entities,layers:list,activeLayer,report};}
+ const activeLayer=(requested&&!requested.frozen?requested:null)?.name||list.find(l=>l.visible&&!l.frozen)?.name||list.find(l=>!l.frozen)?.name||list[0]?.name||'DIBUJO';
+ const doc={...emptyCAD33(),...(list.length?{layers:list}:{}),activeLayer,entities};validateCAD33(doc);report.imported=entities.length;return {entities,layers:doc.layers,activeLayer,report,blocks52,insertRefs74:references,limits:details.limits,zone:details.zone,datum:details.datum};}
 let cadImport67=null;
+function mergeDXFDetails91(doc,parsed,separate){
+ if(parsed.blocks52?.length){
+  const blocks=[...(doc.blocks52||[])],names=new Set(blocks.map(block=>block.name.toUpperCase())),rename=new Map();
+  for(const block of parsed.blocks52){
+   const name=dxfBlockName91(block.name,names);
+   if(name!==block.name)rename.set(block.name,name);
+   blocks.push({...block,name});
+  }
+  require26(blocks.length<=100&&JSON.stringify(blocks).length<=8*1024*1024,'La biblioteca de bloques supera el límite de 100 definiciones o 8 MiB.');
+  doc.blocks52=blocks;
+  for(const e of parsed.entities){
+   const tag=e.source33?.draw52;
+   if(tag&&rename.has(tag.blockName))tag.blockName=rename.get(tag.blockName);
+  }
+ }
+ if(parsed.insertRefs74?.length)doc.insertRefs74=[...(doc.insertRefs74||[]),...parsed.insertRefs74];
+ if(parsed.limits&&(separate||!doc.cadFormat78?.limits))doc.cadFormat78={...doc.cadFormat78,limits:parsed.limits};
+ if(separate&&parsed.zone){doc.zone=parsed.zone;if(parsed.datum)doc.datum=parsed.datum;}
+}
 async function importCAD33(event,separate=false){
  return useFile(event,async file=>{
   const project=workspace14.id,base=cad33.doc;
@@ -7799,6 +8029,7 @@ async function importCAD33(event,separate=false){
    require26(doc.zone===currentZone(),'CAD en otro huso. Cambia al huso del dibujo; no se reproyecta al editar.');
    const names=new Set(doc.layers.map(layer=>layer.name));
    for(const layer of parsed.layers)if(!names.has(layer.name)){doc.layers.push(layer);names.add(layer.name);}
+   mergeDXFDetails91(doc,parsed,separate);
    if(separate&&parsed.activeLayer&&doc.layers.some(l=>l.name===parsed.activeLayer&&!l.frozen))doc.activeLayer=parsed.activeLayer;
    if(largeCAD61(doc)){
     progress('Validando geometría',parsed.report.imported);
@@ -7828,19 +8059,249 @@ async function importCAD33(event,separate=false){
   }finally{cadImport67=null;if(cancel)cancel.hidden=true;}
  });
 }
-function dxfCAD33(doc=cad33.doc){validateCAD33(doc);require26(doc?.entities.length,'CAD sin geometría para exportar.');let nextHandle=0x10000,currentHandle='';const handle=()=>(nextHandle++).toString(16).toUpperCase();const pair=(c,v)=>c+'\n'+String(v)+'\n',coord=(p,c=10)=>pair(c,p.x)+pair(c+10,p.y)+pair(c+20,p.z),common=(e,cls)=>{currentHandle=handle();const style=e.style56||{};return pair(0,e.type==='POLYLINE'?'POLYLINE':e.type==='FACE'?'3DFACE':e.type)+pair(5,currentHandle)+pair(330,e.space56==='paper'?'6':'5')+pair(100,'AcDbEntity')+(e.space56==='paper'?pair(67,1):'')+pair(8,e.layer)
- +(e.style56?.color?pair(420,parseInt(e.style56.color.slice(1),16)):'')
- +(style.dash?pair(6,style.dash==='DISCONTINUA'?'DASHED':'CONTINUOUS'):'')
- +(style.weight!==undefined?pair(370,style.weight):'')
- +(style.transparency!==undefined?pair(440,0x02000000|Math.round(255*(1-style.transparency/100))):'')+pair(100,cls);};let out=pair(0,'SECTION')+pair(2,'HEADER')+pair(9,'$ACADVER')+pair(1,'AC1021')+pair(9,'$HANDSEED')+pair(5,'2FFFFF')+pair(9,'$INSUNITS')+pair(70,6)+pair(9,'$MEASUREMENT')+pair(70,1)+pair(9,'$CLAYER')+pair(8,doc.activeLayer)+dxfLimitsFormat78(doc,pair)+pair(999,'SiteSCad · EPSG:258'+doc.zone+' · '+doc.datum.replace(/[\r\n]/g,' '))+pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'TABLES')+pair(0,'TABLE')+pair(2,'LTYPE')+pair(5,'1')+pair(100,'AcDbSymbolTable')+pair(70,2)+pair(0,'LTYPE')+pair(5,'2')+pair(330,'1')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLinetypeTableRecord')+pair(2,'CONTINUOUS')+pair(70,0)+pair(3,'Solid line')+pair(72,65)+pair(73,0)+pair(40,0)+pair(0,'LTYPE')+pair(5,'B')+pair(330,'1')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLinetypeTableRecord')+pair(2,'DASHED')+pair(70,0)+pair(3,'Dashed')+pair(72,65)+pair(73,2)+pair(40,.75)+pair(49,.5)+pair(74,0)+pair(49,-.25)+pair(74,0)+pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'LAYER')+pair(5,'3')+pair(100,'AcDbSymbolTable')+pair(70,doc.layers.length+(doc.layers.some(l=>l.name==='0')?0:1));const outputLayers=doc.layers.some(l=>l.name==='0')?doc.layers:[{name:'0',color:'#ffffff',visible:true,locked:false},...doc.layers];for(const [i,l]of outputLayers.entries())out+=pair(0,'LAYER')+pair(5,(0x1000+i).toString(16).toUpperCase())+pair(330,'3')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLayerTableRecord')+pair(2,l.name)+pair(70,(l.locked?4:0)|(l.frozen?1:0))+pair(62,l.visible?7:-7)+pair(420,parseInt(l.color.slice(1),16))+pair(6,l.format78?.dash==='DISCONTINUA'?'DASHED':'CONTINUOUS')+pair(290,l.plot===false?0:1)+pair(370,l.format78?.weight??-3)+(l.format78?.transparency!==undefined?pair(440,0x02000000|Math.round(255*(1-l.format78.transparency/100))):'');out+=pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'BLOCK_RECORD')+pair(5,'4')+pair(100,'AcDbSymbolTable')+pair(70,2);for(const [name,h]of [['*Model_Space','5'],['*Paper_Space','6']])out+=pair(0,'BLOCK_RECORD')+pair(5,h)+pair(330,'4')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbBlockTableRecord')+pair(2,name)+pair(70,0);out+=pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'STYLE')+pair(5,'D')+pair(100,'AcDbSymbolTable')+pair(70,1)+pair(0,'STYLE')+pair(5,'E')+pair(330,'D')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbTextStyleTableRecord')+pair(2,'STANDARD')+pair(70,0)+pair(40,0)+pair(41,1)+pair(50,0)+pair(71,0)+pair(42,2.5)+pair(3,'txt')+pair(4,'')+pair(0,'ENDTAB')+pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'BLOCKS');for(const [name,owner,h,end]of [['*Model_Space','5','7','8'],['*Paper_Space','6','9','A']])out+=pair(0,'BLOCK')+pair(5,h)+pair(330,owner)+pair(100,'AcDbEntity')+pair(8,'0')+pair(100,'AcDbBlockBegin')+pair(2,name)+pair(70,0)+coord({x:0,y:0,z:0})+pair(3,name)+pair(1,'')+pair(0,'ENDBLK')+pair(5,end)+pair(330,owner)+pair(100,'AcDbEntity')+pair(8,'0')+pair(100,'AcDbBlockEnd');out+=pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'ENTITIES');for(const e of doc.entities){if(['RAY','XLINE'].includes(e.type))out+=common(e,e.type==='RAY'?'AcDbRay':'AcDbXline')+coord(e.points[0])+coord(unit33(sub33(e.points[1],e.points[0])),11);else if(e.type==='ELLIPSE'){
+function dxfMetadata91(e,pair){
+ const {dimension55,field74,hyperlink74,annotation56,annotationBase56,font78}=e;
+ const draw=e.source33?.draw52;
+ const tag=draw&&(draw.kind==='dimension55'||draw.kind==='blockInsert')?
+  {group:draw.group,dimGroup89:draw.dimGroup89,kind:draw.kind,blockName:draw.blockName}:undefined;
+ const attribute=e.source33?.attribute52;
+ if(!dimension55&&!field74&&!hyperlink74&&!annotation56&&!font78&&!tag&&!attribute&&!e.exchangeId91)return '';
+ const data={id:e.id,dimension55,field74,hyperlink74,annotation56,annotationBase56,font78,tag,attribute};
+ const json=JSON.stringify(data).replace(/[^\x20-\x7E]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
+ if(json.length>12000)return '';
+ let out=pair(1001,'SITESCAD');
+ for(let i=0;i<json.length;i+=240)out+=pair(1000,json.slice(i,i+240));
+ return out;
+}
+function dxfBlockName91(name,used){
+ let base=String(name||'Bloque').replace(/[<>/\\":;?*|=,`\r\n]/g,'_').trim().slice(0,66)||'Bloque',value=base;
+ for(let n=2;used.has(value.toUpperCase());n++)value=base+'_'+n;
+ used.add(value.toUpperCase());
+ return value;
+}
+function dxfLinearDim91(model,entities){
+ if(!model||!['linear','aligned','quick','auto'].includes(model.kind)||model.oblique||model.breakPoint||model.jogPoint||model.textPoint||model.textAlign)return null;
+ const source=entities.get(model.refs?.[0]);
+ let points;
+ try{points=source?dimRef55(source):model.points.slice(0,2);}catch{return null;}
+ const [a,b]=points,place=model.points.at(-1);
+ if(!a||!b||!place||!source&&model.points.length<3||Math.hypot(b.x-a.x,b.y-a.y)<1e-8)return null;
+ const aligned=model.kind==='aligned';
+ const delta=sub33(b,a),offset=sub33(place,dimMid55(a,b));
+ const vertical=!aligned&&(Math.abs(delta.x)<1e-8||Math.abs(delta.y)>1e-8&&Math.abs(offset.x)>Math.abs(offset.y));
+ if(!aligned&&Math.abs(vertical?delta.y:delta.x)<1e-8)return null;
+ const u=aligned?dimXY55(a,b):{x:vertical?0:1,y:vertical?1:0,z:0},v=dimLeft55(u);
+ const def=add33(a,mul33(v,dot33(sub33(place,a),v)));def.z=place.z;
+ return {a:{...a,z:place.z},b:{...b,z:place.z},def,aligned,rotation:vertical?90:0};
+}
+function matchingDXFInsert91(rows,definition,referenceIds){
+ if(!definition||rows.length!==definition.entities.length)return null;
+ const params=rows.find(e=>e.source33?.draw52?.creationParameters)?.source33.draw52.creationParameters;
+ const scale=Number(params?.scale??1),angle=Number(params?.angle??0),zero={x:0,y:0,z:0};
+ if(!Number.isFinite(scale)||scale<=0||!Number.isFinite(angle))return null;
+ const linear=p=>transformPoint52(mul33(p,scale),zero,angle);
+ const base=sub33(rows[0].points[0],linear(definition.entities[0].points[0]));
+ const safe=e=>['LINE','POLYLINE','POINT','FACE'].includes(e.type)&&!e.clip56&&!e.annotation56&&!e.hyperlink74&&
+  !e.field74&&!e.dimension55&&!e.reference56&&!e.source33?.attribute52;
+ const identical=rows.every((e,i)=>{
+  const original=definition.entities[i];
+  return safe(e)&&safe(original)&&!referenceIds.has(e.id)&&e.type===original.type&&
+   (original.layer==='0'?e.layer===rows[0].layer:e.layer===original.layer)&&!!e.closed===!!original.closed&&
+   JSON.stringify(e.style56||{})===JSON.stringify(original.style56||{})&&e.points.length===original.points.length&&
+   e.points.every((point,j)=>len33(sub33(point,add33(base,linear(original.points[j]))))<1e-8);
+ });
+ return identical?{base,scale,angle}:null;
+}
+function planDXF91(doc,options){
+ const blocks=[],entities=[],used=new Set(['*MODEL_SPACE','*PAPER_SPACE']),linked=new Map(),groups=new Map(),wipeouts=new Map(),refRows=new Map((doc.insertRefs74||[]).map(row=>[row.id,row]));
+ const sourceById=new Map(doc.entities.map(e=>[e.id,e]));
+ const referenceIds=new Set(doc.entities.flatMap(e=>[...(e.dimension55?.refs||[]),...(e.field74?.id?[e.field74.id]:[])]));
+ const names=new Map(),definitions=new Map();
+ for(const block of doc.blocks52||[]){
+  const name=dxfBlockName91(block.name,used);names.set(block.name,name);definitions.set(block.name,block);
+  blocks.push({name,entities:block.entities});
+ }
+ if(options.references==='linked')for(const row of refRows.values()){
+  const path=row.name?.trim().split(/[/\\]/).at(-1);
+  if(row.kind!=='dwg'||!path||!/\.dwg$/i.test(path)||/[\r\n]/.test(path)||row.visible===false)continue;
+  const name=dxfBlockName91(path.split(/[/\\]/).at(-1).slice(0,-4),used);
+  linked.set(row.id,name);blocks.push({name,path,entities:[],flags:4});
+  entities.push({type:'INSERT',name,layer:'0',space56:row.space,points:[{x:0,y:0,z:0}]});
+ }
+ for(const raw of doc.entities){
+  if(linked.has(raw.reference56?.id)||refRows.get(raw.reference56?.id)?.visible===false)continue;
+  if(raw.source33?.draw52?.kind==='wipeout'){
+   const key=raw.source33.draw52.group;
+   if(!wipeouts.has(key))wipeouts.set(key,[]);
+   wipeouts.get(key).push(raw);continue;
+  }
+  const e=referenceIds.has(raw.id)?{...raw,exchangeId91:true}:raw;
+  const tag=e.source33?.draw52,key=tag?.kind==='blockInsert'?tag.group:dimensionGroup89(e);
+  if(!key){entities.push(e);continue;}
+  if(!groups.has(key))groups.set(key,[]);
+  groups.get(key).push(e);
+ }
+ for(const rows of wipeouts.values())entities.push({...rows[0],type:'POLYLINE',points:boundary52(rows),closed:true});
+ let anonymous=0;
+ for(const rows of groups.values()){
+  const tag=rows[0].source33?.draw52;
+  if(tag?.kind==='blockInsert'&&rows.every(e=>(e.space56||'model')===(rows[0].space56||'model'))){
+   const original=tag.blockName||tag.name,defName=names.get(original);
+   const same=matchingDXFInsert91(rows,definitions.get(original),referenceIds);
+   if(same){
+    entities.push({type:'INSERT',name:defName,layer:rows[0].layer,space56:rows[0].space56,points:[same.base],
+     scale:same.scale,rotation:same.angle,source33:{draw52:{kind:'blockInsert',group:tag.group,blockName:defName}}});
+   }else{
+    const base=rows[0].points[0],toLocal=p=>sub33(p,base),name=dxfBlockName91((defName||'Bloque')+'_Instancia',used);
+    blocks.push({name,description:'SiteSCad instancia',entities:rows.map(e=>{
+     const item=transformEntity33(e,toLocal);
+     if(defName)item.source33.draw52.blockName=defName;
+     return item;
+    })});
+    entities.push({type:'INSERT',name,layer:rows[0].layer,space56:rows[0].space56,points:[base]});
+   }
+  }else{
+   const head=rows.find(e=>e.dimension55),model=head?.dimension55;
+   const native=!options.flattenDimensions&&dxfLinearDim91(model,sourceById);
+   if(!native||rows.some(e=>e.clip56)){entities.push(...rows);continue;}
+   const name='*D'+(++anonymous);
+   const textPoint=rows.find(e=>e.type==='TEXT')?.points[0]||native.def;
+   blocks.push({name,flags:1,entities:rows});
+   entities.push({...head,type:'DIMENSION',name,native,textPoint});
+  }
+ }
+ return {entities,blocks,linked};
+}
+function dxfCAD33(doc=cad33.doc,options={}){
+ validateCAD33(doc);
+ require26(doc?.entities.length||doc?.blocks52?.length,'CAD sin geometría para exportar.');
+ const plan=planDXF91(doc,options),zero={x:0,y:0,z:0};
+ const clip=e=>e.clip56?clipDisplay56(e).map((part,i)=>i?{...part,id:undefined,dimension55:undefined,source33:undefined,exchangeId91:false}:part):[e];
+ const blocks=[
+  {name:'*Model_Space',owner:'5',first:'7',last:'8',entities:[]},
+  {name:'*Paper_Space',owner:'6',first:'9',last:'A',entities:[]},...plan.blocks
+ ];
+ let nextHandle=0x10000,currentHandle='';
+ const handle=()=>(nextHandle++).toString(16).toUpperCase();
+ for(const block of plan.blocks){block.owner=handle();block.first=handle();block.last=handle();}
+ const pair=(c,v)=>c+'\n'+String(v)+'\n',coord=(p,c=10)=>pair(c,p.x)+pair(c+10,p.y)+pair(c+20,p.z);
+ const common=(e,cls)=>{
+  currentHandle=handle();const style=e.style56||{};
+  return pair(0,e.type==='FACE'?'3DFACE':e.type)+pair(5,currentHandle)+pair(330,e.owner91||(e.space56==='paper'?'6':'5'))+
+   pair(100,'AcDbEntity')+(e.space56==='paper'&&!e.owner91?pair(67,1):'')+pair(8,e.layer)+
+   (style.color?pair(420,parseInt(style.color.slice(1),16)):'')+(style.dash?pair(6,style.dash==='DISCONTINUA'?'DASHED':'CONTINUOUS'):'')+
+   (style.weight!==undefined?pair(370,style.weight):'')+
+   (style.transparency!==undefined?pair(440,0x02000000|Math.round(255*(1-style.transparency/100))):'')+pair(100,cls);
+ };
+ const styles=new Map([['STANDARD',{file:'txt',handle:'E'}]]);
+ const styleName=e=>{
+  const {font,bold,italic}=e.font78||{};
+  if(!font&&!bold&&!italic)return 'STANDARD';
+  const family=['sans','serif','mono'].includes(font)?font:'sans',name='SC_'+family.toUpperCase()+(bold?'_B':'')+(italic?'_I':'');
+  const stem={sans:'arial',serif:'times',mono:'cour'}[family];
+  const suffix=family==='sans'?(bold&&italic?'bi':bold?'bd':italic?'i':''):(bold?'b':'')+(italic?'i':'');
+  if(!styles.has(name))styles.set(name,{file:stem+suffix+'.ttf',handle:handle()});
+  return name;
+ };
+ for(const e of plan.entities)if(e.type==='TEXT')styleName(e);
+ for(const block of plan.blocks)for(const e of block.entities)if(e.type==='TEXT')styleName(e);
+ const dimStyles=new Map();
+ for(const e of plan.entities)if(e.type==='DIMENSION'){
+  const style=e.dimension55.style,key=JSON.stringify([style.height,style.arrow,style.gap,style.precision]);
+  if(!dimStyles.has(key))dimStyles.set(key,{...style,name:'SC_COTA_'+(dimStyles.size+1),handle:handle()});
+  e.dimStyle91=dimStyles.get(key).name;
+ }
+ function write(e){
+  let out='';
+  if(e.type==='INSERT')return common(e,'AcDbBlockReference')+pair(2,e.name)+coord(e.points[0])+
+   (e.scale===undefined?'':pair(41,e.scale)+pair(42,e.scale)+pair(43,e.scale))+
+   (e.rotation?pair(50,e.rotation):'')+dxfMetadata91(e,pair);
+  if(e.type==='DIMENSION'){
+   const {native,dimension55:model}=e;
+   out=common(e,'AcDbDimension')+pair(2,e.name)+coord(native.def)+coord(e.textPoint,11)+
+    pair(70,32+(native.aligned?1:0))+pair(1,(model.label||'<>').replace(/[\r\n]/g,' '))+pair(3,e.dimStyle91)+
+    pair(100,'AcDbAlignedDimension')+coord(native.a,13)+coord(native.b,14);
+   if(!native.aligned)out+=pair(50,native.rotation)+pair(100,'AcDbRotatedDimension');
+  }else if(['RAY','XLINE'].includes(e.type))out+=common(e,e.type==='RAY'?'AcDbRay':'AcDbXline')+coord(e.points[0])+coord(unit33(sub33(e.points[1],e.points[0])),11);else if(e.type==='ELLIPSE'){
  out+=common(e,'AcDbEllipse')+coord(e.points[0])+coord(e.majorAxis,11)+coord(e.normal,210)+pair(40,e.ratio)+pair(41,e.start)+pair(42,e.closed?2*Math.PI:wrap52(e.start+e.sweep));
  }else if(e.type==='SPLINE'){
  out+=common(e,'AcDbSpline')+pair(70,(e.closed?1:0)+(e.periodic?2:0)+(e.weights?4:0))+pair(71,e.degree)+pair(72,e.knots.length)+pair(73,e.points.length)+pair(74,0);
  for(const knot of e.knots)out+=pair(40,knot);
  for(const weight of e.weights||[])out+=pair(41,weight);
  for(const point of e.points)out+=coord(point);
- }else if(e.type==='POINT')out+=common(e,'AcDbPoint')+coord(e.points[0]);else if(e.type==='LINE')out+=common(e,'AcDbLine')+coord(e.points[0])+coord(e.points[1],11);else if(e.type==='POLYLINE'){out+=common(e,'AcDb3dPolyline')+pair(66,1)+coord({x:0,y:0,z:0})+pair(70,8+(e.closed?1:0));const polyHandle=currentHandle;for(const p of e.points)out+=pair(0,'VERTEX')+pair(5,handle())+pair(330,polyHandle)+pair(100,'AcDbEntity')+pair(8,e.layer)+pair(100,'AcDbVertex')+pair(100,'AcDb3dPolylineVertex')+coord(p)+pair(70,32);out+=pair(0,'SEQEND')+pair(5,handle())+pair(330,polyHandle)+pair(100,'AcDbEntity')+pair(8,e.layer);}else if(e.type==='FACE'){out+=common(e,'AcDbFace');for(let i=0;i<4;i++)out+=coord(e.points[Math.min(i,e.points.length-1)],10+i);}else if(['CIRCLE','ARC'].includes(e.type)){const b=basis33(e.normal),c=e.points[0],ocs={x:dot33(c,b.u),y:dot33(c,b.v),z:dot33(c,b.n)},u=e.u||b.u,phase=Math.atan2(dot33(u,b.v),dot33(u,b.u));out+=common(e,'AcDbCircle')+coord(ocs)+pair(40,e.radius)+coord(b.n,210);if(e.type==='ARC')out+=pair(100,'AcDbArc')+pair(50,((e.start+phase)*180/Math.PI%360+360)%360)+pair(51,((e.start+phase+e.sweep)*180/Math.PI%360+360)%360);}else if(e.type==='TEXT')out+=common(e,'AcDbText')+coord(e.points[0])+pair(40,e.height)+pair(1,e.text.replace(/[\r\n\t]/g,' '))+pair(50,e.rotation||0)+pair(100,'AcDbText');}return out+pair(0,'ENDSEC')+pair(0,'EOF');}
-function exportCAD33(){try{if(!needProject15())return;return downloadText('SiteSCad_CAD_H'+cad33.doc.zone+'.dxf',dxfCAD33(),'application/dxf');}catch(e){messageCAD33(e.message);}}
+ }else if(e.type==='POINT')out+=common(e,'AcDbPoint')+coord(e.points[0]);else if(e.type==='LINE')out+=common(e,'AcDbLine')+coord(e.points[0])+coord(e.points[1],11);else if(e.type==='POLYLINE'){out+=common(e,'AcDb3dPolyline')+pair(66,1)+coord({x:0,y:0,z:0})+pair(70,8+(e.closed?1:0))+dxfMetadata91(e,pair);const polyHandle=currentHandle;for(const p of e.points)out+=pair(0,'VERTEX')+pair(5,handle())+pair(330,polyHandle)+pair(100,'AcDbEntity')+pair(8,e.layer)+pair(100,'AcDbVertex')+pair(100,'AcDb3dPolylineVertex')+coord(p)+pair(70,32);out+=pair(0,'SEQEND')+pair(5,handle())+pair(330,polyHandle)+pair(100,'AcDbEntity')+pair(8,e.layer);}else if(e.type==='FACE'){out+=common(e,'AcDbFace');for(let i=0;i<4;i++)out+=coord(e.points[Math.min(i,e.points.length-1)],10+i);}else if(['CIRCLE','ARC'].includes(e.type)){const b=basis33(e.normal),c=e.points[0],ocs={x:dot33(c,b.u),y:dot33(c,b.v),z:dot33(c,b.n)},u=e.u||b.u,phase=Math.atan2(dot33(u,b.v),dot33(u,b.u));out+=common(e,'AcDbCircle')+coord(ocs)+pair(40,e.radius)+coord(b.n,210);if(e.type==='ARC')out+=pair(100,'AcDbArc')+pair(50,((e.start+phase)*180/Math.PI%360+360)%360)+pair(51,((e.start+phase+e.sweep)*180/Math.PI%360+360)%360);}else if(e.type==='TEXT'){
+   const style=styleName(e),text=e.text.replace(/\r\n?/g,'\n').replace(/\t/g,' ');
+   if(text.includes('\n')){
+    const lines=text.replace(/[\\{}]/g,'\\$&').replace(/\n/g,'\\P');
+    const chunks=Array.from(lines),parts=[];
+    for(let i=0;i<chunks.length;i+=240)parts.push(chunks.slice(i,i+240).join(''));
+    out+=common({...e,type:'MTEXT'},'AcDbMText')+coord(e.points[0])+pair(40,e.height)+pair(41,0)+pair(71,1)+pair(72,1);
+    out+=parts.slice(0,-1).map(chunk=>pair(3,chunk)).join('')+pair(1,parts.at(-1))+pair(7,style)+pair(50,e.rotation||0);
+   }else out+=common(e,'AcDbText')+coord(e.points[0])+pair(40,e.height)+pair(1,text)+pair(50,e.rotation||0)+pair(7,style)+pair(100,'AcDbText')+pair(73,0);
+  }
+  return out+(e.type==='POLYLINE'?'':dxfMetadata91(e,pair));
+ }
+ let out=pair(0,'SECTION')+pair(2,'HEADER')+pair(9,'$ACADVER')+pair(1,'AC1021')+pair(9,'$HANDSEED')+pair(5,'2FFFFF')+pair(9,'$INSUNITS')+pair(70,6)+pair(9,'$MEASUREMENT')+pair(70,1)+pair(9,'$CLAYER')+pair(8,doc.activeLayer)+pair(999,'SiteSCad · EPSG:258'+doc.zone+' · '+doc.datum.replace(/[\r\n]/g,' '))+dxfLimitsFormat78(doc,pair)+pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'TABLES')+pair(0,'TABLE')+pair(2,'LTYPE')+pair(5,'1')+pair(100,'AcDbSymbolTable')+pair(70,2)+pair(0,'LTYPE')+pair(5,'2')+pair(330,'1')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLinetypeTableRecord')+pair(2,'CONTINUOUS')+pair(70,0)+pair(3,'Solid line')+pair(72,65)+pair(73,0)+pair(40,0)+pair(0,'LTYPE')+pair(5,'B')+pair(330,'1')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLinetypeTableRecord')+pair(2,'DASHED')+pair(70,0)+pair(3,'Dashed')+pair(72,65)+pair(73,2)+pair(40,.75)+pair(49,.5)+pair(74,0)+pair(49,-.25)+pair(74,0)+pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'LAYER')+pair(5,'3')+pair(100,'AcDbSymbolTable')+pair(70,doc.layers.length+(doc.layers.some(l=>l.name==='0')?0:1));const outputLayers=doc.layers.some(l=>l.name==='0')?doc.layers:[{name:'0',color:'#ffffff',visible:true,locked:false},...doc.layers];for(const [i,l]of outputLayers.entries())out+=pair(0,'LAYER')+pair(5,(0x1000+i).toString(16).toUpperCase())+pair(330,'3')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbLayerTableRecord')+pair(2,l.name)+pair(70,(l.locked?4:0)|(l.frozen?1:0))+pair(62,l.visible?7:-7)+pair(420,parseInt(l.color.slice(1),16))+pair(6,l.format78?.dash==='DISCONTINUA'?'DASHED':'CONTINUOUS')+pair(290,l.plot===false?0:1)+pair(370,l.format78?.weight??-3)+(l.format78?.transparency!==undefined?pair(440,0x02000000|Math.round(255*(1-l.format78.transparency/100))):'');
+ out+=pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'BLOCK_RECORD')+pair(5,'4')+pair(100,'AcDbSymbolTable')+pair(70,blocks.length);
+ for(const {name,owner} of blocks)out+=pair(0,'BLOCK_RECORD')+pair(5,owner)+pair(330,'4')+
+  pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbBlockTableRecord')+pair(2,name)+pair(70,0)+pair(280,1)+pair(281,0);
+ out+=pair(0,'ENDTAB')+pair(0,'TABLE')+pair(2,'STYLE')+pair(5,'D')+pair(100,'AcDbSymbolTable')+pair(70,styles.size);
+ for(const [name,{file,handle:h}] of styles)out+=pair(0,'STYLE')+pair(5,h)+pair(330,'D')+pair(100,'AcDbSymbolTableRecord')+
+  pair(100,'AcDbTextStyleTableRecord')+pair(2,name)+pair(70,0)+pair(40,0)+pair(41,1)+pair(50,0)+pair(71,0)+pair(42,2.5)+pair(3,file)+pair(4,'');
+ out+=pair(0,'ENDTAB');
+ if(dimStyles.size){
+  out+=pair(0,'TABLE')+pair(2,'DIMSTYLE')+pair(5,'12')+pair(100,'AcDbSymbolTable')+pair(70,dimStyles.size)+
+   pair(100,'AcDbDimStyleTable')+pair(71,dimStyles.size);
+  for(const style of dimStyles.values())out+=pair(0,'DIMSTYLE')+pair(105,style.handle)+pair(330,'12')+
+   pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbDimStyleTableRecord')+pair(2,style.name)+pair(70,0)+
+   pair(40,1)+pair(41,style.arrow)+pair(140,style.height)+pair(147,style.gap)+pair(271,style.precision)+pair(340,'E');
+  out+=pair(0,'ENDTAB');
+ }
+ out+=pair(0,'TABLE')+pair(2,'APPID')+pair(5,'10')+pair(100,'AcDbSymbolTable')+pair(70,1)+
+  pair(0,'APPID')+pair(5,'11')+pair(330,'10')+pair(100,'AcDbSymbolTableRecord')+pair(100,'AcDbRegAppTableRecord')+
+  pair(2,'SITESCAD')+pair(70,0)+pair(0,'ENDTAB')+pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'BLOCKS');
+ for(const {name,owner,first,last,flags=0,path='',description='',entities} of blocks){
+  out+=pair(0,'BLOCK')+pair(5,first)+pair(330,owner)+pair(100,'AcDbEntity')+pair(8,'0')+
+   pair(100,'AcDbBlockBegin')+pair(2,name)+pair(70,flags)+coord(zero)+pair(3,name)+pair(1,path)+(description?pair(4,description):'');
+  for(const e of entities)for(const part of clip(e))out+=write({...part,owner91:owner});
+  out+=pair(0,'ENDBLK')+pair(5,last)+pair(330,owner)+pair(100,'AcDbEntity')+pair(8,'0')+pair(100,'AcDbBlockEnd');
+ }
+ out+=pair(0,'ENDSEC')+pair(0,'SECTION')+pair(2,'ENTITIES');
+ for(const e of plan.entities)for(const part of clip(e))out+=write(part);
+ out+=pair(0,'ENDSEC')+pair(0,'EOF');
+ require26(out.length<=DXF_TEXT_LIMIT91,'El DXF supera el tamaño que SiteSCad puede reabrir. Exporta por partes o guarda en SiteSCad JSON.');
+ return out;
+}
+function confirmDXF91(doc,format){
+ const entities=doc.entities,rows=doc.insertRefs74||[],canLink=rows.some(row=>row.kind==='dwg'&&row.visible!==false&&/\.dwg$/i.test(row.name||''));
+ const refs=entities.some(e=>e.reference56);
+ let references='embedded';
+ if(canLink){
+  const choice=prompt('Referencias para '+format.toUpperCase()+'\n\n1. Incorporar geometría al archivo.\n2. Vincular archivos DWG externos por nombre. Colócalos junto al dibujo exportado.','1');
+  if(choice===null)return null;
+  require26(['1','2'].includes(choice.trim()),'Selecciona 1 para incorporar o 2 para vincular las referencias.');
+  if(choice.trim()==='2')references='linked';
+ }
+ const warnings=[];
+ if(entities.some(e=>e.dimension55))warnings.push('Las cotas lineales compatibles son editables en CAD de escritorio. Las demás se representan con su geometría. La asociación original requiere SiteSCad.');
+ if(entities.some(e=>e.field74))warnings.push('Los campos se muestran como texto fijo en CAD de escritorio.');
+ if(entities.some(e=>e.annotation56))warnings.push('Las escalas anotativas se conservan como datos de SiteSCad. El CAD de escritorio muestra la geometría base.');
+ if(entities.some(e=>e.hyperlink74))warnings.push('Los hipervínculos se conservan como datos de SiteSCad.');
+ if(entities.some(e=>e.clip56))warnings.push('Se exportan los tramos visibles. En curvas recortadas se usa la aproximación que muestra el visor.');
+ if(refs||rows.length)warnings.push(references==='linked'?
+  'Las referencias DWG visibles se exportan como vínculos. Las demás geometrías se incorporan. Los adjuntos sin geometría pueden quedar fuera.':
+  'La geometría de referencias se incorpora como entidades independientes. Los adjuntos sin geometría pueden quedar fuera.');
+ if(format==='dwg'&&warnings.length)warnings.push('La conservación de los datos de SiteSCad en DWG depende del conversor. Usa SiteSCad JSON para guardar todas las propiedades editables.');
+ if(warnings.length&&!confirm('Exportar '+format.toUpperCase()+'\n\n'+warnings.join('\n\n')))return null;
+ return {references};
+}
+function exportCAD33(){
+ try{
+  if(!needProject15())return;
+  const doc=ensureCAD33(),options=confirmDXF91(doc,'dxf');
+  if(options)return downloadText('SiteSCad_CAD_H'+doc.zone+'.dxf',dxfCAD33(doc,options),'application/dxf');
+ }catch(error){messageCAD33(error.message);}
+}
 
 function messageCAD33(text){if($('cadMessage33'))$('cadMessage33').textContent=text;}
 function visibleCAD33(space=modifySpace56(),filtered=true){
@@ -9205,9 +9666,6 @@ drawCAD33=function(fit){const r=before52_drawCAD33(fit),runtime=cad33.runtime;if
 function rayDXF52(text){const lines=String(text).split(/\r?\n/),pairs=[];for(let i=0;i<lines.length-1;i+=2)pairs.push([lines[i].trim(),lines[i+1]]);const types=new Map(),used=new Set(pairs.filter(p=>p[0]==='5').map(p=>p[1].trim().toUpperCase()));let serial=0xe000000,section='';for(let i=0;i<pairs.length;i++){if(pairs[i][0]==='0'&&pairs[i][1].trim()==='SECTION')section=pairs[i+1]?.[1].trim()||'';if(section!=='ENTITIES'||pairs[i][0]!=='0'||!['RAY','XLINE'].includes(pairs[i][1].trim()))continue;let end=i+1;while(end<pairs.length&&pairs[end][0]!=='0')end++;const record=pairs.slice(i,end),type=pairs[i][1].trim(),get=(code,def=0)=>Number(record.find(p=>p[0]===String(code))?.[1]??def),anchor=xyz33({x:get(10),y:get(20),z:get(30)}),direction=xyz33({x:get(11),y:get(21),z:get(31)});require26(len33(direction)>1e-12,'DXF con dirección de recta nula.');let handle=record.find(p=>p[0]==='5');if(!handle){while(used.has(serial.toString(16).toUpperCase()))serial++;handle=['5',(serial++).toString(16).toUpperCase()];record.splice(1,0,handle);used.add(handle[1]);}types.set(handle[1].trim().toUpperCase(),type);record[0][1]='LINE';for(const [code,key]of [[11,'x'],[21,'y'],[31,'z']]){let p=record.find(p=>p[0]===String(code));if(p)p[1]=String(anchor[key]+direction[key]);else record.push([String(code),String(anchor[key]+direction[key])]);}pairs.splice(i,end-i,...record);i+=record.length-1;}return {text:pairs.map(p=>p.join('\n')).join('\n')+'\n',types};}
 const before52_parseCADDXF33=parseCADDXF33;
 parseCADDXF33=function(text,...args){const normalized=rayDXF52(text),result=before52_parseCADDXF33(normalized.text,...args);for(const e of result.entities){const type=normalized.types.get(String(e.source33?.handle||'').toUpperCase());if(type){e.type=type;e.source33.type=type;}}return result;};
-const before52_dxfCAD33=dxfCAD33;
-dxfCAD33=function(doc=cad33.doc){if(!doc)return before52_dxfCAD33(doc);const entities=[],seen=new Set();for(const e of doc.entities){if(e.source33?.draw52?.kind!=='wipeout'){entities.push(e);continue;}const group=e.source33.draw52.group;if(seen.has(group))continue;seen.add(group);const mask=doc.entities.filter(v=>v.source33?.draw52?.group===group);const boundary=boundary52(mask);entities.push({...e,type:'POLYLINE',points:boundary,closed:true});}return before52_dxfCAD33({...doc,entities});};
-
 /* Guided, mixed graphical/numeric command entry. Geometry commits still use the validated CAD engines. */
 const dynamic53={ready:false,session:null,hover:null,lastScreen:null,lastPreview:0,starting:false};
 const stepPoint53=(label='Punto XYZ')=>({kind:'point',label});
@@ -11244,18 +11702,19 @@ function openCADImport58(){
 }
 
 const DWG_EXPORT_VERSION59='AC1032';
-function dwgExportInput59(doc){
- const dxf=dxfCAD33(doc);
+function dwgExportInput59(doc,options={}){
+ const dxf=dxfCAD33(doc,options);
  const version=/^(\s*9\n\$ACADVER\n\s*1\n)AC1021$/m;
  require26(version.test(dxf),'No se encontró la versión del dibujo de intercambio.');
  const lines=dxf.split('\n');
- let inEntities=false,count=0;
+ let inGeometry=false,count=0;
+ const structural=new Set(['VERTEX','SEQEND','BLOCK','ENDBLK']);
  for(let i=0;i+1<lines.length;i+=2){
   if(lines[i].trim()!=='0')continue;
   const type=lines[i+1].trim();
-  if(type==='SECTION'){inEntities=lines[i+3]?.trim()==='ENTITIES';continue;}
-  if(type==='ENDSEC'){inEntities=false;continue;}
-  if(inEntities&&type!=='VERTEX'&&type!=='SEQEND')count++;
+  if(type==='SECTION'){inGeometry=['ENTITIES','BLOCKS'].includes(lines[i+3]?.trim());continue;}
+  if(type==='ENDSEC'){inGeometry=false;continue;}
+  if(inGeometry&&!structural.has(type))count++;
  }
  require26(count>0,'El dibujo no contiene entidades para exportar.');
  return {dxf:dxf.replace(version,'$1'+DWG_EXPORT_VERSION59),count};
@@ -11934,14 +12393,14 @@ async function cadDocumentBlob65(doc){
  for(let i=0;i<blocks.length;i++){if(i)parts.push(',');parts.push(blocks[i].slice(1,-1));}
  return new Blob([...parts,']}']);
 }
-async function cadSaveFile65(tab,format){
+async function cadSaveFile65(tab,format,options={}){
  const basename=safeName14(tab.name.replace(/(?:\.scad\.json|\.(?:dwg|dxf))$/i,''));
  if(format==='scad'){
   const meta={format:'SITESCAD_DRAWING',version:1,name:tab.name,page:tab.page,view:tab.view};
   return new File([JSON.stringify(meta).slice(0,-1),',"doc":',await cadDocumentBlob65(tab.doc),'}'],basename+'.scad.json',{type:'application/json'});
  }
- if(format==='dxf')return new File([dxfCAD33(tab.doc)],basename+'.dxf',{type:'application/dxf'});
- const {dxf,count}=dwgExportInput59(tab.doc);
+ if(format==='dxf')return new File([dxfCAD33(tab.doc,options)],basename+'.dxf',{type:'application/dxf'});
+ const {dxf,count}=dwgExportInput59(tab.doc,options);
  require26(dxf.length<=DWG_MAX58*2,'El dibujo supera el tamaño admitido para generar un DWG. Usa SiteSCad JSON o DXF.');
  const packed=Uint8Array.from(atob($('cadDWGWriter59').textContent.trim()),c=>c.charCodeAt(0));
  const bytes=await runDWGWriter59(pako.ungzip(packed),dxf,count);
@@ -11958,7 +12417,9 @@ async function saveDrawing65(tab,format,onSaved=null,update=true){
  cadFiles65.saving=true;
  $('cadDWGExportStatus59').textContent='Preparando '+tab.name+'…';
  try{
-  const file=await cadSaveFile65(tab,format);
+  const options=format==='scad'?{}:confirmDXF91(tab.doc,format);
+  if(!options){$('cadDWGExportStatus59').textContent='Exportación cancelada.';return;}
+  const file=await cadSaveFile65(tab,format,options);
   deliverCAD65(file,capture,(ok,filename)=>{
    if(!ok||!current37(capture)||!cadFiles65.tabs.includes(tab))return;
    if(update){tab.format=format;tab.name=(filename||file.name).slice(0,300);tab.dirty=tab.revision!==revision;renderCADFiles65();scheduleSave();}
@@ -16051,9 +16512,10 @@ function layerExpress81(mode){
 }
 function selectedDXF81(){
  const doc=insertDocument74(),entities=selectionCAD33();
- const layers=new Set(entities.map(e=>e.layer));layers.add(doc.activeLayer);
+ const scope={...doc,entities,insertRefs74:(doc.insertRefs74||[]).filter(row=>entities.some(e=>e.reference56?.id===row.id))};
+ const options=confirmDXF91(scope,'dxf');if(!options)return;
  const name=safeName14(activeCAD65().name.replace(/\.[^.]+$/,''))+'_seleccion.dxf';
- exportTools79(name,dxfCAD33({...doc,entities,layers:doc.layers.filter(l=>layers.has(l.name))}),'application/dxf');expressStatus81('DXF de la selección preparado.');
+ exportTools79(name,dxfCAD33(scope,options),'application/dxf');expressStatus81('DXF de la selección preparado.');
 }
 function listBlocks81(){
  const doc=insertDocument74(),counts=new Map(),seen=new Set();

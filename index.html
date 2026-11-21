@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="topografia-version" content="5.90.0-rc1"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
+  <meta charset="UTF-8"><meta name="topografia-version" content="5.90.0-rc3"><meta name="topografia-baseline" content="5cd398ae6282963c554d186fee6ee642c98611fdaed19bb365459e5e4e64f8cf">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>SiteSCad · v5.90 RC1 · 2026-11-21</title>
+  <title>SiteSCad · v5.90 RC3 · 2026-11-21</title>
 
   <!-- Tipografías Técnicas de Alta Legibilidad -->
 
@@ -3467,6 +3467,15 @@ body.cad-full33 .workspace-head58{display:none}
 #cadViews49>button:last-child{border-right:0}
 #cadViews49>button[aria-pressed=true]{background:var(--accent-primary);color:#202327}
 #cadViews49 .site-icon35{width:20px;height:20px}
+#cadLayerInfo95{display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;box-sizing:border-box;padding:5px 8px;min-height:32px;background:var(--bg-surface-solid);border:1px solid var(--border);border-radius:8px;font-size:.68rem;color:var(--text-main);cursor:pointer}
+#cadLayerColor95{flex:none;width:13px;height:13px;box-sizing:border-box;border:1px solid var(--text-muted);border-radius:3px}
+#cadLayerName95{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-main)}
+#cadLayerPicker96{width:min(360px,calc(100vw - 32px))}
+#cadLayerChoices96{display:grid;gap:4px;max-height:55dvh;overflow:auto}
+#cadLayerChoices96 button{display:flex;align-items:center;gap:8px;padding:6px 10px;text-align:left;white-space:normal;overflow-wrap:anywhere}
+#cadLayerChoices96 button[aria-current=true]{border-color:var(--accent-primary)}
+#cadLayerChoices96 button>span{flex:none;width:13px;height:13px;border-radius:3px;border:1px solid var(--text-muted)}
+
 #cadEntityCount33{background:var(--bg-surface-solid);border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin:0;font-size:.65rem;max-width:100%;overflow-wrap:anywhere;box-shadow:0 2px 9px #0001}
 #cadStage33 #cadSnapStatus38{min-height:32px;background:var(--bg-surface-solid);border:1px solid var(--border);border-radius:8px;font-size:10px;padding:6px 9px}
 #cadStage33 .cad-tools33{top:12px;right:10px;bottom:8px;z-index:6}
@@ -3811,7 +3820,7 @@ body.cad-layout-moving92,body.cad-layout-moving92 *{cursor:grabbing!important;us
       <button class="brand-icon" id="brandHome19" type="button" onclick="switchTab('tabHome19')" aria-label="SiteSCad · Ir a Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="9" r="5"></circle><path d="m12 14-5 8m5-8 5 8M12 2v14M5 9h14"></path></svg></button>
       <div class="brand-title">
         <h1>SiteSCad</h1>
-        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.90 RC1</span>
+        <span class="brand-sub">CAMPO &amp; OBRA CIVIL · v5.90 RC3</span>
       </div>
     </div>
 
@@ -3893,7 +3902,11 @@ Del dato de campo a la entrega.</div></nav>
     <section id="tabCAD33" class="tab-content" role="tabpanel" aria-label="Cad y Topografía">
 <div class="prepare-nav58 cad-subtabs49" role="tablist" aria-label="Apartados de Cad"><button id="cadTab49" class="subtab58 active" type="button" role="tab" aria-selected="true" aria-controls="cadStage33" onclick="setCadMode49('cad')">Cad</button><button id="cadTopoTab49" class="subtab58" type="button" role="tab" aria-selected="false" aria-controls="cadStage33" tabindex="-1" onclick="setCadMode49('topography')">Topografía</button></div>
 <nav id="cadDrawingTabs65" aria-label="Dibujos abiertos"></nav>
-<div class="cad-top33"><div class="button-row topo-views24" id="cadViews49"><button id="cadView2d33" class="btn" onclick="guardCAD33(()=>viewCAD33('2d'))" aria-pressed="true">2D</button><button id="cadView3d33" class="btn" onclick="guardCAD33(()=>viewCAD33('3d'))" aria-pressed="false">3D</button><button class="btn" onclick="fitCAD33()">Encuadrar</button><button id="cadUndo33" class="btn" onclick="undoCAD33()" aria-label="Deshacer">↶</button><button id="cadRedo33" class="btn" onclick="undoCAD33(true)" aria-label="Rehacer">↷</button></div><span id="cadEntityCount33" class="field-note">Dibujo del proyecto</span></div>
+<div class="cad-top33"><div class="button-row topo-views24" id="cadViews49"><button id="cadView2d33" class="btn" onclick="guardCAD33(()=>viewCAD33('2d'))" aria-pressed="true">2D</button><button id="cadView3d33" class="btn" onclick="guardCAD33(()=>viewCAD33('3d'))" aria-pressed="false">3D</button><button class="btn" onclick="fitCAD33()">Encuadrar</button><button id="cadUndo33" class="btn" onclick="undoCAD33()" aria-label="Deshacer">↶</button><button id="cadRedo33" class="btn" onclick="undoCAD33(true)" aria-label="Rehacer">↷</button></div><button id="cadLayerInfo95" type="button" aria-haspopup="dialog" aria-controls="cadLayerPicker96" onclick="openCADLayerPicker96()"><span id="cadLayerColor95" aria-hidden="true" hidden></span><strong id="cadLayerName95">—</strong></button><span id="cadEntityCount33" class="field-note">Dibujo del proyecto</span></div>
+<dialog id="cadLayerPicker96" class="ui-dialog58" aria-labelledby="cadLayerPickerTitle96">
+ <div class="dialog-head58"><h2 id="cadLayerPickerTitle96">Elegir capa de dibujo</h2><button class="btn" type="button" onclick="$('cadLayerPicker96').close()">Cerrar</button></div>
+ <div id="cadLayerChoices96"></div>
+</dialog>
 <div id="cadStage33"><div id="cadCanvas33" aria-label="Espacio de dibujo XYZ"></div><section id="cadViewPanel69" aria-labelledby="cadViewTitle69" hidden><h3 id="cadViewTitle69">Vista <button id="cadViewClose69" type="button" class="btn" aria-label="Cerrar Vista">Cerrar</button></h3><div id="cadViewControls69"></div><p id="cadViewStatus69" role="status"></p></section><section id="cadEditionPanel71" aria-labelledby="cadEditionTitle71" hidden><h3 id="cadEditionTitle71">Edición <button class="btn" id="cadEditionClose71" type="button" aria-label="Cerrar Edición">Cerrar</button></h3><div id="cadEditionControls71"></div><p id="cadEditionStatus71" role="status"></p></section><div id="cadZoomBox69" hidden aria-hidden="true"></div><div id="cadInset69" hidden aria-hidden="true"><span>Planta auxiliar</span></div><canvas id="cadGrips68" aria-hidden="true"></canvas><div id="cadCursor33" class="cad-cursor33" role="status"></div><nav class="cad-tools33" aria-label="Herramientas CAD">
 <button onclick="toolCAD33('select')" aria-label="Seleccionar entidades"><span>↖</span><small>Seleccionar</small></button><button onclick="toolCAD33('window')" aria-label="Selección por ventana"><span>▧</span><small>Ventana</small></button><button onclick="panelCAD33('cadDrawPanel33')" aria-controls="cadDrawPanel33"><span>⌁</span><small>Dibujar</small></button><button onclick="panelCAD33('cadEditPanel33')" aria-controls="cadEditPanel33"><span>✎</span><small>Modificar</small></button><button onclick="panelCAD33('cadLayerPanel33')" aria-controls="cadLayerPanel33"><span>▱</span><small>Capas</small></button><button onclick="panelCAD33('cadPointsPanel33')" aria-controls="cadPointsPanel33"><span>⁙</span><small>Puntos</small></button><button onclick="panelCAD33('cadFilesPanel33')" aria-controls="cadFilesPanel33"><span>⇅</span><small>Archivos</small></button><button onclick="panelCAD33('cadPrecisionPanel33')" aria-controls="cadPrecisionPanel33"><span>⌖</span><small>Precisión</small></button><button onclick="toolCAD33('measure')"><span>↔</span><small>Medir</small></button></nav>
 <section id="cadDrawPanel33" class="cad-panel33" hidden=""><h3>Dibujar <button class="btn" onclick="this.closest('.cad-panel33').hidden=true">Cerrar</button></h3><div class="cad-buttons33"><button class="btn" onclick="toolCAD33('point')">Punto XYZ</button><button class="btn" onclick="toolCAD33('line')">Línea 3D</button><button class="btn" onclick="toolCAD33('polyline')">Polilínea 3D</button><button class="btn" onclick="toolCAD33('rectangle')">Rectángulo</button><button class="btn" onclick="toolCAD33('circle')">Círculo</button><button class="btn" onclick="toolCAD33('arc')">Arco · centro/inicio/final</button><button class="btn" onclick="toolCAD33('text')">Texto</button></div><label for="cadText33">Texto a insertar</label><input id="cadText33" class="input-field" value="Cota"><div class="cad-grid33"><label>Altura del texto (m)<input id="cadTextHeight33" class="input-field" type="number" step="any" value="1"></label><label>Giro del texto (°)<input id="cadTextAngle33" class="input-field" type="number" step="any" value="0"></label></div><p class="field-note">Líneas y polilíneas admiten XYZ distintas por vértice. Las nuevas curvas y rectángulos se construyen en un plano horizontal; no se altera la Z de un punto para forzarlo a ese plano. El arco se dibuja en sentido antihorario.</p></section>
@@ -5146,7 +5159,7 @@ function toggleTodasCapasCarto(activar){allLayers57(activar);}
 /* Topografía Pro v5.5 · revisión 2026-11-11. Conserva las entradas públicas v5.4.
    Coordenadas: E,N en metros. Offset positivo a la DERECHA del sentido de PK.
    Ninguna cota desconocida ni estado RTK se sustituye por un valor inventado. */
-const app55 = {version:'5.90.0-rc1',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
+const app55 = {version:'5.90.0-rc3',huso:30,surfaces:[],vectors:[],rasters:[],cad:[],watch:null,lastFix:0,heading:null,saveTimer:null,restoring:false,serial:null,serialReader:null,serialStop:false,resize3D:null,raf3D:null,db:null};
 const $ = id => document.getElementById(id);
 const finite = v => v !== null && v !== undefined && String(v).trim() !== '' && Number.isFinite(Number(v));
 const numberOrNull = v => finite(v) ? Number(v) : null;
@@ -8470,7 +8483,51 @@ function inputPointCAD33(point){const p=xyz33(point);require26(cad33.doc.zone===
 function finishCAD33(closed=false){return guardCAD33(()=>{require26(cad33.tool==='polyline'&&cad33.draft.length>=(closed?3:2),'Añade al menos '+(closed?3:2)+' vértices a una polilínea.');require26(addEntities33([newEntity33('POLYLINE',cad33.draft,{closed})]),'No se guardó la polilínea.');cad33.draft=[];toolCAD33('select');});}
 function inputXYZCAD33(){return guardCAD33(()=>inputPointCAD33({x:numCAD33('cadX33'),y:numCAD33('cadY33'),z:numCAD33('cadZ33')}));}
 function panelCAD33(id){if(id==='cadLayerPanel33')return guardCAD33(showLayerManager80);closeView69();for(const p of document.querySelectorAll('.cad-panel33'))p.hidden=p.id!==id||!p.hidden;refreshCADUI33();if(id==='cadModelTerr82')renderModelTerr82();}
-function refreshCADUI33(){if(!cad33.ready)return;if($('cadToolsPanel79')?.hidden===false)renderToolsMenu79();const d=ensureCAD33(),sel=$('cadActiveLayer33');sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;renderLayerManager80();const selected=[...cad33.selected].map(id=>getEntity67(d,id)).filter(Boolean);$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.slice(0,8).map(e=>e.type+' / '+e.layer).join(', ')+(selected.length>8?'…':''):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+measureFormat78(m.spatial)+' · horizontal '+measureFormat78(m.horizontal)+(m.horizontalApprox?' aprox.':'')+' · área en planta '+measureFormat78(m.area,2)+' · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
+function updateCADLayerInfo95(doc,selection){
+ const bar=$('cadLayerInfo95');
+ const first=selection[0]?.layer;
+ const mixed=selection.some(entity=>entity.layer!==first);
+ const name=mixed?'Varias capas':first??doc.activeLayer;
+ const color=mixed?null:doc.layers.find(layer=>layer.name===name)?.color;
+ const context=mixed?'Capas seleccionadas':selection.length?'Capa seleccionada':'Capa activa';
+ const value=$('cadLayerName95'),swatch=$('cadLayerColor95');
+ if(value.textContent!==name)value.textContent=name;
+ swatch.hidden=!color;
+ swatch.style.backgroundColor=color||'';
+ bar.title=context+' · '+name+(color?' · '+color:'');
+ bar.setAttribute('aria-label',bar.title+'. Elegir capa de dibujo');
+}
+function openCADLayerPicker96(){
+ return guardCAD33(()=>{
+  const doc=layerDoc80(),dialog=$('cadLayerPicker96'),list=$('cadLayerChoices96');
+  if(dialog.open)return;
+  list.replaceChildren();
+  let active=null;
+  for(const layer of doc.layers){
+   const button=document.createElement('button'),swatch=document.createElement('span');
+   button.type='button';button.className='btn';
+   button.disabled=!!layer.locked;
+   if(layer.locked)button.title='Capa bloqueada';
+   swatch.style.backgroundColor=layer.color;
+   swatch.setAttribute('aria-hidden','true');
+   button.append(swatch,document.createTextNode(layer.name));
+   if(layer.name===doc.activeLayer){
+    button.setAttribute('aria-current','true');active=button;
+   }
+   button.onclick=()=>guardCAD33(()=>{
+    const current=layerDoc80().layers.find(item=>item.name===layer.name);
+    require26(current&&!current.locked,'Elige una capa disponible para dibujar.');
+    if(layer.name!==cad33.doc.activeLayer||!current.visible||current.frozen)setLayerActual80(layer.name);
+    dialog.close();
+    messageCAD33('Capa de dibujo · '+layer.name);
+   });
+   list.append(button);
+  }
+  dialog.showModal();
+  if(active&&!active.disabled)active.focus();
+ });
+}
+function refreshCADUI33(){if(!cad33.ready)return;if($('cadToolsPanel79')?.hidden===false)renderToolsMenu79();const d=ensureCAD33(),sel=$('cadActiveLayer33');sel.replaceChildren();for(const l of d.layers)sel.add(new Option(l.name+(l.locked?' 🔒':''),l.name));sel.value=d.activeLayer;$('cadPlaneZ33').value=String(d.planeZ);$('cadDatum33').value=d.datum;$('cadUndo33').disabled=!cad33.undo.length;$('cadRedo33').disabled=!cad33.redo.length;renderLayerManager80();const selected=[...cad33.selected].map(id=>getEntity67(d,id)).filter(Boolean);updateCADLayerInfo95(d,selected);$('cadSelection33').textContent=selected.length+' seleccionadas'+(selected.length?' · '+selected.slice(0,8).map(e=>e.type+' / '+e.layer).join(', ')+(selected.length>8?'…':''):'')+(selected.length===1?' · Origen '+(selected[0].source33?.file||selected[0].source33?.kind||'Dibujo')+' · Referencia Z '+(selected[0].source33?.datum||selected[0].source33?.datums?.join(' / ')||d.datum):'');const vertices=$('cadVertex33'),index=vertices.value;vertices.replaceChildren();if(selected.length===1){const e=selected[0];if(['ARC','CIRCLE'].includes(e.type)){$('cadRadius33').value=e.radius;$('cadArcStart33').value=(e.start||0)*180/Math.PI;$('cadArcSweep33').value=(e.sweep||2*Math.PI)*180/Math.PI;}if(e.type==='TEXT'){$('cadEditText33').value=e.text;$('cadEditHeight33').value=e.height;$('cadEditRotation33').value=e.rotation||0;}e.points.forEach((p,i)=>vertices.add(new Option((i+1)+' · '+p.x.toFixed(3)+', '+p.y.toFixed(3)+', '+p.z.toFixed(3),String(i))));vertices.value=Number(index)<e.points.length?index:'0';if(vertices.value==='')vertices.value='0';const m=measureCAD33(e);$('cadMeasure33').textContent='Longitud 3D '+measureFormat78(m.spatial)+' · horizontal '+measureFormat78(m.horizontal)+(m.horizontalApprox?' aprox.':'')+' · área en planta '+measureFormat78(m.area,2)+' · Z '+m.minZ.toFixed(3)+' / '+m.maxZ.toFixed(3);loadVertexCAD33();}else $('cadMeasure33').textContent='Selecciona una entidad para consultar longitud, superficie en planta y cotas.';const query=$('cadEntitySearch33').value.trim().toLowerCase(),list=$('cadEntities33');list.replaceChildren();let listed61=0;for(const e of d.entities){if(query&&!(e.id+' '+e.layer+' '+e.type+' '+(e.text||'')).toLowerCase().includes(query))continue;if(listed61++===500)break;const b=document.createElement('button');b.className='btn';b.textContent=(cad33.selected.has(e.id)?'✓ ':'')+e.type+' · '+e.layer+' · '+e.id;b.onclick=()=>{if(!$('cadMulti33').checked)cad33.selected.clear();if(cad33.selected.has(e.id))cad33.selected.delete(e.id);else cad33.selected.add(e.id);refreshCADUI33();drawCAD33();};list.append(b);}if(d.entities.length>500){const info=document.createElement('p');info.textContent='Lista limitada a 500 coincidencias; afina el filtro. El dibujo y la exportación conservan todas las entidades.';list.append(info);}refreshPointListCAD33();}
 function loadVertexCAD33(){const e=ensureCAD33().entities.find(e=>cad33.selected.has(e.id)),p=e?.points[Number($('cadVertex33').value)];if(!p)return;for(const k of ['x','y','z'])$('cadV'+k.toUpperCase()+'33').value=String(p[k]);}
 function editVertexCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(list.length===1,'Selecciona una entidad.');const i=Number($('cadVertex33').value),p={x:numCAD33('cadVX33'),y:numCAD33('cadVY33'),z:numCAD33('cadVZ33')};changeCAD33('Editar vértice XYZ',d=>{const e=editEntity67(d,list[0].id);require26(i>=0&&i<e.points.length,'Vértice inexistente.');e.points[i]=p;delete e.refs;});});}
 function deleteCAD33(){return guardCAD33(()=>{const list=editableCAD33();require26(confirm('¿Borrar '+list.length+' entidades del dibujo? Los puntos medidos no se modifican. Puedes deshacer.'),'Borrado cancelado.');const ids=new Set(list.map(e=>e.id));changeCAD33('Borrar',d=>d.entities=d.entities.filter(e=>!ids.has(e.id)));});}
@@ -10085,7 +10142,7 @@ function initDynamic53(){
  }
  positionHud53(e);},{passive:true});
  document.addEventListener('keydown',event=>{
-  if(ui58.section!=='tabCAD33'||!dynamic53.session||event.isComposing||$('cadMouseDialog83').open||$('commandDialog58').open||$('helpDialog58').open)return;
+  if(ui58.section!=='tabCAD33'||!dynamic53.session||event.isComposing||$('cadMouseDialog83').open||$('commandDialog58').open||$('helpDialog58').open||$('cadLayerPicker96').open||event.target.closest('#cadLayerInfo95'))return;
   const typing=event.target.matches('input,textarea,select,[contenteditable="true"]');
   const undo=(event.ctrlKey||event.metaKey)&&!event.shiftKey&&event.key.toLowerCase()==='z';
   const handle=action=>{event.preventDefault();event.stopImmediatePropagation();action();};
@@ -13492,7 +13549,7 @@ function initView69(){
  });
  document.addEventListener('keydown',event=>{
   const r=cad33.runtime;
-  if(ui58.section!=='tabCAD33'||!r||event.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+  if(ui58.section!=='tabCAD33'||!r||$('cadLayerPicker96').open||event.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
   if(event.code==='Digit0'&&(event.ctrlKey||event.metaKey)){event.preventDefault();fullscreenCAD36();return;}
   if(event.key==='Escape'&&(r.viewGesture69||viewNavigation69(r)||!root.hidden)){
    closeView69();event.preventDefault();event.stopImmediatePropagation();viewStatus69('Navegación finalizada.');
@@ -17454,6 +17511,7 @@ function initDistribution94(){
  const cadDefinitions=[
   ['#cadDrawingTabs65','drawing-tabs','Dibujos abiertos','drawings'],
   ['#cadViews49','views','Barra de vistas','views'],
+  ['#cadLayerInfo95','layer-info','Información de capa','chip'],
   ['#cadEntityCount33','count','Estado del dibujo','chip'],
   ['#cadSnapStatus38','snaps','Modos de cazado','chip'],
   ['#cadCursor33','cursor','Coordenadas del cursor','cursor'],
